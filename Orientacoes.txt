@@ -1,0 +1,13 @@
+ #TODO TIBIII  print("Meu PRimeiro slidesss")
+
+# CTRL ESPAÇO, vc comenta em varias linhas selecionadas
+# CTRL F LOCALIZA, CTRL R SUBSTITUI
+
+# pip install pandas
+# pip install openpyxl
+# pip install twilio
+# pip install flask
+# pip install -U Flask-SQLAlchemy PARA BANCO DE DADOS - frame ORM 
+# pip install flask_mysqldb
+
+

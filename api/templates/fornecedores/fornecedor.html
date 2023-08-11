@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" style="font-size: 11px">
+            <a href="#">
+                Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Relação de Fornecedores
+        </li>
+    </ol>
+</nav>
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div>
+            <span class="badge rounded text-bg-secondary">Total Fornecedores: {{ total_fornecedores }} </span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success">{{ total_fornecedores_ativos }} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_fornecedores_inativos }} inativo</span>
+        </div>
+        <div>
+        <a href="#" class="btn btn-secondary"  title="Consultar Fornecedores">Consultar</a>
+        <a href="{{ url_for('exibir_formfornecedor') }}"  methods='POST' rel="tooltip" class="btn btn-primary" title="Cadastrar Fornecedor">Cadastrar Fornecedor</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="text-center">id</th>
+                        <th>Nome</th>
+                        <th>produto_id</th>
+                        <th>descricao</th>
+                        <th>endereco</th>
+                        <th>bairro</th>
+                        <th>cidade</th>
+                        <th>whatsapp</th>
+                        <th>responsavel</th>
+                        <th>status</th>
+                        <th class="text-center">acões</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   {% for fornecedor in fornecedores %}
+                    <tr>
+                        <td>{{fornecedor.id}}</td>
+                        <td>{{fornecedor.nome}}</td>
+                        <td>{{fornecedor.produto_id}}</td>
+                        <td>{{fornecedor.descricao}}</td>
+                        <td>{{fornecedor.endereco}}</td>
+                        <td>{{fornecedor.bairro}}</td>
+                        <td>{{fornecedor.cidade}}</td>
+                        <td>{{fornecedor.whatsapp}}</td>
+                        <td>{{fornecedor.responsavel}}</td>
+                         <td class="text-center">
+                                    {% if fornecedor.status == 1 %}
+                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                    {% else %}
+                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                   <a href="{{ url_for('visualizar_fornecedor', id=fornecedor.id, _method='GET') }}" methods='GET' class="btn btn-info" role="button">Detalhes</a>
+                                   <a href="{{ url_for('atualizar_fornecedor', id=fornecedor.id, _method='PUT') }}" title="Atualizar Fornecedor">
+                                       <i class="fa-solid fa-pen m-1"></i>
+                                   </a>
+                                   <a href="{{ url_for('deletar_fornecedor', id=fornecedor.id) }}" methods='DELETE' title="Excluir Fornecedor" onclick="return confirm('Deseja excluir o fornecedor?')">
+                                       <i class="fa-solid fa-trash m-1"></i>
+                                   </a>
+                                </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}

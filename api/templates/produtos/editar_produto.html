@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar Produto</title>
+</head>
+<body>
+    <h1>Editar Produto</h1>
+    <form method="post" action="{{ url_for('editar_produto', id=produto.id) }}">
+        {{ form.csrf_token }}
+        {{ form.nome.label }} {{ form.nome() }}
+        {{ form.descricao.label }} {{ form.descricao() }}
+        <!-- Restante dos campos do formulário de edição de produto -->
+        <br>
+        <input type="submit" value="Salvar Alterações">
+    </form>
+</body>
+</html>

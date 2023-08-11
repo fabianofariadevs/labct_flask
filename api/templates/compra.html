@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="#">
+                Admin & Usuários
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Cadastrar Pedidos de Compras
+        </li>
+    </ol>
+</nav>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form action="#" method="post">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        <label for="data_pedido" class="form-label">Data Pedido</label>
+                        <input type="date" name="data_pedido" id="data_pedido" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="data_pedido" class="form-label">Nome do Produto</label>
+                        <input type="text" name="data_pedido" id="produto" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="fornecedor" class="form-label">Fornecedor</label>
+                        <select class="form-select" name="fornecedor" id="fornecedor">
+                            #
+                            <option value="#">#</option>
+                           #
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="pedido" class="form-label">Qtde.Pedido</label>
+                        <input type="text" name="pedido" id="pedido" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="departamento" class="form-label">Departamento</label>
+                        <input type="text" name="departamento" id="departamento" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="compra_minima_kg" class="form-label">Compra_Min_kg</label>
+                        <textarea name="compra_minima_kg" id="compra_minima_kg" class="form-control" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="indicador_compra" class="form-label">Indicador_Compra</label>
+                        <textarea name="indicador_compra" id="indicador_compra" class="form-control" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="consumo_medio_semanal" class="form-label">Consumo_Medio_Semanal</label>
+                        <textarea name="consumo_medio_semanal" id="consumo_medio_semanal" class="form-control" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="unid_compra" class="form-label">Unid.Compra</label>
+                        <textarea name="unid_compra" id="unid_compra" class="form-control" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="necessidade_compra" class="form-label">Necessidade_compra</label>
+                        <textarea name="necessidade_compra" id="necessidade_compra" class="form-control" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="custo_unidade" class="form-label">Custo_Unid.</label>
+                        <textarea name="custo_unidade" id="custo_unidade" class="form-control" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="valor_pedido" class="form-label">Valor_Pedido</label>
+                        <textarea name="valor_pedido" id="valor_pedido" class="form-control" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="status">
+                            <option value="1">Ativo</option>
+                            <option value="0">Inativo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <input type="submit" class="btn btn-primary" value="Cadastrar">
+            <a href="#" class="btn btn-dark" title="Consultar Compras">Consultar</a>
+            <a href="#" class="btn btn-dark" title="Voltar Menu">Voltar</a>
+        </form>   
+    </div>
+</div>
+{% endblock %}

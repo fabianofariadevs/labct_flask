@@ -1,0 +1,57 @@
+{% extends "basedetalhes.html" %}
+{% block conteudo %}
+
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+            <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+            <span class="badge rounded text-bg-secondary">Filiais cadastradas / Total: {{total_filiais}}</span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_filiais_ativos}} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_filiais_inativos}} inativo </span>
+        </div>
+        <div>
+            <a href="{{ url_for('listar_painel') }}" class="btn btn-outline-dark" title="Voltar para Painel Estoque">Voltar para Painel Estoque</a>
+            <a href="#" class="btn btn-secondary" title="Consultar Inventário">Consultar Inventário</a>
+            <a href="#" class="btn btn-primary" rel="tooltip" title="Atualizar Inventário">Atualizar Inventário</a>
+            <a href="#" methods='DELETE' onclick="return confirm('Deseja excluir o Inventário?')" class="btn btn-danger" title="Excluir Inventário">Excluir Inventário</a>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive" style="width:100%">
+              <table class="table table-striped" style="width:100%">
+                  <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>produto_id</th>
+                            <th>cliente_id</th>
+                            <th>descricao</th>
+                            <th>nome</th>
+                            <th>quantidade</th>
+                            <th>detalhes</th>
+                            <th>obs</th>
+                            <th>data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                       {% for inventario in inventarios %}
+                        <tr>
+                          <td>{{inventario.id}}</td>
+                          <td>{{inventario.produto_id}}</td>
+                          <td>{{inventario.cliente_id}}</td>
+                          <td>{{inventario.descricao}}</td>
+                          <td>{{inventario.nome}}</td>
+                          <td>{{inventario.quantidade}}</td>
+                          <td>{{inventario.detalhes}}</td>
+                          <td>{{inventario.obs}}</td>
+                          <td>{{inventario.data}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}

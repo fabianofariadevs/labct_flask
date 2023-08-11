@@ -1,0 +1,31 @@
+<!-- imprimir_template.html -->
+<!--* * #TODO Arquivo p views TEMPLATE para impressao, apresenta os dados e detalhes do objeto/entidades
+#     @author Fabiano Faria -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impressão de Cliente</title>
+</head>
+<body>
+    <!-- Aqui você formata os dados do cliente para impressão -->
+    <h1>Dados do Cliente</h1>
+    <p>Id: {{ cliente_data.id}}</p>
+    <p>Nome: {{ cliente_data.nome}}</p>
+    <p>Endereço: {{cliente_data.endereco}}</p>
+    <p>Bairro: {{ cliente_data.bairro}}</p>
+    <p>Cidade: {{cliente_data.cidade}}</p>
+    <p>Estado: {{cliente_data.estado}}</p>
+    <p>Telefone: {{cliente_data.telefone}}</p>
+    <p>Email: {{cliente_data.email}}</p>
+    <p>Responsavel: {{cliente_data.responsavel}}</p>
+    <p>Whatsapp: {{cliente_data.whatsapp}}</p>
+    <p>Cnpj: {{cliente_data.cnpj}}</p>
+    <p>Status: {{cliente_data.status}}</p>
+    <p>Cadastrado_em: {{cliente_data.cadastrado_em}}</p>
+    <p>Atualizado_em: {{cliente_data.atualizado_em}}</p>
+    <p>Filial_pdv: {{cliente_data.filial_id}}</p>
+</body>
+</html>

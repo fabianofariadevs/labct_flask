@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detalhes do Produto</title>
+</head>
+<body>
+    <h1>Detalhes do Produto</h1>
+    <p>Nome: {{ produto.nome }}</p>
+    <p>Descrição: {{ produto.descricao }}</p>
+    <!-- Restante dos campos do produto -->
+    <a href="{{ url_for('editar_produto', id=produto.id) }}">Editar</a>
+    <form method="post" action="{{ url_for('deletar_produto', id=produto.id) }}" onsubmit="return confirm('Tem certeza que deseja excluir o produto?');">
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="submit" value="Excluir">
+    </form>
+</body>
+</html>

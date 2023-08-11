@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" style="font-size: 11px">
+            <a href="#">
+                Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Cadastro de Usuários
+        </li>
+    </ol>
+</nav>
+<div class="card border-0 shadow-sm">
+    <div class="card-header">
+        <h3 class="card-title">{% if usuario %}Atualizar Usuário {% else %} Cadastrar Usuário{% endif %}</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{% if usuario %}{{ url_for('atualizar_usuario', id=usuario.id, _method='PUT') }}{% else %}{{ url_for('listar_usuarios') }}{% endif %}">
+            {% if usuario %}
+            <input type="hidden" name="_method" value="PUT">
+            {% endif %}
+            {{ form.hidden_tag() }}
+            {% for error in form.nome.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+            <p>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.nome.label(class="form-label") }}:
+                        {{ form.nome(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}:
+                        {{ form.email(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.senha.label(class="form-label") }}:
+                        {{ form.senha(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.is_admin.label(class="form-label") }}:
+                        {{ form.is_admin(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.empresa.label(class="form-label") }}:
+                        {{ form.empresa(class="form-control") }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.cargo.label(class="form-label") }}:
+                        {{ form.cargo(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                     <div class="mb-3">
+                         {{ form.status.label(class="form-label") }}:
+                         {{ form.status(class="form-select") }}
+                     </div>
+                </div>
+            </div>
+           {% if usuario %}
+            <input type="submit" class="btn btn-success" value="Atualizar Usuário">
+            {% else %}
+            <input type="submit" class="btn btn-primary" value="Cadastrar">
+            {% endif %}
+            <a href="{{ url_for('listar_usuarios') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
+        </form>
+    </div>
+</div>
+{% endblock conteudo %}

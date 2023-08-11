@@ -1,0 +1,61 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<!--* * #TODO Arquivo p views Detalhes_Usuario_HTML, lista um usuarios e apresenta todos os detalhes do usuario
+#     @author Fabiano Faria -->
+
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+             <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+            <span class="badge rounded text-bg-secondary">TOTAL Usuários: {{total_usuarios}}</span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_usuarios_ativos}} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_usuarios_inativos}} inativo </span>
+        </div>
+        <div>
+            <a href="{{ url_for('listar_usuarios') }}" class="btn btn-dark" title="Voltar a lista">Voltar para lista de Usuário</a>
+            <a href="#" class="btn btn-secondary" title="Consultar Usuários">Consultar</a>
+            <a href="{{ url_for('atualizar_usuario', id=usuario.id, _method='PUT') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Usuário">Atualizar Usuário</a>
+            <a href="{{ url_for('deletar_usuario', id=usuario.id) }}" methods='DELETE' onclick="return confirm('Deseja excluir o Usuário?')" class="btn btn-danger" title="Excluir Usuário">Excluir Usuário</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive" style="width:100%">
+              <table class="table table-striped" style="width:100%">
+                  <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>Nome</th>
+                            <th>email</th>
+                            <th>senha</th>
+                            <th>is_admin</th>
+                            <th>status</th>
+                            <th>cadastrado_em</th>
+                            <th>atualizado_em</th>
+                            <th>api_key</th>
+                            <th>empresa</th>
+                            <th>cargo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{usuario.id}}</td>
+                            <td>{{usuario.nome}}</td>
+                            <td>{{usuario.email}}</td>
+                            <td>{{usuario.senha}}</td>
+                            <td>{{usuario.is_admin}}</td>
+                            <td>{{usuario.status}}</td>
+                            <td>{{usuario.cadastrado_em}}</td>
+                            <td>{{usuario.atualizado_em}}</td>
+                            <td>{{usuario.api_key}}</td>
+                            <td>{{usuario.empresa}}</td>
+                            <td>{{usuario.cargo}}</td>
+                    </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}
+

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" style="font-size: 11px">
+            <a href="#">
+                Admin & Usuários
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Planejamento Pedidos de Produção
+        </li>
+    </ol>
+</nav>
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div>
+            <span class="badge rounded text-bg-secondary"># Pedidos </span>
+            <span class="badge rounded text-bg-success"># pendentes</span>
+            <span class="badge rounded text-bg-danger"># realizados</span>
+        </div>
+        <a href="#" class="btn btn-primary" title="Cadastrar Pedido Produção">Cadastrar</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="#" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th class="fw-bold text-center">Data Pedido</th>
+                        <th class="text-center">Descrição</th>
+                        <th class="text-center">Qtde</th>
+                        <th class="text-center">Data/Hora Entrega</th>
+                        <th class="text-center">Loja filial</th>
+                        <th class="text-center">Cliente_Fábrica</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Ações</th>                     
+                    </tr>
+                   #
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="info#">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Status pedido de produção:<br>#</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                Previsão de Entrega: #
+                            </li>
+                            <li class="list-group-item">
+                                Cliente/Fabrica: #
+                            </li>
+                            <li class="list-group-item">
+                                Loja PDV: #
+                            </li>
+                            <li class="list-group-item">
+                                Cadastrado em: #
+                            </li>
+                            <li class="list-group-item">
+                                Atualizado em: #
+                            </li>
+                            <li class="list-group-item">
+                                Última visita em: #
+                            </li>
+                            <li class="list-group-item">
+                                Usuário: <b>#</b>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+               
+                </thead>
+            </table>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <a href="#" class="btn btn-primary" title="Enviar para Entrega">Liberar Pedidos para Entrega</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

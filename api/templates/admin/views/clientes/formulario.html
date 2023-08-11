@@ -1,0 +1,95 @@
+{% extends "dashboard.html" %}
+
+{% block conteudo %}  
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="#">
+                Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Cadastrar Clientes
+        </li>
+    </ol>
+</nav>
+#
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form action="##" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome Cliente</label>
+                <input type="text" name="nome" id="nome" value="#" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="endereco_cliente" class="form-label">Endereço</label>
+                <input type="text" name="endereco_cliente" id="endereco_cliente" value="#" class="form-control">
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="bairro_cli" class="form-label">Bairro</label>
+                        <input type="text" name="bairro_cli" id="bairro_cli" value="#" class="form-control"></input>
+                    </div>
+                </div>                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="cidade_cli" class="form-label">Cidade</label>
+                        <input type="text" name="cidade_cli" id="cidade_cli" value="#" class="form-control"></input>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="mb-3">
+                        <label for="estado_cli" class="form-label">Estado</label>
+                        <input type="text" name="estado_cli" id="estado_cli" value="#" class="form-control"></input>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="telefone_cli" class="form-label">Telefone_empresa</label>
+                        <input type="text" name="telefone_cli" id="telefone_cli" value="#" class="form-control"></input>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        <label for="whatsapp" class="form-label">Whatsapp_resp.</label>
+                        <input type="text" name="whatsapp" id="whatsapp" value="#" class="form-control"></input>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="cnpj_fabrica" class="form-label">Cnpj</label>
+                        <input type="text" name="cnpj_fabrica" id="cnpj_fabrica" value="#" class="form-control"></input>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="email_cli" class="form-label">Email</label>
+                        <input type="text" name="email_cli" id="email_cli" value="#" class="form-control"></input>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="responsavel_empresa" class="form-label">Responsável</label>
+                        <input type="text" name="responsavel_empresa" id="responsavel_empresa" value="#" class="form-control"></input>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" name="status">
+                            <option value="1"  >Ativo</option>
+                            <option value="0"  >Inativo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <input type="submit" class="btn btn-primary" value="#">
+            <a href="{{url_for('clientelist')}}" class="btn btn-outline-secondary" rel="tooltip" title="Voltar ao Menu">Voltar</a>
+        </form>
+    </div>    
+</div>
+{% endblock %}
