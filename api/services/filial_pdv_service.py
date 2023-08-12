@@ -7,7 +7,8 @@ from api import db
 def cadastrar_filial_pdv(filial):
     filial_bd = filial_pdv_model.Filial(nome=filial.nome, endereco=filial.endereco, bairro=filial.bairro,
                                         cidade=filial.cidade, estado=filial.estado, responsavel=filial.responsavel, whatsapp=filial.whatsapp,
-                                        cnpj=filial.cnpj, status=filial.status, cadastrado_em=filial.cadastrado_em, atualizado_em=filial.atualizado_em)
+                                        cnpj=filial.cnpj, status=filial.status, cadastrado_em=filial.cadastrado_em, atualizado_em=filial.atualizado_em,
+                                        clientes=filial.clientes)
 
     db.session.add(filial_bd)
     db.session.commit()
@@ -30,10 +31,10 @@ def atualiza_filial_pdv(filial_pdv_anterior, filial_pdv_novo):
     filial_pdv_anterior.responsavel = filial_pdv_novo.responsavel
     filial_pdv_anterior.whatsapp = filial_pdv_novo.whatsapp
     filial_pdv_anterior.cnpj = filial_pdv_novo.cnpj
-    filial_pdv_anterior.status = bool(filial_pdv_novo.status)
+    filial_pdv_anterior.status = filial_pdv_novo.status
     filial_pdv_anterior.cadastrado_em = filial_pdv_novo.cadastrado_em
     filial_pdv_anterior.atualizado_em = filial_pdv_novo.atualizado_em
-    filial_pdv_anterior.cliente = filial_pdv_novo.cliente
+    filial_pdv_anterior.clientes = filial_pdv_novo.clientes
 
     db.session.commit()
 

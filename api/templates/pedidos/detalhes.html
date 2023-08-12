@@ -11,8 +11,8 @@
                 <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
             </a>
             <span class="badge rounded text-bg-secondary">TOTAL de Pedidos: {{ total_pedidos }}</span>
-            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{ total_pedidos_ativos }} ativo</span>
-            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_pedidos_inativos }} inativo </span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_pedidos_ativos}} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_pedidos_inativos}} inativo </span>
         </div>
         <div>
         <a href="{{ url_for('listar_pedidos') }}" class="btn btn-outline-dark" title="Voltar para lista de Pedidos">Voltar para lista de Pedidos</a>

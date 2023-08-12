@@ -22,9 +22,9 @@ class Cliente(db.Model):
     responsavel = db.Column(db.String(50), nullable=False)
     whatsapp = db.Column(db.String(50), nullable=False)
     cnpj = db.Column(db.String(17), nullable=True)
-    status = db.Column(db.Integer, default=1, nullable=False)
-    cadastrado_em = db.Column(db.DateTime, nullable=False,  default=func.now())
-    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
     #TODO a coluna filial_id como uma chave estrangeira referenciando a coluna id da tabela "filial".
     filial_id = db.Column(db.Integer, db.ForeignKey("filial.id"), nullable=False)

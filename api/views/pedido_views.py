@@ -20,7 +20,6 @@ from sqlalchemy.orm import joinedload
 
 
 class PedidoCForm(FlaskForm):
-    _method = HiddenField(default='PUT')
     qtde_pedido = StringField("Qtde_Pedido", validators=[DataRequired()])
     data_pedido = DateField("Data_Pedido", format='%d/%m/%Y', validators=[DataRequired()])
     data_entrega = DateField('Dt_Entrega_limite', format='%d/%m/%Y', validators=[DataRequired()])
@@ -66,10 +65,9 @@ class PedidoCForm(FlaskForm):
 def atualizar_pedido(id):
     pedido = pedido_service.listar_pedido_id(id)
     if not pedido:
-        return render_template("pedidos/formpedido.html", error_message="Pedido não encontrado"), 404
+        return render_template("pedidos/pedidos.html", error_message="Pedido não encontrado"), 404
 
     form = PedidoCForm(obj=pedido)
-
     if request.method == 'POST' and form.validate_on_submit():
         pedido_atualizado = pedido_model.Pedido.query.get(id)
         form.populate_obj(pedido_atualizado)

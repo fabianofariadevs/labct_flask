@@ -8,15 +8,6 @@ from datetime import timedelta
 
 class LoginList(Resource):
 
-<<<<<<< HEAD
-    #@jwt.additional_claims_loader
-=======
-<<<<<<< HEAD
-    #@jwt.additional_claims_loader
-=======
-    @jwt.additional_claims_loader
->>>>>>> 4fa6ea9600c37de14916dd9a101c920e1e1fca04
->>>>>>> 5f6ef395b8b041d6fa8aa179ea8159e1b7ccf947
     def add_claims_to_access_token(identity):
         usuario_token = usuario_service.listar_usuario_id(identity)
         if usuario_token.is_admin:

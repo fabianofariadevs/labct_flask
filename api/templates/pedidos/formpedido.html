@@ -18,14 +18,16 @@
     <h3 class="card-title">{% if pedido %}Atualizar Pedido de Compras{% else %}Cadastrar Pedido de Compras{% endif %}</h3>
     </div>
     <div class="card-body">
-        <form method="POST" action="{% if pedido %}{{ url_for('atualizar_pedido', id=pedido.id, _method='POST') }}{% else %}{{ url_for('listar_pedidos') }}{% endif %}">
-           {% if pedido %}
-           <input type="hidden" name="_method" value="PUT">
-           {% endif %}
+        <form method="POST" action="#">
+            {% if pedido %}
+            <input type="hidden" name="_method" value="PUT">
+            {% else %}
+            <input type="hidden" name="_method" value="POST">
+            {% endif %}
             {{ form.hidden_tag() }}
-            {% for error in form.produto_id.errors %}
+            {% for error in form.data_entrega.errors %}
             <p>{{ error }}</p>
-              {% endfor %}
+            {% endfor %}
             <p>
             <div class="row">
                 <div class="col-md-2">
@@ -75,7 +77,7 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         {{ form.filial_pdv.label(class="form-label") }}:
-                        {{ form.filial_pdv(class="form-control") }}
+                        {{ form.filial_pdv(class="form-select") }}
                     </div>
                 </div>
             </div>

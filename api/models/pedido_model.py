@@ -16,13 +16,13 @@ class Pedido(db.Model):
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     qtde_pedido = db.Column(db.Integer, nullable=True, default=0)
-    data_pedido = db.Column(db.Date, default=datetime.now, onupdate=datetime.now)
-    data_entrega = db.Column(db.Date, nullable=False)
+    data_pedido = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+    data_entrega = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.Integer, default=1, nullable=True)
     obs = db.Column(db.Text(), nullable=True)
     #tipo = db.Column(db.Enum(TipoEnum), nullable=False)  # tipo
     cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
-    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now)
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
     #TODO relacionamento de N/1 com Produto / Pedido
     produto_id = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False)

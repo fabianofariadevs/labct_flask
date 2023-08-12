@@ -19,7 +19,7 @@
     </div>
     <div class="card-body">
         <form method="POST" action="#">
-           {% if cliente %}
+           {% if receita %}
            <input type="hidden" name="_method" value="PUT">
            {% endif %}
             {{ form.hidden_tag() }}

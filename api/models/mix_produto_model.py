@@ -10,7 +10,7 @@ class Mixproduto(db.Model):
     departamento = db.Column(db.String(20), nullable=False)
     rend_kg = db.Column(db.Float, nullable=False)
     rend_unid = db.Column(db.Float, nullable=False)
-    status = db.Column(db.Boolean, default=1, nullable=False)
+    status = db.Column(db.Boolean, default=1, nullable=True)
     validade = db.Column(db.Date, nullable=False)
     cadastrado_em = db.Column(db.Date, nullable=False)
     atualizado_em = db.Column(db.Date, nullable=False)

@@ -6,7 +6,7 @@ from api import db
 def cadastrar_pedido(pedido):
     # TODO a função cadastrar_pedido recebe um objeto pedido como argumento e cria uma instância do modelo pedido com os valores do objeto fornecido. Em seguida, adiciona a instância ao banco de dados usando db.session.add() e faz o commit das alterações usando db.session.commit(). Por fim, retorna a instância do pedido cadastrado.
     pedido_bd = pedido_model.Pedido(qtde_pedido=pedido.qtde_pedido, data_pedido=pedido.data_pedido, data_entrega=pedido.data_entrega,
-                                    status=pedido.status, obs=pedido.obs, produto_id=pedido.produto_id,
+                                    status=pedido.status, obs=pedido.obs, cadastrado_em=pedido.cadastrado_em, atualizado_em=pedido.atualizado_em, produto_id=pedido.produto_id,
                                     fornecedor_id=pedido.fornecedor_id, filial_pdv=pedido.filial_pdv)
 
     db.session.add(pedido_bd)
@@ -31,13 +31,15 @@ def atualiza_pedido(pedido_anterior, pedido_novo):
     pedido_anterior.data_entrega = pedido_novo.data_entrega
     # Verifica se pedido_novo.status é uma string 'True' ou 'False'
     # e converte para um valor booleano adequado
-    pedido_anterior.status = bool(pedido_novo.status)
+    pedido_anterior.status = pedido_novo.status
     pedido_anterior.obs = pedido_novo.obs
     #pedido_anterior.tipo = pedido_novo.tipo
+
     pedido_anterior.produto_id = pedido_novo.produto_id
     pedido_anterior.fornecedor_id = pedido_novo.fornecedor_id
     pedido_anterior.filial_pdv = pedido_novo.filial_pdv
-
+    pedido_anterior.cadastrado_em = pedido_novo.cadastrado_em
+    pedido_anterior.atualizado_em = pedido_novo.atualizado_em
     db.session.commit()
 
 def remove_pedido(pedido):

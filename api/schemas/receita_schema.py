@@ -21,5 +21,7 @@ class ReceitaSchema(ma.SQLAlchemyAutoSchema):
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
     produto_id = fields.String(required=True)
+    filial = fields.String(required=True)
+    pedidoprod = fields.String(required=False)
 
 

@@ -3,9 +3,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, BooleanField
 from wtforms.validators import DataRequired, ValidationError
 from api import app, api, db
-from ..models import filial_pdv_model
-from ..services import filial_pdv_service
-from ..schemas import filial_pdv_schema
+from ..models import filial_pdv_model, receita_model
+from ..services import filial_pdv_service, receita_service
+from ..schemas import filial_pdv_schema, receita_schema, pedido_schemas
 from ..schemas.filial_pdv_schema import FilialSchema
 from ..models.cliente_model import Cliente
 from ..paginate import paginate
@@ -106,47 +106,47 @@ def exibir_formfilial():
 
 @app.route('/filiais/<int:id>', methods=['GET', 'PUT'])
 def visualizar_filial(id):
-    filial = filial_pdv_service.listar_filial_pdv_id(id)
-    return render_template('filiais/detalhes.html', filial=filial)
+    if request.method == 'GET':
+        filial = filial_pdv_service.listar_filial_pdv_id(id)
+        if filial:
+            filial_data = filial_pdv_schema.FilialSchema().dump(filial)
+            # Obter o nome do receita
+            receitas = filial.receitas
+            filial_data['receitas'] = [receita.descricao_mix for receita in receitas]
 
+            # Obter o nome do pedido de Compras
+            pedidos = filial.pedidos
+            pedidos_produto_nomes = [pedido.produtos.nome if pedido.produtos else 'Produto não encontrado' for pedido in pedidos]
+            filial_data['pedidos'] = ', '.join(pedidos_produto_nomes)
 
-@app.route('/filiais99/<int:id>', methods=['GET', 'PUT'])
-def visualizar_filial99(id):
-###if request.method == 'GET':
-#    filial = filial_pdv_service.listar_filial_pdv_id(id)
-    if filial:
-        filial_data = filial_pdv_schema.FilialSchema().dump(filial)
+            # Obter o nome do Cliente
+            clientes = filial.clientes
+            clientes_nomes = [cliente.nome if cliente else 'Cliente não encontrado' for cliente in clientes]
+            filial_data['clientes'] = clientes_nomes
 
-        # Obter o nome do receita
-        receitas = filial.receitas
-        filial_data['receitas'] = filial.receitas.nome if receitas else 'Receita não encontrado'
+            # Obter o nome do PEDIDO DE PRODUÇAO
+            pedidosprod = filial.pedidosprod
+            pedidos_producao_ids = [pedido.receita_id if pedido.receitas else 'Pedido de Produção não encontrado' for pedido in pedidosprod]
+            filial_data['pedidosprod'] = pedidos_producao_ids
 
-        # Obter o nome do pedido de Compras
-        pedido = filial.pedidos
-        filial_data['pedidos'] = pedido.produto.nome if pedido else 'Produto não encontrado'
+            return render_template('filiais/detalhes.html', filial=filial_data)
+        else:
+            # Caso o pedido não seja encontrado, retorne uma mensagem de erro
+            return render_template('error.html', message='Pedido não encontrado', status_code=404)
 
-        # Obter o nome do Cliente
-        cliente = filial.clientes
-        filial_data['clientes'] = cliente.nome if cliente else 'Filial não encontrada'
+ #   elif request.method == 'POST':  # método DELETE
+  #      if request.form.get('_method') == 'DELETE':
+   #         filial = filial_pdv_service.listar_filial_pdv_id(id)
+    #        if filial:
+     #           filial_pdv_service.remove_filial_pdv(filial)
+      #          return redirect(url_for('listar_filiais'))
 
-        # Obter o nome do PEDIDO DE PRODUÇAO
-        pedidoproducao = filial.pedidosprod
-        filial_data['pedidosprod'] = pedidoproducao.receita_id if pedidoproducao else 'Filial não encontrada'
-
-        return render_template('filiais/detalhes.html', filial=filial_data)
-    else:
-        # Caso o pedido não seja encontrado, retorne uma mensagem de erro
-        return render_template('error.html', message='Pedido não encontrado', status_code=404)
-
-
-@app.route('/filiais/<int:id>/deletar', methods=['DELETE'])
+@app.route('/filiais/<int:id>', methods=['DELETE'])
 def deletar_filial(id):
     filial = filial_pdv_service.listar_filial_pdv_id(id)
     if filial:
         filial_pdv_service.remove_filial_pdv(filial)
         return redirect(url_for('listar_filiais'))
     else:
-        return render_template('filiais/formfilial.html', message='Filial não encontrada'), 404
-
-
+        return render_template('error.html', message='Filial não encontrada', status_code=404)
 

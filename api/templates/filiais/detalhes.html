@@ -14,7 +14,6 @@
         <div>
         <a href="{{ url_for('listar_filiais') }}" class="btn btn-outline-dark" title="Voltar a lista">Voltar para lista de Filiais</a>
         <a href="{{ url_for('atualizar_filial', id=filial.id, _method='PUT') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Filial">Atualizar Filial</a>
-        <a href="{{ url_for('deletar_filial', id=filial.id) }}" methods='DELETE' onclick="return confirm('Deseja excluir a Filial?')" class="btn btn-danger" title="Excluir Filial">Excluir Filial</a>
         </div>
     </div>
     <div class="card-body">
@@ -70,8 +69,11 @@
                               Serviços solicitados:
                             <a href="{{ url_for('listar_pedidos') }}" class="btn btn-secondary" title="Consultar pedidos de compra realizados">Pedidos_Compra</a>
                             <a href="{{ url_for('listar_pedidosprod') }}" class="btn btn-secondary" title="Consultar pedidos de produção realizados">Pedidos_Produção</a>
-
                           </div>
+                              <form id="delete-form" action="{{ url_for('deletar_filial', id=filial.id, _method='DELETE') }}" >
+                              <input type="hidden" name="_method" value="DELETE">
+                              <button class="btn btn-danger" type="submit" title="Excluir Filial"  onclick="return confirm('Deseja excluir a Filial {{filial.nome}} ?')">Excluir Filial</button>
+                          </form>
                       </div>
                       <hr>
                   </div>

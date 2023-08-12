@@ -16,13 +16,8 @@ def listar_usuario_email(email):
     return usuarioemail
 
 def listar_usuario_id(id):
-<<<<<<< HEAD
     usuario = usuario_model.Usuario.query.filter_by(id=id).first()
     return usuario
-=======
-    return usuario_model.Usuario.query.filter_by(id=id).first()
-<<<<<<< HEAD
->>>>>>> 5f6ef395b8b041d6fa8aa179ea8159e1b7ccf947
 
 def listar_usuarios():
     #TODO a função listar_usuarios recupera todos os registros da tabela Usuarios no banco de dados usando usuario_model.Usuario.query.all(). Em seguida, retorna uma lista com todos os usuarios encontrados.
@@ -41,9 +36,4 @@ def atualizar_usuario(usuario_anterior, usuario_novo):
     usuario_anterior.atualizado_em = usuario_novo.atualizado_em
 
     db.session.commit()
-<<<<<<< HEAD
 
-=======
-=======
->>>>>>> 4fa6ea9600c37de14916dd9a101c920e1e1fca04
->>>>>>> 5f6ef395b8b041d6fa8aa179ea8159e1b7ccf947

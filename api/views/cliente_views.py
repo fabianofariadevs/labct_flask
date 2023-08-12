@@ -12,7 +12,6 @@ from sqlalchemy.orm import joinedload
 from ..paginate import paginate
 from ..models.filial_pdv_model import Filial
 from..views.filial_pdv_views import FilialForm
-from typing import Dict
 
 # TODO: Classe ClienteForm_Modelo ** ESSA classe recebe os dados do formulario.
 #     @author Fabiano Faria
@@ -60,7 +59,7 @@ class ClienteForm(FlaskForm):
             'filial_id': self.filial_id.data,
         }
 
-@app.route('/clientes/formulariofilial', methods=['GET', 'POST'])###2
+@app.route('/clientes/formulariofilial', methods=['GET', 'POST'])
 def novoformfilial():
     form = FilialForm()
     if request.method == 'POST' and form.validate_on_submit():
@@ -72,7 +71,7 @@ def novoformfilial():
             flash("Filial cadastrada com sucesso!")
             return redirect(url_for('exibir_formulario'))
         except ValidationError as error:
-            flash("Erro ao cadastrar filial: " + str(error.messages))
+            flash("Erro ao cadastrar filial. ")
     return render_template('clientes/formfilialnova.html', form=form)###3
 
 
@@ -89,7 +88,7 @@ def exibir_formulario():
             # Redirecionar para a página de listagem de clientes após o cadastro bem-sucedido
             return redirect(url_for("listar_clientes"))
         except ValidationError as error:
-            flash("Erro ao cadastrar filial: " + str(error.messages))
+            flash("Erro ao cadastrar Cliente")
     return render_template('clientes/formulario.html', form=formcli)
 
 
@@ -123,7 +122,7 @@ def buscar_cliente():
 
 
 @app.route('/clientes/<int:id>', methods=['GET', 'POST'])
-def visualizar_cliente(id): ## OK 0808
+def visualizar_cliente(id):
     #cliente = cliente_service.listar_cliente_id(id)
     #return render_template('clientes/detalhes.html', cliente=cliente)
     if request.method == 'GET':
@@ -140,7 +139,7 @@ def visualizar_cliente(id): ## OK 0808
             # Caso o pedido não seja encontrado, retorne uma mensagem de erro
             return render_template('error.html', message='Cliente não encontrado', status_code=404)
 
-    elif request.method == 'POST':  # Lidar com o método DELETE
+    elif request.method == 'POST':  # método DELETE
         if request.form.get('_method') == 'DELETE':
             clientev = cliente_service.listar_cliente_id(id)
             if clientev:
@@ -148,7 +147,7 @@ def visualizar_cliente(id): ## OK 0808
                 return redirect(url_for('listar_clientes'))
 
 @app.route('/clientes', methods=['GET'])
-def listar_clientes():  #OK 0808
+def listar_clientes():
     page = request.args.get('page', 1, type=int)
     per_page = 6  # Escolha o número de clientes por página
 
@@ -177,13 +176,14 @@ def listar_clientes():  #OK 0808
 
 
 @app.route('/clientes/<int:id>/atualizar', methods=['GET', 'POST', 'PUT'])
-def atualizar_cliente(id): #OK
+def atualizar_cliente(id):
     atuacliente = cliente_service.listar_cliente_id(id)
     if not atuacliente:
         #return "Cliente não encontrado", 404
         return render_template("clientes/cliente.html", error_message="Cliente não encontrado"), 404
+
     form = ClienteForm(obj=atuacliente)
-    if form.validate_on_submit():
+    if request.method == 'POST' and form.validate_on_submit():
         cliente_atualizado = cliente_model.Cliente.query.get(id)
         form.populate_obj(cliente_atualizado)
         cliente_service.atualiza_cliente(atuacliente, cliente_atualizado)
@@ -191,7 +191,6 @@ def atualizar_cliente(id): #OK
 
     return render_template("clientes/formulario.html", cliente=atuacliente, form=form), 400
 
-#@app.route('/clientes/<int:id>', methods=['DELETE'])
 
 
 

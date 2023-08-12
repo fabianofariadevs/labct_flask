@@ -10,7 +10,7 @@ class ProdutoMpSchema(ma.SQLAlchemyAutoSchema):
         model = produtoMp_model.Produto
         load_instance = True
         fields = ("id", "nome", "descricao", "quantidade", "fornecedor_id", "cliente_id", "compra_unid", "peso_pcte",
-                  "valor", "custo_ultima_compra", "whatsapp", "qrcode", "status", "cadastrado_em", "atualizado_em", "_links")
+                  "valor", "custo_ultima_compra", "whatsapp", "qrcode", "status", "cadastrado_em", "atualizado_em")
 
     nome = fields.String(required=True)
     descricao = fields.String(required=True)

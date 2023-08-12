@@ -12,10 +12,8 @@ class ClienteSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = cliente_model.Cliente
         load_instance = True  # TODO Define se o esquema Cliente deve carregar uma instância do modelo ao fazer a desserialização. Nesse caso, está definido como True.
-        # Uma tupla que especifica quais campos do modelo devem ser serializados/desserializados. Aqui, são listados vários campos do modelo Cliente.
+        # Uma tupla que especifica quais os campos do modelo devem ser serializados/desserializados. Aqui, são listados vários campos do modelo Cliente.
         fields = ("id", "nome", "endereco", "bairro", "cidade", "estado", "telefone", "email", "responsavel", "whatsapp", "cnpj", "status", "cadastrado_em", "atualizado_em", "filial_id")
-        many = True
-        unknown = 'EXCLUDE'
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     nome = fields.String(required=True)

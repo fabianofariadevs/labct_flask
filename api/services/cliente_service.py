@@ -11,7 +11,8 @@ def cadastrar_cliente(cliente):
     cliente_bd = cliente_model.Cliente(nome=cliente.nome, endereco=cliente.endereco, bairro=cliente.bairro,
                                        cidade=cliente.cidade, estado=cliente.estado, telefone=cliente.telefone,
                                        email=cliente.email, responsavel=cliente.responsavel, whatsapp=cliente.whatsapp,
-                                       cnpj=cliente.cnpj, status=cliente.status, filial_id=cliente.filial_id)
+                                       cnpj=cliente.cnpj, status=cliente.status, cadastrado_em=cliente.cadastrado_em,
+                                       atualizado_em=cliente.atualizado_em, filial_id=cliente.filial_id)
 
     db.session.add(cliente_bd)
     db.session.commit()
@@ -39,9 +40,9 @@ def atualiza_cliente(cliente_anterior, cliente_novo):
     cliente_anterior.responsavel = cliente_novo.responsavel
     cliente_anterior.whatsapp = cliente_novo.whatsapp
     cliente_anterior.cnpj = cliente_novo.cnpj
-    # Verifica se cliente_novo.status é uma string 'True' ou 'False'
-    # e converte para um valor booleano adequado
-    cliente_anterior.status = bool(cliente_novo.status)
+    cliente_anterior.status = cliente_novo.status
+    cliente_anterior.cadastrado_em = cliente_novo.cadastrado_em
+    cliente_anterior.atualizado_em = cliente_novo.atualizado_em
     cliente_anterior.filial_id = cliente_novo.filial_id
     db.session.commit()
 
