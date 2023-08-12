@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Novo Produto</title>
+</head>
+<body>
+    <h1>Novo Produto</h1>
+    <form method="post" action="{{ url_for('novo_produto') }}">
+        {{ form.csrf_token }}
+        {{ form.nome.label }} {{ form.nome() }}
+        {{ form.descricao.label }} {{ form.descricao() }}
+        <!-- Restante dos campos do formulário de criação de produto -->
+        <br>
+        <input type="submit" value="Criar Produto">
+    </form>
+</body>
+</html>

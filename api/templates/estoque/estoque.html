@@ -1,0 +1,236 @@
+{% extends "basedetalhes.html" %}
+{% block conteudo %}
+
+<!--* * #TODO Arquivo p views estoquedetalhes_HTML, views estoque.html apresenta todos os detalhes operacionais de estoque
+#     @author Fabiano Faria -->
+
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+		    <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+            <span class="badge rounded text-bg-secondary"> Vinculadas / Total: #</span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success "># ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger"># inativo </span>
+        </div>
+        <div>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-dark" title="Ver Histórico de Ações">Voltar Menu</a>
+        </div>
+    </div>
+    <div class="shadow-sm" style="width:95%; margin-left:32px; margin-top:32px;">
+        <div class="row card-header bg-secondary">
+            <div class="col-xl-6 col-xxl-5 mb-4 d-flex">
+                <div class="w-100">
+                    <div class="row">
+                        <!--INICIO **INVENTÁRIO DE ESTOQUE M.PRIMA
+
+
+                        class="card border-0 shadow-sm mb-3  -->
+
+
+                        <div class="col-sm-6">
+                            <a href="{{ url_for('listar_inventario') }}" ><div class="card border-0 shadow-sm mb-3">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                             <h5 class="fw-bold text-secondary">INVENTÁRIO<BR>ESTOQUE</h5>
+
+                                        </div>
+
+                                    </div>
+                                    <i class="fa-solid fa-cubes-stacked fa-3x"></i> <i class="fa-solid fa-magnifying-glass fa-beat"></i>
+
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                        <!--FIM INVENTÁRIO-->
+
+                        <!--INICIO ** CADASTRO DE MATÉRIA PRIMA-->
+                        <div class="col-sm-6">
+                            <a href="{{ url_for('listar_produtos') }}">
+                                <div class="card border-0 shadow-sm mb-3">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col">
+                                                <h5 class="fw-bold text-secondary">MATÉRIA PRIMA</h5>
+                                                <br>
+                                            </div>
+                                            <div class="col-auto text-secondary">
+                                            </div>
+                                        </div>
+                                        <i class="fab fa-palfed fa-3x"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <!--FIM ** CADASTRO DE MATÉRIA PRIMA-->
+
+                        <!--INICIO ** COMPRAS MATÉRIA PRIMA-->
+                        <div class="col-sm-6">
+                            <a href="{{ url_for('listar_pedidos') }}">
+                                <div class="card border-0 shadow-sm mb-3">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col">
+                                                <h5 class="fw-bold text-secondary">COMPRAS<BR>MATÉRIA PRIMA</h5>
+                                            </div>
+
+                                        </div>
+
+                                        <i class="fa fa-cart-plus fa-3x" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <!--FIM ** COMPRAS MATÉRIA PRIMA-->
+
+                        <!--INICIO ** CURVA ABC / CONTROLADOR DE TAREFAS E DIADRAMA PARETO-->
+                        <div class="col-sm-6">
+                            <div class="card border-0 shadow-sm mb-3">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <p class="fw-bold text-secondary">+CONTR.TAREFAS<BR>++CURVA ABC</p>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-chart-line fa-2x"></i>
+                                    <i class="fa-sharp fa-light fa-list-check" style="color: #f3f4f7;"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <!--FIM ** A DESENVOLVER-->
+                    </div>
+                </div>
+            </div>
+            <!--FIM-->
+
+            <!--INICIO QUADROS DE AVISOS-->
+
+            <!--INICIO PEDIDOS DE COMPRAS-->
+            <div class="col-xl-6 col-xxl-7 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
+                        <div>
+                            <h6 class="fw-bold text-secondary">
+                                Últimos Pedidos de Compras
+                            </h6>
+                        </div>
+                        <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Pedido de Compra">
+                            <i class="fa-solid fa-circle-plus"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                            ´#
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Receitas</th>
+                                        <th class="text-center">Visitas</th>
+                                        <th class="text-center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    #
+                                    <tr>
+                                        <th>
+
+                                            <div>
+                                                <span>
+
+                                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+
+                                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+
+                                                </span>
+                                                ...text100
+                                            </div>
+                                            <small class="text-muted fw-normal">
+
+                                            </small>
+                                        </th>
+                                        <td class="text-center">#</td>
+                                        <td class="text-center">
+
+                                            <a href="#" rel="tooltip" title="Editar">
+                                                <i class="fa-solid fa-pen m-1"></i>
+                                            </a>
+                                            <a href="#" rel="tooltip" title="Deletar">
+                                                <i class="fa-solid fa-trash m-1"></i>
+                                            </a>
+
+                                        </td>
+                                    </tr>
+                                    ´´
+                                </tbody>
+                            </table>
+                        </div>
+                        ´´
+                        <div class="alert alert-warning" role="alert">
+                            Nenhum pedido cadastrado para exibir!
+                        </div>
+                        ´´
+                    </div>
+                </div>
+            </div>
+            <!--FIM** PEDIDOS DE COMPRAS-->
+
+            <!--INICIO **COMPRAS POR FORNECEDOR-->
+            <div class="col-sm-6 col-md-6 col-xl-4 mb-4">
+                <div class="card border-0 shadow-sm  h-100">
+                    <div class="card-header bg-white border-0 mt-2">
+                        <h6 class="fw-bold text-secondary">
+                            Compras por Fornecedor
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning" role="alert">
+                            Nenhum registros a exibir!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--FIM DOS 20+ COMPRADOS-->
+
+            <!--INICIO ** OS 20+ PRODUTOS MAIS COMPRADOS X MÊS-->
+            <div class="col-sm-6 col-md-6 col-xl-4 mb-4">
+                <div class="card border-0 shadow-sm  h-100">
+                    <div class="card-header bg-white border-0 mt-2">
+                        <h6 class="fw-bold text-secondary">
+                            Os 20+ Comprados x Mês
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning" role="alert">
+                            Nenhum registros a exibir!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--FIM DOS 20+ COMPRADOS-->
+
+            <!--COMPRAS POR DEPARTAMENTOS-->
+            <div class="col-sm-6 col-md-12 col-xl-4 mb-4">
+                <div class="card border-0 shadow-sm  h-100">
+                    <div class="card-header bg-white border-0 mt-2">
+                        <h6 class="fw-bold text-secondary">
+                            Compras por Departamentos
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning" role="alert">
+                            Nenhum registros a exibir!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--FIM-->
+
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}

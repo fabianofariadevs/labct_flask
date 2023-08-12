@@ -1,0 +1,47 @@
+{% extends "dashboard.html" %}
+
+{% block conteudo %} 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" style="font-size: 11px">
+            Admin
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Relação de Clientes
+        </li>
+    </ol>
+</nav>
+#
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+        <div>
+            <span class="badge rounded text-bg-secondary"># total</span>
+            <span class="badge rounded text-bg-success"># ativo</span>
+            <span class="badge rounded text-bg-danger"># inativo</span>
+        </div>
+        <a href="#" class="btn btn-primary" rel="tooltip" title="Cadastrar Clientes">Cadastrar</a>
+
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="tabelaClientes" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Nome Cliente</th>
+                        <th scope="col">Endereço</th>
+                        <th scope="col">Bairro</th>
+                        <th scope="col">Cidade</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Responsável</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Ação</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>   
+        <a href="#" class="btn btn-secondary" rel="tooltip" title="PDVs Filiais">Consultar PDVs</a>
+
+    </div>
+</div>
+{% endblock %}

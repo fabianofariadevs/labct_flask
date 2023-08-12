@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block corpo %}
+
+<div class="fundo15 p-3">
+    <div class="col-md-6 col-sm-6 col-lg-4 mx-auto">
+        <div class="card mt-5">
+            <div class="card-body">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="#" height="172" width="202"/>
+                <h2 class="h4 mb-3 text-center">Painel Administrativo</h2><hr>
+                
+
+                <p class="text-center">Informe seu login e senha para entrar no sistema.</p>
+
+               #
+
+                <form action="#" method="post">
+                    <div class="form-floating mb-3">
+                        <input type="email" name="email" id="email" class="form-control" placeholder="E-mail" required>
+                        <label for="email">E-mail</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" name="senha" id="senha" class="form-control"  placeholder="Senha">
+                        <label for="senha">Senha</label>
+                    </div>
+
+                    <button class="w-100 btn btn-lg btn-dark mb-5" type="submit">Entrar</button>
+                    <div class="text-center">
+                        <small class="text-muted"> &copy; {{ "now"|date("Y") }} - # - Todos os direitos reservados</small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

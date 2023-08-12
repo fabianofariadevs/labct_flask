@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="#">
+                Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Fábrica Cadastrando Nova Filial_PDV
+        </li>
+    </ol>
+</nav>
+<div class="card border-0 shadow-sm">
+    <div class="card-header">
+    <h3 class="card-title">{% if filial %}Atualizar Filial{% else %}Cadastrar Filial{% endif %}</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="#">
+            {% if filial %}
+           <input type="hidden" name="_method" value="POST">
+            {% endif %}
+            {{ form.hidden_tag() }}
+            {% for error in form.nome.errors %}
+            <p>{{ error }}</p>
+              {% endfor %}
+            <p>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.nome.label(class="form-label") }}:
+                        {{ form.nome(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.endereco.label(class="form-label") }}:
+                        {{ form.endereco(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.bairro.label(class="form-label") }}:
+                        {{ form.bairro(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.cidade.label(class="form-label") }}:
+                        {{ form.cidade(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="mb-3">
+                        {{ form.estado.label(class="form-label") }}:
+                        {{ form.estado(class="form-control") }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        {{ form.responsavel.label(class="form-label") }}:
+                        {{ form.responsavel(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.whatsapp.label(class="form-label") }}:
+                        {{ form.whatsapp(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.cnpj.label(class="form-label") }}:
+                        {{ form.cnpj(class="form-control") }}
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.status.label(class="form-label") }}:
+                        {{ form.status(class="form-select") }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        {{ form.cliente.label(class="form-label") }}:
+                        {{ form.cliente(class="form-control") }}
+                    </div>
+                </div>
+            </div>
+            {% if filial %}
+            <input type="submit" class="btn btn-success" value="Atualizar Filial PDV">
+            {% else %}
+            <input type="submit" class="btn btn-primary" value="Cadastrar">
+            {% endif %}
+            <a href="{{ url_for('exibir_formulario') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar para cadastro Cliente</a>
+        </form>
+    </div>
+</div>
+
+{% endblock conteudo %}

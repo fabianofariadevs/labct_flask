@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+
+<!-- Arquivo views Consultar_Cliente_HTML, apresenta a função buscar_cliente para consultas de cliente.html listar
+#     @author Fabiano Faria -->
+
+<div class="table-responsive" style="width:100%">
+    <table class="table table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>Nome</th>
+                <th>endereco</th>
+                <th>bairro</th>
+                <th>cidade</th>
+                <th>estado</th>
+                <th>Telefone</th>
+                <th>email</th>
+                <th>responsavel</th>
+                <th>whatsapp</th>
+                <th>cnpj</th>
+                <th>status</th>
+                <th>cadastrado_em</th>
+                <th>atualizado_em</th>
+                <th>filial_id</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if resultados %}
+                {% for cliente in resultados %}
+                <tr>
+                    <td>{{cliente.id}}</td>
+                    <td>{{cliente.nome}}</td>
+                    <td>{{cliente.endereco}}</td>
+                    <td>{{cliente.bairro}}</td>
+                    <td>{{cliente.cidade}}</td>
+                    <td>{{cliente.estado}}</td>
+                    <td>{{cliente.telefone}}</td>
+                    <td>{{cliente.email}}</td>
+                    <td>{{cliente.responsavel}}</td>
+                    <td>{{cliente.whatsapp}}</td>
+                    <td>{{cliente.cnpj}}</td>
+                    <td>{{cliente.status}}</td>
+                    <td>{{cliente.cadastrado_em}}</td>
+                    <td>{{cliente.atualizado_em}}</td>
+                    <td>{{cliente.filial_id}}</td>
+                    <td>
+                      <form action="{{ url_for('imprimir_cliente', id=cliente.id) }}" method="GET">
+                        <button type="submit">Imprimir</button>
+                      </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="10">Nenhum resultado encontrado.</td>
+                </tr>
+                {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock conteudo %}

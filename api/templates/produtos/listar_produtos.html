@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Produtos</title>
+</head>
+<body>
+    <h1>Lista de Produtos</h1>
+    <ul>
+        {% for produto in produtos %}
+            <li>
+                <a href="{{ url_for('visualizar_produto', id=produto.id) }}">{{ produto.nome }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('novo_produto') }}">Criar Novo Produto</a>
+</body>
+</html>

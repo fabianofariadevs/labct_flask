@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" style="font-size: 11px">
+            Admin
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Atualizar Cliente
+        </li>
+    </ol>
+</nav>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-secondary border-0">
+        <h4 class="card-title">Atualizar Cliente</h4>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('exibir_formulario') }}">
+            <div class="form-group">
+                <label for="nome">Nome</label>
+                <input type="text" class="form-control" id="nome" name="nome" value="{{ cliente.nome }}" required>
+            </div>
+            <div class="form-group">
+                <label for="endereco">Endereço</label>
+                <input type="text" class="form-control" id="endereco" name="endereco" value="{{ cliente.endereco }}" required>
+            </div>
+            <div class="form-group">
+                <label for="bairro">Bairro</label>
+                <input type="text" class="form-control" id="bairro" name="bairro" value="{{ cliente.bairro }}" required>
+            </div>
+            <div class="form-group">
+                <label for="cidade">Cidade</label>
+                <input type="text" class="form-control" id="cidade" name="cidade" value="{{ cliente.cidade }}" required>
+            </div>
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <input type="text" class="form-control" id="estado" name="estado" value="{{ cliente.estado }}" required>
+            </div>
+            <div class="form-group">
+                <label for="telefone">Telefone</label>
+                <input type="text" class="form-control" id="telefone" name="telefone" value="{{ cliente.telefone }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ cliente.email }}" required>
+            </div>
+            <div class="form-group">
+                <label for="responsavel">Responsável</label>
+                <input type="text" class="form-control" id="responsavel" name="responsavel" value="{{ cliente.responsavel }}" required>
+            </div>
+            <div class="form-group">
+                <label for="whatsapp">WhatsApp</label>
+                <input type="text" class="form-control" id="whatsapp" name="whatsapp" value="{{ cliente.whatsapp }}" required>
+            </div>
+            <div class="form-group">
+                <label for="cnpj">CNPJ</label>
+                <input type="text" class="form-control" id="cnpj" name="cnpj" value="{{ cliente.cnpj }}" required>
+            </div>
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select class="form-control" id="status" name="status" required>
+                    <option value="1" {% if cliente.status == 1 %}selected{% endif %}>Ativo
+                    <option value="0" {% if cliente.status == 0 %}selected{% endif %}>Inativo</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="filial_pdv_id">Filial/PDV</label>
+                <input type="text" class="form-control" id="filial_pdv_id" name="filial_pdv_id" value="{{ cliente.filial_pdv_id }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Atualizar</button>
+            <a href="{{url_for('clientelist')}}" class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
+        </form>
+    </div>
+</div>
+{% endblock conteudo %}

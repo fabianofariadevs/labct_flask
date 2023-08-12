@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+
+<!--* * #TODO Arquivo views Cliente_HTML, lista todos os clientes e apresenta as funções para os metodos CRUD_service_models
+#        @author Fabiano Faria -->
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" style="font-size: 11px">
+            <a href="#">
+            Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Relação de Clientes
+        </li>
+    </ol>
+</nav>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div>
+            <span class="badge rounded text-bg-secondary">Total Clientes: {{ total_clientes }}</span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{ total_clientes_ativos }} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_clientes_inativos }} inativo </span>
+        </div>
+             <form action="{{ url_for('buscar_cliente') }}" method="get" class="form-inline">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="nome_cliente" placeholder="Buscar por nome">
+                </div>
+             </form>
+                 <button type="submit" class="btn btn-secondary">Buscar</button>
+             <form action="#" method="GET">
+                <button type="submit" class="btn btn-secondary" title="Imprimir">Imprimir</button>
+             </form>
+             <a href="{{ url_for('exibir_formulario') }}" methods='POST' class="btn btn-primary" rel="tooltip" title="Cadastrar Cliente">Cadastrar Cliente</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive" style="width:100%">
+             {% if error_message %}
+                <p>{{ error_message }}</p>
+             {% else %}
+                    <table class="table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th class="text-center">id</th>
+                                <th>Nome</th>
+                                <th>Endereco</th>
+                                <th>Bairro</th>
+                                <th>Cidade</th>
+                                <th class="text-center">Filiais</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Acões</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    {% for cliente in paginated_result["items"] %}
+                            <tr>
+                                <td>{{cliente.id}}</td>
+                                <td>{{cliente.nome}}</td>
+                                <td>{{cliente.endereco}}</td>
+                                <td>{{cliente.bairro}}</td>
+                                <td>{{cliente.cidade}}</td>
+                                <td class="text-center"><a href="#" data-toggle="modal" data-target="#consultaModal">{{cliente.filial_id}}</a></td>
+                                <td class="text-center">
+                                    {% if cliente.status == 1 %}
+                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                    {% else %}
+                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{ url_for('visualizar_cliente', id=cliente.id, _method='GET') }}" class="btn btn-info" role="button">Detalhes</a>
+                                    <a href="{{ url_for('atualizar_cliente', id=cliente.id, _method='PUT') }}" title="Atualizar Cliente">
+                                        <i class="fa-solid fa-pen m-1"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                {% endif %}
+                {% if paginated_result.prev %}
+                <a href="{{ url_for('listar_clientes', page=paginated_result.prev) }}">Anterior</a>
+              {% endif %}
+              {% if paginated_result.next %}
+                <a href="{{ url_for('listar_clientes', page=paginated_result.next) }}">Próximo</a>
+              {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}
+
+
+{% block modal_content %}
+
+{% for clientev in cliente_data %}
+     <div class="modal-body">
+            <!-- Conteúdo do modal de consulta de filiais de cliente /arquivo principal no base.html -->
+            <p>Aqui vamos adicionar informações adicionais sobre as filiais do cliente.</p>
+            <p>Id: {{clientev.id}}</p>
+            <p>Nome: {{clientev.nome}}</p>
+            <p>Endereço: {{clientev.endereco}}</p>
+            <p>Bairro: {{clientev.bairro}}</p>
+            <p>Cidade: {{clientev.cidade}}</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        </div>
+
+{% endfor %}
+{% endblock modal_content %}

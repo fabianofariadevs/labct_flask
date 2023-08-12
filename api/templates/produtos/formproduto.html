@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" style="font-size: 11px">
+            <a href="#">
+                Admin & Usuários
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Cadastro de Produtos x Matéria_Prima
+        </li>
+    </ol>
+</nav>
+<div class="card border-0 shadow-sm">
+    <div class="card-header">
+    <h3 class="card-title">{% if produto %}Atualizar Produto {% else %} Cadastrar Novo Produto{% endif %}</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{% if produto %}{{ url_for('atualizar_produto', id=produto.id, _method='PUT') }}{% else %}{{ url_for('listar_produtos') }}{% endif %}">
+            {% if produto %}
+            <input type="hidden" name="_method" value="PUT">
+            {% endif %}
+            {{ form.hidden_tag() }}
+            {% for error in form.nome.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+            <p>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.nome.label(class="form-label") }}:
+                        {{ form.nome(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.descricao.label(class="form-label") }}:
+                        {{ form.descricao(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="mb-3">
+                        {{ form.quantidade.label(class="form-label") }}:
+                        {{ form.quantidade(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.fornecedor_id.label(class="form-label") }}:
+                        {{ form.fornecedor_id(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.compra_unid.label(class="form-label") }}:
+                        {{ form.compra_unid(class="form-control") }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.peso_pcte.label(class="form-label") }}:
+                        {{ form.peso_pcte(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.valor.label(class="form-label") }}:
+                        {{ form.valor(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.custo_ultima_compra.label(class="form-label") }}:
+                        {{ form.custo_ultima_compra(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.whatsapp.label(class="form-label") }}:
+                        {{ form.whatsapp(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.qrcode.label(class="form-label") }}:
+                        {{ form.qrcode(class="form-control") }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                     <div class="mb-3">
+                         {{ form.status.label(class="form-label") }}:
+                         {{ form.status(class="form-select") }}
+                     </div>
+                </div>
+            </div>
+                {% if produto %}
+                <input type="submit" class="btn btn-success" value="Atualizar Produto">
+                {% else %}
+                <input type="submit" class="btn btn-primary" value="Cadastrar">
+                {% endif %}
+                <a href="{{ url_for('listar_produtos') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
+        </form>
+    </div>
+</div>
+
+{% endblock conteudo %}

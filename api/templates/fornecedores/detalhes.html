@@ -1,0 +1,241 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<!--* * #TODO Arquivo p views Detalhes_Fornecedor_HTML, lista todos os fornecedores e apresenta as funções para os detalhes Fornecedor
+#     @author Fabiano Faria -->
+
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-rigth:2px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+             <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+            <span class="badge rounded text-bg-secondary">FILIAIS Vinculadas / Total: {{ total_produtos }}</span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{ total_produtos_ativos }} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_produtos_inativos }} inativo </span>
+        </div>
+        <div>
+        <a href="{{ url_for('listar_fornecedores') }}" class="btn btn-outline-dark" title="Voltar para lista de Fornecedores">Voltar para lista de Fornecedores</a>
+        <a href="{{ url_for('atualizar_fornecedor', id=fornecedor.id, _method='PUT') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Fornecedor">Atualizar Fornecedor</a>
+        <a href="{{ url_for('deletar_fornecedor', id=fornecedor.id) }}" methods='DELETE' onclick="return confirm('Deseja excluir o Fornecedor?')" class="btn btn-danger" title="Excluir Fornecedor">Excluir Fornecedor</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive" style="width:100%">
+              <table class="table table-striped" style="width:100%">
+                  <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>nome</th>
+                            <th>descricao</th>
+                            <th>endereco</th>
+                            <th>bairro</th>
+                            <th>cidade</th>
+                            <th>estado</th>
+                            <th>telefone</th>
+                            <th>email</th>
+                            <th>responsavel</th>
+                            <th>whatsapp</th>
+                            <th>cnpj</th>
+                            <th>status</th>
+                            <th>cadastrado_em</th>
+                            <th>atualizado_em</th>
+                            <th>produto_id</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{fornecedor.id}}</td>
+                            <td>{{fornecedor.nome}}</td>
+                            <td>{{fornecedor.descricao}}</td>
+                            <td>{{fornecedor.endereco}}</td>
+                            <td>{{fornecedor.bairro}}</td>
+                            <td>{{fornecedor.cidade}}</td>
+                            <td>{{fornecedor.estado}}</td>
+                            <td>{{fornecedor.telefone}}</td>
+                            <td>{{fornecedor.email}}</td>
+                            <td>{{fornecedor.responsavel}}</td>
+                            <td>{{fornecedor.whatsapp}}</td>
+                            <td>{{fornecedor.cnpj}}</td>
+                            <td>{{fornecedor.status}}</td>
+                            <td>{{fornecedor.cadastrado_em}}</td>
+                            <td>{{fornecedor.atualizado_em}}</td>
+                            <td>{{fornecedor.produto_id}}</td>
+                    </tbody>
+                  <div class="row">
+                      <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                          <div>
+                            <i class="fw-bold text-secondary"> Detalhes Fornecedor : </i>(id: {{fornecedor.id}})
+                            <i class="breadcrumb-item active fw-bold text-dark"> {{fornecedor.nome}}</i>
+                          </div>
+                      </div>
+                      <hr>
+                  </div>
+              </table>
+        </div>
+
+        <!--inicio DA div detalhes abaixo tabela detalhes fornecedores-->
+        <div class="row card-header bg-secondary">
+             <!--INICIO ULTIMOS FORENCEDORES CADASTRADOS-->
+             <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
+                <div class="card border-0 shadow-sm  h-100">
+                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
+                        <h6 class="fw-bold text-secondary">
+                            Ultimos Fornecedores Cadastrados
+                        </h6>
+
+                        <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Receita">
+                            <i class="fa-solid fa-circle-plus"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if fornecedor %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+
+                                        <th>Nome</th>
+                                        <th class="text-center">Produto</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for fornecedor in fornecedores %}
+                                    <tr>
+
+                                        <td>
+                                            <span>
+                                                {% if fornecedor.status == 1 %}
+                                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                {% else %}
+                                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                {% endif %}
+                                            </span>
+                                            {{fornecedor.nome}}
+                                        </td>
+                                        <td class="text-center">
+                                            {{fornecedor.nome}} {{fornecedor.produto}}
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="#" rel="tooltip" title="Editar">
+                                                <i class="fa-solid fa-pen m-1"></i>
+                                            </a>
+                                            <a href="#" rel="tooltip" title="Deletar">
+                                                <i class="fa-solid fa-trash m-1"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            Nenhum Fornecedor cadastrado para exibir!
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+             <!--INICIO ULTIMOS PRODUTOS CADASTRADOS-->
+             <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
+                <div class="card border-0 shadow-sm  h-100">
+                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
+                        <h6 class="fw-bold text-secondary">
+                            Ultimos Produtos Cadastrados
+                        </h6>
+
+                        <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Pedidos">
+                            <i class="fa-solid fa-circle-plus"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if produto %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th class="text-center">Descrição</th>
+                                        <th class="text-center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for produto in produtos %}
+                                    <tr>
+                                        <td>
+                                            <span>
+                                                {% if produto.status == 1 %}
+                                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                {% else %}
+                                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                {% endif %}
+                                            </span>
+                                            {{produto.nome}}
+                                        </td>
+                                        <td class="text-center">
+                                            {{produto.descricao}}
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="#" rel="tooltip" title="Editar">
+                                                <i class="fa-solid fa-pen m-1"></i>
+                                            </a>
+                                            <a href="#" rel="tooltip" title="Deletar">
+                                                <i class="fa-solid fa-trash m-1"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            Nenhum Produto cadastrado para exibir!
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!--FIM ULTIMOS PRODUTOS-->
+
+            <!--INICIO RANKING  -->
+            <div class="col-sm-6 col-md-6 col-xl-4 mb-4">
+                <div class="card border-0 shadow-sm  h-100">
+                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
+                        <h6 class="fw-bold text-secondary">
+                            RANKING Fornecedores
+                        </h6>
+                        <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Produto">
+                             <i class="fa-solid fa-circle-plus"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if fornecedor %}
+                        <ul class="list-group list-group-flush">
+
+                            <li class="list-group-item">
+                                <p>
+                                    <i class="fa-solid fa-user me-2"></i>
+                                    <span class="fw-bold">#</span>
+                                </p>
+                                <small class="text-muted"># em # às #</small>
+                            </li>
+
+                        </ul>
+                        {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            Nenhum Fornecedor para exibir!
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!--FIM RANKING-->
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}
+

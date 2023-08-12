@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" style="font-size: 11px">
+            ADMIN & Usuários
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Relação de Mix Produtos Clientes
+        </li>
+    </ol>
+</nav>
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div>
+            <span class="badge rounded text-bg-secondary"> total</span>
+            <span class="badge rounded text-bg-success"> ativo</span>
+            <span class="badge rounded text-bg-danger"> inativo</span>
+        </div>
+        <a href="#" class="btn btn-primary" title="Cadastrar Mix">Cadastrar Mix_Produto</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="#" url="#" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Cod.</th>
+                        <th scope="col">Nome Produto</th>
+                        <th scope="col">departamento</th>
+                        <th scope="col">Rend_Kg</th>
+                        <th scope="col">Rend_receita_Unid</th>
+                        <th scope="col">Validade</th>
+                        <th scope="col">Categoria</th>
+                        <th scope="col">Cliente</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for mixproduto in mixprodutos %}
+
+                        <td>{{mixproduto.id}}</td>
+                        <td>{{mixproduto.cod_prod_mix}}</td>
+                        <td>{{mixproduto.nome}}</td>
+                        <td>{{mixproduto.departamento}}</td>
+                        <td>{{mixproduto.rend_kg}}</td>
+                        <td>{{mixproduto.rend_unid}}</td>
+                        <td>{{mixproduto.validade}}</td>
+                        <td>{{mixproduto.categoria}}</td>
+                        <td>{{mixproduto.cliente}}</td>
+                        <td>{{mixproduto.status}}</td>
+                        <td class="td-actions text-right text-center">
+                            <a href="https://www.example.com">
+                                <button type="button" rel="tooltip" class="btn btn-info">
+                                    <i class="material-icons">detalhes</i>
+                                </button>
+                            </a>
+                            <a href="#">
+                                <button  type="button" rel="tooltip" class="btn btn-success">
+                                    <i class="material-icons">editar</i>
+                                </button>
+                            </a>
+                            <a href="https://www.example.com">
+                                <button type="button" rel="tooltip" class="btn btn-danger">
+                                    <i class="material-icons">excluir</i>
+                                </button>
+                            </a>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}

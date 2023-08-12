@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" style="font-size: 11px">
+            ADMIN & Usuários
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Relação de PDVs de Vendas / Filiais X Fábricas
+        </li>
+    </ol>
+</nav>
+{{ flash() }}
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+        <div>
+            <span class="badge rounded text-bg-secondary">{{total.pdvs}} total</span> 
+            <span class="badge rounded text-bg-success">{{total.pdvsAtivo}} ativo</span> 
+            <span class="badge rounded text-bg-danger">{{total.pdvsInativo}} inativo</span> 
+        </div>
+        <a href="{{url('cadastrar_cliente')}}" class="btn btn-primary" rel="tooltip" title="Cadastrar Cliente">Cadastrar Cliente</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="cliente" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="text-center">id</th>
+                        <th>Nome</th>
+                        <th>filial_pdv</th>
+                        <th>endereco</th>
+                        <th>bairro</th>
+                        <th>cidade</th>
+                        <th>telefone</th>
+                        <th>responsavel</th>
+                        <th class="text-center">acões</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>     
+        <a href="{{url('clientes')}}" class="btn btn-outline-secondary" rel="tooltip" title="Voltar ao Menu">Voltar</a>
+    </div>
+</div>
+{% endblock %}

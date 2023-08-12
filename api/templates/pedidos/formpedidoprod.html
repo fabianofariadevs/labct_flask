@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+         <a href="#">
+                Admin
+         </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Pedido de PRODUÇÃO
+        </li>
+    </ol>
+</nav>
+<div class="card border-0 shadow-sm">
+    <div class="card-header">
+    <h3 class="card-title">{% if pedidoprod %}Atualizar Pedido de Produção{% else %}Cadastrar Pedido de Produção{% endif %}</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="#">
+           {% if pedidoprod %}
+           <input type="hidden" name="_method" value="PUT">
+            {% else %}
+            <input type="hidden" name="_method" value="POST">
+            {% endif %}
+            {{ form.hidden_tag() }}
+            {% for error in form.receita_id.errors %}
+            <p>{{ error }}</p>
+              {% endfor %}
+            <p>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.data_pedido.label(class="form-label") }}:
+                        {{ form.data_pedido(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.data_entrega.label(class="form-label") }}:
+                        {{ form.data_entrega(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.receita_id.label(class="form-label") }}:
+                        {{ form.receita_id(class="form-select") }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.qtde_pedido.label(class="form-label") }}:
+                        {{ form.qtde_pedido(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.filial_pdv.label(class="form-label") }}:
+                        {{ form.filial_pdv(class="form-select") }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.obs.label(class="form-label") }}:
+                        {{ form.obs(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                     <div class="mb-3">
+                         {{ form.status.label(class="form-label") }}:
+                         {{ form.status(class="form-select") }}
+                     </div>
+                </div>
+            </div>
+            {% if pedidoprod %}
+            <input type="submit" class="btn btn-success" value="Atualizar P.PRODUÇÃO">
+            {% else %}
+            <input type="submit" class="btn btn-primary" value="Cadastrar P.Produção">
+            {% endif %}
+            <a href="{{ url_for('listar_pedidosprod') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
+        </form>
+    </div>
+</div>
+
+{% endblock conteudo %}
