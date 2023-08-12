@@ -5,8 +5,10 @@ from api import api, app, db
 from ..services import fornecedor_service
 from ..schemas import produtoMp_schema, fornecedor_schemas
 from ..models.fornecedor_model import Fornecedor
+from ..models import fornecedor_model
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, BooleanField, SubmitField, SelectField, SelectMultipleField, widgets
+from wtforms import StringField, IntegerField, BooleanField, SubmitField, SelectField, SelectMultipleField, widgets, \
+    DateField
 from wtforms.validators import DataRequired, ValidationError
 from ..models.estoque_model import Estoque
 
@@ -25,7 +27,10 @@ class FornecedorForm(FlaskForm):
     #status = db.Column(db.Boolean, default=1, nullable=True)
     status = SelectField('Status', choices=[(True, 'Ativo'), (False, 'Inativo')], validators=[DataRequired()])
     #status = BooleanField('Status')
-    produtos = SelectMultipleField('Produtos', coerce=int, validators=[DataRequired()], widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.CheckboxInput())
+    cadastrado_em = DateField('cadastro dt', format='%d/%m/%Y', validators=[DataRequired()])
+    atualizado_em = DateField('atual dt', format='%d/%m/%Y', validators=[DataRequired()])
+    produtos = StringField('Produto Ofertado', validators=[DataRequired()])
+    # produtos = SelectMultipleField('Produtos', coerce=int, validators=[DataRequired()], widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.CheckboxInput())
     #cliente_id = SelectField('Cliente/Fabrica')
 
     submit = SubmitField('Cadastrar')
@@ -54,6 +59,8 @@ class FornecedorForm(FlaskForm):
             'whatsapp': self.whatsapp.data,
             'cnpj': self.cnpj.data,
             'status': self.status.data,
+            'cadastrado_em': self.cadastrado_em.data,
+            'atualizado_em': self.atualizado_em.data,
             'produtos': self.produtos.data,
             #'cliente_id': self.cliente_id.data,
         }
@@ -86,19 +93,11 @@ def atualizar_fornecedor(id):
         return render_template("fornecedores/fornecedor.html", error_message="Fornecedor não encontrado"), 404
 
     form = FornecedorForm(obj=fornecedor)
-
-    if form.validate_on_submit():
-        fornecedor_atualizado = Fornecedor.query.get(id)
-
+    if request.method == 'POST' and form.validate_on_submit():
+        fornecedor_atualizado = fornecedor_model.Fornecedor.query.get(id)
         # Atualizar os campos do fornecedor
         form.populate_obj(fornecedor_atualizado)
-
-        # Atualizar a lista de produtos do fornecedor
-        produtos_ids = form.produtos.data
-        produtos = [Produto.query.get(produto_id) for produto_id in produtos_ids]
-        fornecedor_atualizado.produtos = produtos
-
-        db.session.commit()
+        fornecedor_service.atualiza_fornecedor(fornecedor, fornecedor_atualizado)
         return redirect(url_for("listar_fornecedores"))
 
     return render_template("fornecedores/formfornecedor.html", fornecedor=fornecedor, form=form), 400

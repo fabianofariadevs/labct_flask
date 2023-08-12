@@ -9,23 +9,23 @@ class ProdutoMpSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = produtoMp_model.Produto
         load_instance = True
-        fields = ("id", "nome", "descricao", "quantidade", "fornecedor_id", "cliente_id", "compra_unid", "peso_pcte",
-                  "valor", "custo_ultima_compra", "whatsapp", "qrcode", "status", "cadastrado_em", "atualizado_em")
+        fields = ("id", "nome", "descricao", "quantidade", "compra_unid", "peso_pcte",
+                  "valor", "custo_ultima_compra", "whatsapp", "qrcode", "status", "cadastrado_em", "atualizado_em", "fornecedor_id", "cliente_id", )
 
     nome = fields.String(required=True)
     descricao = fields.String(required=True)
     quantidade = fields.Integer(required=True)
-    fornecedor_id = fields.Integer(required=True)
-    cliente_id = fields.Integer(required=False)
     compra_unid = fields.Integer(required=True)
     peso_pcte = fields.Float(required=False)
     valor = fields.Float(required=True)
     custo_ultima_compra = fields.Float(required=False)
     whatsapp = fields.String(required=True)
     qrcode = fields.String(required=False)
-    status = fields.Boolean(required=False)
-    cadastrado_em = fields.Date(required=True)
-    atualizado_em = fields.Date(required=True)
+    status = fields.Integer(required=True)
+    cadastrado_em = fields.Date(required=False)
+    atualizado_em = fields.Date(required=False)
+    fornecedor_id = fields.Integer(required=True)
+    cliente_id = fields.Integer(required=False)
 
 
 class InventarioSchema(ma.SQLAlchemyAutoSchema):

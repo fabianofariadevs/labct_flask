@@ -10,7 +10,7 @@ from .estoque_model import Estoque
 
 class Cliente(db.Model):
     __tablename__ = "cliente"
-    __table_args__ = {"extend_existing": True} #indica que a tabela deve ser estendida se ela já existir no banco de dados.
+    __table_args__ = {"extend_existing": True} # indica que a tabela deve ser estendida se ela já existir no banco de dados.
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     nome = db.Column(db.String(50), nullable=False)
     endereco = db.Column(db.String(150), nullable=False)
@@ -23,7 +23,7 @@ class Cliente(db.Model):
     whatsapp = db.Column(db.String(50), nullable=False)
     cnpj = db.Column(db.String(17), nullable=True)
     status = db.Column(db.Integer, default=1, nullable=True)
-    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
     #TODO a coluna filial_id como uma chave estrangeira referenciando a coluna id da tabela "filial".

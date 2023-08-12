@@ -48,7 +48,7 @@ class FornecedorSchema(ma.SQLAlchemyAutoSchema):
     atualizado_em = fields.DateTime(required=False)
     produtos = ma.List(ma.Nested(ProdutoMpSchema), attribute='produtos', dump_only=True)
 
-    def make_instance(self, data, **kwargs):
-        data['produtos'] = [Produto.query.get(produto_id) for produto_id in data.pop('produtos', [])]
-        return super().make_instance(data, **kwargs)
-
+  #  def make_instance(self, data, **kwargs):
+   #     data['produtos'] = [Produto.query.get(produto_id) for produto_id in data.pop('produtos', [])]
+    #    return super().make_instance(data, **kwargs)
+#

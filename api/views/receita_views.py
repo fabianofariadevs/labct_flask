@@ -8,6 +8,8 @@ from ..services import receita_service
 from ..models import receita_model
 from ..paginate import paginate
 from ..models.produtoMp_model import Produto
+from ..models.filial_pdv_model import Filial
+from ..models.pedido_model import PedidoProducao
 
 
 class ReceitaForm(FlaskForm):
@@ -18,7 +20,11 @@ class ReceitaForm(FlaskForm):
     rend_unid = StringField('rend_unid', validators=[DataRequired()])
     validade = DateField('validade', format='%d/%m/%Y', validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
-    produto_id = StringField('produto_id', validators=[DataRequired()])
+    cadastrado_em = DateField('cadastrado_em', format='%d/%m/%Y')
+    atualizado_em = DateField('atualizado_em', format='%d/%m/%Y')
+    produto_id = StringField('produtos', validators=[DataRequired()])
+    filial = StringField('Filial Relacionada', validators=[DataRequired()])
+    pedidoprod = StringField('Pedido de Produção', validators=[DataRequired()])
 
     submit = SubmitField('Cadastrar')
 
@@ -26,6 +32,11 @@ class ReceitaForm(FlaskForm):
         super(ReceitaForm, self).__init__(*args, **kwargs)
         self.produto_id.choices = [(produto.id, produto.nome)
                                    for produto in Produto.query.all()]
+        self.filial.choices = [(filial.id, filial.nome)
+                               for filial in Filial.query.all()]
+        self.pedidoprod.choices = [(pedidoproducao.id, pedidoproducao.receitas)
+                               for pedidoproducao in PedidoProducao.query.all()]
+
         self.status.choices = self.get_status_choices()
 
     @staticmethod
@@ -41,7 +52,11 @@ class ReceitaForm(FlaskForm):
             'rend_unid': self.rend_unid.data,
             'validade': self.validade.data,
             'status': self.status.data,
+            'cadastrado_em': self.cadastrado_em.data,
+            'atualizado_em': self.atualizado_em.data,
             'produto_id': self.produto_id.data,
+            'filial': self.filial.data,
+            'pedidoprod': self.pedidoprod.data,
         }
 
 
@@ -55,7 +70,7 @@ def exibir_formreceita():
             receita_bd = receita_service.cadastrar_receita(receitaform)
             receita_data = receita_schema.ReceitaSchema().dump(receita_bd)
             flash("Receita cadastrada com sucesso!")
-            # Redirecionar para a página de listagem de clientes após o cadastro bem-sucedido
+            # Redirecionar para a página de listagem de Receitas após o cadastro bem-sucedido
             return redirect(url_for("listar_receitas"))
         except ValidationError as error:
             flash("Erro ao cadastrar Receita")
@@ -103,18 +118,19 @@ def visualizar_receita(id):
 
             # Obter o Produto
             produto = receita.produtos
-            receita_data['produto_id'] = produto.nome if produto else 'Produto não encontrada'
+            receita_data['produtos'] = produto.nome if produto else 'Produto não encontrada'
 
             # Obter o nome do filial
             filiais = receita.filiais
-            filiais_nomes = [filial.nome if filial else 'filial não encontrado' for filial in filiais]
-            receita_data['filial'] = filiais_nomes
+            filiais_nomes = [filial.nome if filial else 'filial não encontrado'
+                             for filial in filiais]
+            receita_data['filiais'] = filiais_nomes
 
             # Obter o nome do PEDIDO DE PRODUÇAO
-       #     pedidosprod = receita.pedidosprod
-        #    pedidos_producao_ids = [receita.descricao_mix if receita.receitas else 'Pedido de Produção não encontrado' for
-         #                           receita in pedidosprod]
-          #  receita_data['pedidosprod'] = pedidos_producao_ids
+            pedidosprod = receita.pedidosprod
+            pedidos_producao_ids = [pedidoprod.receita_id if pedidoprod else 'Pedido de Produção não encontrado'
+                                    for pedidoprod in pedidosprod]
+            receita_data['pedidosprod'] = pedidos_producao_ids
 
             return render_template('receitas/detalhes.html', receita=receita_data)
         else:

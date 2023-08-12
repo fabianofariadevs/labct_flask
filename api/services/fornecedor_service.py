@@ -6,10 +6,10 @@ from ..services import produtoMp_service
 #       @author Fabiano Faria
 
 def cadastrar_fornecedor(fornecedor):
-    fornecedor_bd = fornecedor_model.Fornecedor(produtos=fornecedor.produtos, descricao=fornecedor.descricao, nome=fornecedor.nome, cnpj=fornecedor.cnpj,
+    fornecedor_bd = fornecedor_model.Fornecedor(descricao=fornecedor.descricao, nome=fornecedor.nome, cnpj=fornecedor.cnpj,
                                                 endereco=fornecedor.endereco, bairro=fornecedor.bairro, cidade=fornecedor.cidade, estado=fornecedor.estado,
                                                 email=fornecedor.whatsapp, telefone=fornecedor.telefone, responsavel=fornecedor.responsavel, status=fornecedor.status,
-                                                cadastrado_em=fornecedor.cadastrado_em, atualizado_em=fornecedor.atualizado_em)
+                                                cadastrado_em=fornecedor.cadastrado_em, atualizado_em=fornecedor.atualizado_em, produtos=fornecedor.produtos)
 
     db.session.add(fornecedor_bd)
     db.session.commit()
@@ -35,12 +35,10 @@ def atualiza_fornecedor(fornecedor_anterior, fornecedor_novo):
     fornecedor_anterior.responsavel = fornecedor_novo.responsavel
     fornecedor_anterior.whatsapp = fornecedor_novo.whatsapp
     fornecedor_anterior.cnpj = fornecedor_novo.cnpj
-    fornecedor_anterior.status = bool(fornecedor_novo.status)
-    # Limpar os produtos anteriores e adicionar os novos produtos
-    fornecedor_anterior.produtos.clear()
-    for produto in fornecedor_novo.produtos:
-        fornecedor_anterior.produtos.append(produto)
-
+    fornecedor_anterior.status = fornecedor_novo.status
+    fornecedor_anterior.cadastrado_em = fornecedor_novo.cadastrado_em
+    fornecedor_anterior.atualizado_em = fornecedor_novo.atualizado_em
+    fornecedor_anterior.produtos = fornecedor_novo.produtos
 
 db.session.commit()
 

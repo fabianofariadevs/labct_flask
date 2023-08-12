@@ -21,6 +21,8 @@
         <form method="POST" action="#">
            {% if receita %}
            <input type="hidden" name="_method" value="PUT">
+            {% else %}
+           <input type="hidden" name="_method" value="POST">
            {% endif %}
             {{ form.hidden_tag() }}
             {% for error in form.descricao_mix.errors %}
@@ -69,7 +71,7 @@
                 <div class="col-md-2">
                     <div class="mb-3">
                         {{ form.produto_id.label(class="form-label") }}:
-                        {{ form.produto_id(class="form-control") }}
+                        {{ form.produto_id(class="form-select") }}
                     </div>
                 </div>
                 <div class="col-md-3">

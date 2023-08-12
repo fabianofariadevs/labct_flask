@@ -211,6 +211,7 @@ def atualizar_pedidoprod(id):
         return render_template("pedidos/formpedidoprod.html", error_message="Pedido não encontrado"), 404
 
     form = PedidoPForm(obj=pedidoprod)
+
     if request.method == 'POST' and form.validate_on_submit():
         pedidoprod_atualizado = pedido_model.PedidoProducao.query.get(id)
         form.populate_obj(pedidoprod_atualizado)
@@ -222,29 +223,54 @@ def atualizar_pedidoprod(id):
 
 @app.route('/pedidoprod/<int:id>', methods=['GET', 'POST'])
 def visualizar_pedidoprod(id):
-    #pedido = pedido_service.listar_pedido_id(id)
+    # pedido = pedido_service.listar_pedido_id(id)
     # return render_template('pedidos/detalhes.html', pedido=pedido)
     if request.method == 'GET':
+        # Carregar os pedidos e usar a opção joinedload para incluir os objetos relacionados (receitas) na consulta
+        pedidosprod = PedidoProducao.query.options(joinedload('receitas')).all()
+        pedidos_data = []
+        for pedido in pedidosprod:
+            pedido_dict = pedido_schemas.PedidoSchema().dump(pedido)
+
+            pedido_dict['data_pedido'] = pedido.data_pedido.strftime('%d/%m/%Y')  # Formata a data como dia/mês/ano
+            pedido_dict['data_entrega'] = pedido.data_entrega.strftime('%d/%m/%Y')  # Formata a data como dia/mês/ano
+
+            # Verificar se o objeto da Receita está presente e obter o nome, caso contrário, usar uma mensagem padrão
+            receita = pedido.receitas
+            pedido_dict['receita_id'] = receita.descricao_mix if receita else 'Receita não encontrado'
+
+            # Obter o nome do Filial
+            filial = pedido.filiais
+            pedido_dict['filial_pdv'] = filial.nome if filial else 'Filial não encontrado'
+
+            pedidos_data.append(pedido_dict)
+
+    if request.method == 'GET':
         pedidoprod = pedido_service.listar_pedidoprod_id(id)
-        #pedido = pedido_service.listar_pedido_id(id)
         if pedidoprod:
-            pedidoprod_data = pedido_schemas.PedidoProducaoSchema().dump(pedidoprod)
-            # Ajusta o formato da hora
-            pedidoprod_data['data_pedido'] = pedidoprod.data_pedido.strftime('%d/%m/%Y')
-            pedidoprod_data['data_entrega'] = pedidoprod.data_entrega.strftime('%d/%m/%Y')
+            pedido_data = pedido_schemas.PedidoProducaoSchema().dump(pedidoprod)
+            pedido_data['data_pedido'] = pedidoprod.data_pedido.strftime('%d/%m/%Y')
+            pedido_data['data_entrega'] = pedidoprod.data_entrega.strftime('%d/%m/%Y')
 
             # Obter o nome do receita
             receita = pedidoprod.receitas
-            pedidoprod_data['receita_id'] = receita.descricao_mix if receita else 'Receita não encontrada'
+            pedido_data['receita_id'] = receita.descricao_mix if receita else 'Receita não encontrada'
 
             # Obter o nome dos filiais relacionados
             filial = pedidoprod.filiais
-            pedidoprod_data['filial_pdv'] = filial.nome if filial else 'Produto não encontrada'
+            pedido_data['filial_pdv'] = filial.nome if filial else 'Produto não encontrada'
 
-            return render_template('pedidos/producaodetalhes.html', pedidoprod=pedidoprod_data)
+            return render_template('pedidos/producaodetalhes.html', pedidoprod=pedido_data)
         else:
             # Caso o pedido não seja encontrado, retorne uma mensagem de erro
-            return render_template('error.html', message='Pedido de Produção não encontrado', status_code=404)
+            return render_template('error.html', message='Pedido não encontrado', status_code=404)
+
+    elif request.method == 'POST':  # método DELETE
+        if request.form.get('_method') == 'DELETE':
+            pedidoprod = pedido_service.listar_pedidoprod_id(id)
+            if pedidoprod:
+                pedido_service.remove_pedidoprod(pedidoprod)
+                return redirect(url_for('listar_pedidoprod'))
 
 
 @app.route('/pedidoprod', methods=['GET'])

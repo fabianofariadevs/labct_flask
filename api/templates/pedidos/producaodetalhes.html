@@ -17,7 +17,6 @@
         <div>
         <a href="{{ url_for('listar_pedidosprod') }}" class="btn btn-outline-dark" title="Voltar para lista de Pedidos Produção">Voltar para lista de Pedidos Produção</a>
         <a href="{{ url_for('atualizar_pedidoprod', id=pedidoprod.id, _method='POST') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Pedido de Produção">Atualizar P.Produção</a>
-        <a href="{{ url_for('deletar_pedidoprod', id=pedidoprod.id) }}" methods='DELETE' onclick="return confirm('Deseja excluir o Pedido de Produção?')" class="btn btn-danger" title="Excluir Pedido">Excluir Pedido</a>
         </div>
     </div>
     <div class="card-body">
@@ -28,8 +27,8 @@
                             <th>id</th>
                             <th>data_pedido</th>
                             <th>qtde_pedido</th>
-                            <th>receita_id</th>
-                            <th>filial_pdv</th>
+                            <th>Receita</th>
+                            <th>Filial</th>
                             <th>data_entrega</th>
                             <th>obs</th>
                             <th>status</th>
@@ -54,8 +53,12 @@
                       <div class="card-header border-0 d-flex justify-content-between align-items-center">
                           <div>
                             <i class="fw-bold text-secondary"> Detalhes Pedido de PRODUÇÃO : </i>('id': {{pedidoprod.id}})
-                            <i class="breadcrumb-item active fw-bold text-dark"> {{pedidoprod.receita_id}}</i>
+                            <i class="breadcrumb-item active fw-bold text-dark"> {{pedidoprod.receitas}}</i>
                           </div>
+                           <form id="delete-form" action="{{ url_for('visualizar_pedidoprod', id=pedidoprod.id, _method='POST') }}" method="post">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button class="btn btn-danger" type="submit" title="Excluir Pedido de Produção e suas ligações"  onclick="return confirm('Deseja excluir o Pedido de Produção {{pedidoprod.receita_id}}?')">Excluir Pedido Produção</button>
+                            </form>
                       </div>
                       <hr>
                   </div>
