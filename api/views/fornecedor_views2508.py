@@ -1,4 +1,4 @@
-from flask import render_template, url_for, request, redirect, flash
+from flask import render_template, url_for, request, redirect
 from sqlalchemy.orm import joinedload
 from ..models.produtoMp_model import Inventario, Produto
 from api import app, db
@@ -11,7 +11,7 @@ from wtforms.validators import DataRequired, ValidationError
 
 class FornecedorForm(FlaskForm):
     nome = StringField("Nome", validators=[DataRequired()])
-    descricao = StringField("Produto a Cadastrar", validators=[DataRequired()])
+    descricao = StringField("Descrição", validators=[DataRequired()])
     endereco = StringField('Endereco', validators=[DataRequired()])
     bairro = StringField('Bairro', validators=[DataRequired()])
     cidade = StringField('Cidade', validators=[DataRequired()])
@@ -24,15 +24,16 @@ class FornecedorForm(FlaskForm):
     #status = db.Column(db.Boolean, default=1, nullable=True)
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
     #status = BooleanField('Status')
-    #produtos = StringField('Produto Ofertado', validators=[DataRequired()])
-    #produtos = SelectMultipleField('Produtos', coerce=int, validators=[DataRequired()], widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.CheckboxInput())
+    produtos = SelectField('Produto Ofertado', validators=[DataRequired()])
+    # produtos = SelectMultipleField('Produtos', coerce=int, validators=[DataRequired()], widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.CheckboxInput())
     #cliente_id = SelectField('Cliente/Fabrica')
 
     submit = SubmitField('Cadastrar')
 
     def __init__(self, *args, **kwargs):
         super(FornecedorForm, self).__init__(*args, **kwargs)
-        #self.produtos.choices = [(produto.id, produto.nome) for produto in Produto.query.all()]
+        self.produtos.choices = [(produto.id, produto.nome)
+                                 for produto in Produto.query.all()]
       #  self.receitas.choices = [(receita.id, receita.nome) for receita in Receita.query.all()]
         self.status.choices = self.get_status_choices()
 
@@ -54,7 +55,7 @@ class FornecedorForm(FlaskForm):
             'whatsapp': self.whatsapp.data,
             'cnpj': self.cnpj.data,
             'status': self.status.data,
-         #   'produtos': self.produtos.data,
+            'produtos': self.produtos.data,
             #'cliente_id': self.cliente_id.data,
         }
 
@@ -86,18 +87,8 @@ def listar_fornecedores():
 
 @app.route('/fornecedores/<int:id>', methods=['GET', 'POST'])
 def visualizar_fornecedor(id):
-    #fornecedor = fornecedor_service.listar_fornecedor_id(id)
-    #return render_template('fornecedores/detalhes.html', fornecedor=fornecedor)
-    if request.method == 'GET':
-        fornecedor = fornecedor_service.listar_fornecedor_id(id)
-        return render_template('fornecedores/detalhes.html', fornecedor=fornecedor)
-
-    elif request.method == 'POST':  # método DELETE
-        if request.form.get('_method') == 'DELETE':
-            fornecedor = fornecedor_service.listar_fornecedor_id(id)
-            if fornecedor:
-                fornecedor_service.remove_fornecedor(fornecedor)
-                return redirect(url_for('listar_fornecedores'))
+    fornecedor = fornecedor_service.listar_fornecedor_id(id)
+    return render_template('fornecedores/detalhes.html', fornecedor=fornecedor)
 
 
 @app.route('/fornecedores/<int:id>/atualizar', methods=['GET', 'POST', 'PUT'])
@@ -109,6 +100,7 @@ def atualizar_fornecedor(id):
     form = FornecedorForm(obj=fornecedor)
     if form.validate_on_submit():
         fornecedor_atualizado = Fornecedor.query.get(id)
+        # Atualizar os campos do fornecedor
         form.populate_obj(fornecedor_atualizado)
         fornecedor_service.atualiza_fornecedor(fornecedor, fornecedor_atualizado)
         return redirect(url_for("listar_fornecedores"))
@@ -122,15 +114,18 @@ def exibir_formfornecedor():
     if request.method == 'POST' and form.validate_on_submit():
         try:
             form_data = form.to_dict()
+            produtos_ids = form_data.pop('produtos', [])  # Remover a lista de IDs de produtos dos dados do formulário
             fornecedor = fornecedor_schemas.FornecedorSchema().load(form_data)
-            fornecedor_bd = fornecedor_service.cadastrar_fornecedor(fornecedor)
-            fornecedor_data = fornecedor_schemas.FornecedorSchema().dump(fornecedor_bd)
-            flash("Fornecedor cadastrado com sucesso!")
+
+            # Carregar os objetos Produto correspondentes aos IDs
+            produtos = Produto.query.filter(Produto.id.in_(produtos_ids)).all()
+
+            fornecedor_data = fornecedor_schemas.FornecedorSchema().dump(fornecedor)
             return redirect(url_for("listar_fornecedores"))
         except ValidationError as error:
-            flash("Erro ao cadastrar Fornecedor")
-    return render_template('fornecedores/formfornecedor.html', form=form)
-
+            return render_template('fornecedores/formfornecedor.html', form=form, error_message=error.messages)
+    else:
+        return render_template('fornecedores/formfornecedor.html', form=form, error_message=form.errors)
 
 @app.route('/fornecedores/<int:id>/deletar', methods=['DELETE'])
 def deletar_fornecedor(id):

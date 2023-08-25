@@ -70,7 +70,7 @@
                             <a href="{{ url_for('listar_pedidos') }}" class="btn btn-secondary" title="Consultar pedidos de compra realizados">Pedidos_Compra</a>
                             <a href="{{ url_for('listar_pedidosprod') }}" class="btn btn-secondary" title="Consultar pedidos de produção realizados">Pedidos_Produção</a>
                           </div>
-                              <form id="delete-form" action="{{ url_for('deletar_filial', id=filial.id, _method='DELETE') }}" >
+                              <form id="delete-form" action="{{ url_for('visualizar_filial', id=filial.id, _method='POST') }}" method="post">
                               <input type="hidden" name="_method" value="DELETE">
                               <button class="btn btn-danger" type="submit" title="Excluir Filial"  onclick="return confirm('Deseja excluir a Filial {{filial.nome}} ?')">Excluir Filial</button>
                           </form>

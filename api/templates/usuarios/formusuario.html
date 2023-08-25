@@ -15,12 +15,14 @@
 </nav>
 <div class="card border-0 shadow-sm">
     <div class="card-header">
-        <h3 class="card-title">{% if usuario %}Atualizar Usuário {% else %} Cadastrar Usuário{% endif %}</h3>
+        <h3 class="card-title">{% if usuario %}Atualizar Usuário {% else %} Cadastrar Novo Usuário{% endif %}</h3>
     </div>
     <div class="card-body">
-        <form method="POST" action="{% if usuario %}{{ url_for('atualizar_usuario', id=usuario.id, _method='PUT') }}{% else %}{{ url_for('listar_usuarios') }}{% endif %}">
+        <form method="POST" action="#">
             {% if usuario %}
             <input type="hidden" name="_method" value="PUT">
+            {% else %}
+            <input type="hidden" name="_method" value="POST">
             {% endif %}
             {{ form.hidden_tag() }}
             {% for error in form.nome.errors %}
@@ -46,16 +48,12 @@
                         {{ form.senha(class="form-control") }}
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <div class="mb-3">
-                        {{ form.is_admin.label(class="form-label") }}:
-                        {{ form.is_admin(class="form-control") }}
-                    </div>
-                </div>
-                <div class="col-md-2">
+
+
+                <div class="col-md-4">
                     <div class="mb-3">
                         {{ form.empresa.label(class="form-label") }}:
-                        {{ form.empresa(class="form-control") }}
+                        {{ form.empresa(class="form-select") }}
                     </div>
                 </div>
             </div>
@@ -63,7 +61,13 @@
                 <div class="col-md-3">
                     <div class="mb-3">
                         {{ form.cargo.label(class="form-label") }}:
-                        {{ form.cargo(class="form-control") }}
+                        {{ form.cargo(class="form-select") }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.is_admin.label(class="form-label") }}:
+                        {{ form.is_admin(class="form-select") }}
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -73,10 +77,10 @@
                      </div>
                 </div>
             </div>
-           {% if usuario %}
-            <input type="submit" class="btn btn-success" value="Atualizar Usuário">
+            {% if usuario %}
+            <input type="submit" class="btn btn-success" name="Atualizar" value="Atualizar Usuário">
             {% else %}
-            <input type="submit" class="btn btn-primary" value="Cadastrar">
+            <input type="submit" class="btn btn-primary" name="cadastrar" value="Cadastrar">
             {% endif %}
             <a href="{{ url_for('listar_usuarios') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
         </form>

@@ -22,18 +22,18 @@
                   <thead>
                         <tr>
                             <th>id</th>
-                            <th>descricao_mix</th>
-                            <th>modo_preparo</th>
-                            <th>departamento</th>
-                            <th class="text-center">rend_kg</th>
-                            <th class="text-center">rend_unid</th>
-                            <th>validade</th>
-                            <th class="text-center">status</th>
-                            <th class="text-center">pedidosprod</th>
-                            <th class="text-center">produtos</th>
-                            <th>filiais</th>
-                            <th class="text-center">cadastrado_em</th>
-                            <th class="text-center">atualizado_em</th>
+                            <th>Descricao_mix</th>
+                            <th>Modo_preparo</th>
+                            <th>Departamento</th>
+                            <th class="text-center">Rend_kg</th>
+                            <th class="text-center">Rend_unid</th>
+                            <th>Validade</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Pedidos_Prod</th>
+                            <th class="text-center">Produtos</th>
+                            <th>Filiais</th>
+                            <th class="text-center">Cadastrado_em</th>
+                            <th class="text-center">Atualizado_em</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,7 +58,7 @@
                             <i class="fw-bold text-secondary"> Detalhes Receitas : </i>(id: {{receita.id}})
                             <i class="breadcrumb-item active fw-bold text-dark"> {{receita.descricao_mix}}</i>
                           </div>
-                          <form id="delete-form" action="#" method="post">
+                          <form id="delete-form" action="{{ url_for('visualizar_receita', id=receita.id, _method='POST') }}" method="post">
                               <input type="hidden" name="_method" value="DELETE">
                               <button class="btn btn-danger" type="submit" title="Excluir Receita"  onclick="return confirm('Deseja excluir a Receita {{receita.descricao_mix}} ?')">Excluir Receita</button>
                           </form>

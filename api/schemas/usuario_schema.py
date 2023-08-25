@@ -9,15 +9,16 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         fields = ("id", "nome", "email", "senha", "is_admin", "status", "cadastrado_em", "atualizado_em", "api_key", "empresa", "cargo")
 
+    id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     nome = fields.String(required=True)
     email = fields.String(required=True)
     senha = fields.String(required=False)
-    is_admin = fields.Boolean(required=False)
-    status = fields.Boolean(required=True)
+    is_admin = fields.Integer(required=False)
+    status = fields.Integer(required=True)
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
     api_key = fields.String(required=False)
-    empresa = fields.Integer(required=False)
+    empresa = fields.String(required=False)
     #empresa = fields.List(fields.Nested(cliente_schema.ClienteSchema(), only=('id', 'nome')))
-    cargo = fields.Integer(required=False)
+    cargo = fields.String(required=False)
 

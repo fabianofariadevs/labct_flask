@@ -64,7 +64,7 @@ def atualizar_filial(id):
     if not filial:
         return render_template("filiais/filial.html", error_message="Filial não encontrada"), 404
     form = FilialForm(obj=filial)
-    if form.validate_on_submit():
+    if request.method == 'POST' and form.validate_on_submit():
         filial_atualizada = filial_pdv_model.Filial.query.get(id)
         form.populate_obj(filial_atualizada)
         filial_pdv_service.atualiza_filial_pdv(filial, filial_atualizada)
@@ -104,7 +104,7 @@ def exibir_formfilial():
     return render_template('filiais/formfilial.html', form=form)###3
 
 
-@app.route('/filiais/<int:id>', methods=['GET', 'PUT'])
+@app.route('/filiais/<int:id>', methods=['GET', 'POST'])
 def visualizar_filial(id):
     if request.method == 'GET':
         filial = filial_pdv_service.listar_filial_pdv_id(id)
@@ -134,12 +134,12 @@ def visualizar_filial(id):
             # Caso o pedido não seja encontrado, retorne uma mensagem de erro
             return render_template('error.html', message='Pedido não encontrado', status_code=404)
 
- #   elif request.method == 'POST':  # método DELETE
-  #      if request.form.get('_method') == 'DELETE':
-   #         filial = filial_pdv_service.listar_filial_pdv_id(id)
-    #        if filial:
-     #           filial_pdv_service.remove_filial_pdv(filial)
-      #          return redirect(url_for('listar_filiais'))
+    elif request.method == 'POST':  # método DELETE
+        if request.form.get('_method') == 'DELETE':
+            filial = filial_pdv_service.listar_filial_pdv_id(id)
+            if filial:
+                filial_pdv_service.remove_filial_pdv(filial)
+                return redirect(url_for('listar_filiais'))
 
 @app.route('/filiais/<int:id>', methods=['DELETE'])
 def deletar_filial(id):

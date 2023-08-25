@@ -1,5 +1,6 @@
+
 class Cliente:
-    def __int__(self, nome, endereco, bairro, cidade, estado, telefone, email, responsavel, whatsapp, cnpj, status,  filial, cadastrado_em, atualizado_em):
+    def __init__(self, nome, endereco, bairro, cidade, estado, telefone, email, responsavel, whatsapp, cnpj, status,  filial, cadastrado_em, atualizado_em):
         self.__nome = nome
         self.__endereco = endereco
         self.__bairro = bairro

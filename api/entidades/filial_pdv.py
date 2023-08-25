@@ -25,6 +25,7 @@ class Filial:
     @property
     def endereco(self):
         return self.__endereco
+
     @endereco.setter
     def endereco(self, endereco):
         self.__endereco = endereco
@@ -32,6 +33,7 @@ class Filial:
     @property
     def bairro(self):
         return self.__bairro
+
     @bairro.setter
     def bairro(self, bairro):
         self.__bairro = bairro
@@ -39,6 +41,7 @@ class Filial:
     @property
     def cidade(self):
         return self.__cidade
+
     @cidade.setter
     def cidade(self, cidade):
         self.__cidade = cidade
@@ -46,6 +49,7 @@ class Filial:
     @property
     def estado(self):
         return self.__estado
+
     @estado.setter
     def estado(self, estado):
         self.__estado = estado
@@ -53,6 +57,7 @@ class Filial:
     @property
     def responsavel(self):
         return self.__responsavel
+
     @responsavel.setter
     def responsavel(self, responsavel):
         self.__responsavel = responsavel
@@ -60,6 +65,7 @@ class Filial:
     @property
     def whatsapp(self):
         return self.__whatsapp
+
     @whatsapp.setter
     def whatsapp(self, whatsapp):
         self.__whatsapp = whatsapp
@@ -67,6 +73,7 @@ class Filial:
     @property
     def cnpj(self):
         return self.__cnpj
+
     @cnpj.setter
     def cnpj(self, cnpj):
         self.__cnpj = cnpj
@@ -74,6 +81,7 @@ class Filial:
     @property
     def status(self):
         return self.__status
+
     @status.setter
     def status(self, status):
         self.__status = status
@@ -82,12 +90,14 @@ class Filial:
     def cadastrado_em(self):
         return self.__cadastrado_em
     @cadastrado_em.setter
+
     def cadastrado_em(self, cadastrado_em):
         self.__cadastrado_em = cadastrado_em
 
     @property
     def atualizado_em(self):
         return self.__atualizado_em
+
     @atualizado_em.setter
     def atualizado_em(self, atualizado_em):
         self.__atualizado_em = atualizado_em
@@ -95,16 +105,8 @@ class Filial:
     @property
     def cliente(self):
         return self.__cliente
+
     @cliente.setter
     def cliente(self, cliente):
         self.__cliente = cliente
-
-
-    @property
-    def receitas(self):
-        return self.__receitas
-
-    @receitas.setter
-    def receitas(self, receitas):
-        self.__receitas = receitas
 

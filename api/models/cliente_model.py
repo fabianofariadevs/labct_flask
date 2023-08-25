@@ -10,7 +10,7 @@ from .estoque_model import Estoque
 
 class Cliente(db.Model):
     __tablename__ = "cliente"
-    __table_args__ = {"extend_existing": True} # indica que a tabela deve ser estendida se ela já existir no banco de dados.
+    __table_args__ = {"extend_existing": True}  # indica que a tabela deve ser estendida se ela já existir no banco de dados.
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     nome = db.Column(db.String(50), nullable=False)
     endereco = db.Column(db.String(150), nullable=False)

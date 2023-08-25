@@ -14,7 +14,7 @@ class Receita(db.Model):
     rend_unid = db.Column(db.Float, nullable=False)
     validade = db.Column(db.Date(), nullable=False)
     status = db.Column(db.Integer, default=1, nullable=True)
-    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
     # Propriedade 'filiais' referenciando a tabela "filial"
     # TODO relacionando RECEITA c/ Filiais N/N
@@ -28,4 +28,8 @@ class Receita(db.Model):
     produtos = db.relationship(produtoMp_model.Produto, backref=db.backref("receitas", lazy="dynamic"))
     #1/N
     pedidosprod = db.relationship("PedidoProducao", back_populates="receitas")
+
+    def __repr__(self):
+        return f"<Receita {self.descricao_mix}>"
+
 

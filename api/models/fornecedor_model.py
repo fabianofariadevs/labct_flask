@@ -32,3 +32,5 @@ class Fornecedor(db.Model):
     ##cliente = db.relationship("Cliente", backref=db.backref("fornecedor", lazy="dynamic"))
     pedidos = db.relationship('Pedido', back_populates='fornecedor')
 
+    def __repr__(self):
+        return f"<Fornecedor {self.nome}>"

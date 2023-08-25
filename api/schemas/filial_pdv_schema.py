@@ -25,8 +25,8 @@ class FilialSchema(ma.SQLAlchemyAutoSchema):
     status = fields.Integer(required=True)
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
-    pedidos = fields.String(required=False)
-    pedidosprod = fields.String(required=False)
+   # pedidos = fields.String(required=False)
+   # pedidosprod = fields.String(required=False)
     clientes = fields.List(fields.Nested(cliente_schema.ClienteSchema(), only=('id', 'nome')))
 
 

@@ -136,7 +136,7 @@ def visualizar_cliente(id):
 
             return render_template('clientes/detalhes.html', clientev=cliente_data)
         else:
-            # Caso o pedido não seja encontrado, retorne uma mensagem de erro
+            # Caso o cliente não seja encontrado, retorne uma mensagem de erro
             return render_template('error.html', message='Cliente não encontrado', status_code=404)
 
     elif request.method == 'POST':  # método DELETE

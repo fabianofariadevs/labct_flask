@@ -1,8 +1,6 @@
 
 class Receita:
-    def __init__(self, clientes, produto_id, descricao_mix, modo_preparo, departamento, rend_kg, rend_unid, validade, status, cadastrado_em, atualizado_em):
-        self.__clientes = clientes
-        self.__produtos = produto_id
+    def __init__(self, descricao_mix, modo_preparo, departamento, rend_kg, rend_unid, validade, status, cadastrado_em, atualizado_em, produto_id):
         self.__descricao_mix = descricao_mix
         self.__modo_preparo = modo_preparo
         self.__departamento = departamento
@@ -12,23 +10,7 @@ class Receita:
         self.__status = status
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
-
-
-    @property
-    def clientes(self):
-        return self.__clientes
-
-    @clientes.setter
-    def clientes(self, clientes):
-        self.__clientes = clientes
-
-    @property
-    def produto_id(self):
-        return self.__produtos
-
-    @produto_id.setter
-    def produto_id(self, produto_id):
-        self.__produtos = produto_id
+        self.__produtos_id = produto_id
 
     @property
     def descricao_mix(self):
@@ -101,3 +83,25 @@ class Receita:
     @atualizado_em.setter
     def atualizado_em(self, atualizado_em):
         self.__atualizado_em = atualizado_em
+
+    @property
+    def produto_id(self):
+        return self.__produtos_id
+
+    @produto_id.setter
+    def produto_id(self, produto_id):
+        self.__produtos_id = produto_id
+
+    def json(self):
+        return {
+            "descricao_mix": self.__descricao_mix,
+            "modo_preparo": self.__modo_preparo,
+            "departamento": self.__departamento,
+            "rend_kg": self.__rend_kg,
+            "rend_unid": self.__rend_unid,
+            "validade": self.__validade,
+            "status": self.__status,
+            "cadastrado_em": self.__cadastrado_em,
+            "atualizado_em": self.__atualizado_em,
+            "produto_id": self.__produtos_id
+        }

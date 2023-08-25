@@ -1,5 +1,4 @@
 from api import db
-
 from datetime import datetime
 from sqlalchemy import func
 
