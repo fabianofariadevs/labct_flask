@@ -33,12 +33,12 @@
                     <table class="table table-striped" style="width:100%">
                         <thead>
                             <tr>
-                                <th>id</th>
-                                <th class="text-center">Nome</th>
-                                <th class="text-center">Descrição</th>
+                                <th class="text-center">id</th>
+                                <th>Nome</th>
+                                <th>Descrição</th>
                                 <th class="text-center">Qtde</th>
                                 <th class="text-center">Fornecedor</th>
-                                <th class="text-center">whatsapp_prod</th>
+                                <th class="text-center">Whatsapp</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Ações</th>
                             </tr>
@@ -47,8 +47,8 @@
                          {% for produto in produtos %}
                             <tr>
                                 <td class="text-center">{{produto.id}}</td>
-                                <td class="text-center">{{produto.nome}}</td>
-                                <td class="text-center">{{produto.descricao}}</td>
+                                <td>{{produto.nome}}</td>
+                                <td>{{produto.descricao}}</td>
                                 <td class="text-center">{{produto.quantidade}}</td>
                                 <td class="text-center">{{produto.fornecedor_id}}</td>
                                 <td class="text-center">{{produto.whatsapp}}</td>

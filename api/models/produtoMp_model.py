@@ -22,7 +22,7 @@ class Produto(db.Model):
     whatsapp = db.Column(db.String(50), nullable=False)
     qrcode = db.Column(db.String(50), nullable=False)
     status = db.Column(db.Integer, default=1, nullable=True)
-    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
     #TODO Chave estrangeira referenciando o fornecedor

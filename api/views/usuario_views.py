@@ -79,7 +79,6 @@ def listar_usuarios():
 def atualizar_usuario(id):
     usuario = usuario_service.listar_usuario_id(id)
     if not usuario:
-        #return "Cliente não encontrado", 404
         return render_template("usuarios/usuarios.html", error_message="Usuario não encontrado"), 404
 
     form = UsuarioForm(obj=usuario)

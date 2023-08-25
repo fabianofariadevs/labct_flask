@@ -18,9 +18,11 @@
     <h3 class="card-title">{% if produto %}Atualizar Produto {% else %} Cadastrar Novo Produto{% endif %}</h3>
     </div>
     <div class="card-body">
-        <form method="POST" action="{% if produto %}{{ url_for('atualizar_produto', id=produto.id, _method='PUT') }}{% else %}{{ url_for('listar_produtos') }}{% endif %}">
+        <form method="POST" action="#">
             {% if produto %}
             <input type="hidden" name="_method" value="PUT">
+            {% else %}
+            <input type="hidden" name="_method" value="POST">
             {% endif %}
             {{ form.hidden_tag() }}
             {% for error in form.nome.errors %}
@@ -49,7 +51,7 @@
                 <div class="col-md-3">
                     <div class="mb-3">
                         {{ form.fornecedor_id.label(class="form-label") }}:
-                        {{ form.fornecedor_id(class="form-control") }}
+                        {{ form.fornecedor_id(class="form-select") }}
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -99,14 +101,13 @@
                      </div>
                 </div>
             </div>
-                {% if produto %}
-                <input type="submit" class="btn btn-success" value="Atualizar Produto">
-                {% else %}
-                <input type="submit" class="btn btn-primary" value="Cadastrar">
-                {% endif %}
-                <a href="{{ url_for('listar_produtos') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
+            {% if produto %}
+            <input type="submit" class="btn btn-success" value="Atualizar Produto">
+            {% else %}
+            <input type="submit" class="btn btn-primary" value="Cadastrar">
+            {% endif %}
+            <a href="{{ url_for('listar_produtos') }}" class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
         </form>
     </div>
 </div>
-
 {% endblock conteudo %}

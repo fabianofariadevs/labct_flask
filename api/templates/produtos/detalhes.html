@@ -23,22 +23,22 @@
                         <tr>
                             <th>id</th>
                             <th>Nome</th>
-                            <th>descricao</th>
-                            <th class="text-center">quantidade</th>
-                            <th class="text-center">compra_unid</th>
-                            <th class="text-center">peso_pcte</th>
-                            <th class="text-center">valor</th>
-                            <th class="text-center">custo_ultima_compra</th>
-                            <th>whatsapp</th>
-                            <th>qrcode</th>
-                            <th class="text-center">status</th>
-                            <th>fornecedor</th>
-                            <th>estoques_produto</th>
-                            <th>mixproduto</th>
+                            <th>Descricao</th>
+                            <th class="text-center">Qtde</th>
+                            <th class="text-center">Compra_unid</th>
+                            <th class="text-center">Peso_pcte</th>
+                            <th class="text-center">Valor</th>
+                            <th class="text-center">Custo_ultima</th>
+                            <th>Whatsapp</th>
+                            <th>Qrcode</th>
+                            <th class="text-center">Status</th>
+                            <th>Fornecedor</th>
+                            <th>Estoque</th>
+                            <th>Mixproduto</th>
                             <th>Ped.Compra</th>
-                            <th>receitas_produtos</th>
-                            <th>cadastrado_em</th>
-                            <th>atualizado_em</th>
+                            <th>Receitas</th>
+                            <th>Cadastrado_em</th>
+                            <th>Atualizado_em</th>
 
                         </tr>
                     </thead>
@@ -70,7 +70,7 @@
                                 <i class="fw-bold text-secondary"> Detalhes do Produto : </i> ('id': {{produto.id}})
                                 <i class="breadcrumb-item active fw-bold text-dark"> {{produto.nome}}</i>
                             </div>
-                            <form id="delete-form" action="#" method="post">
+                            <form id="delete-form" action="{{ url_for('visualizar_produto', id=produto.id, _method='POST') }}" method="post">
                               <input type="hidden" name="_method" value="DELETE">
                               <button class="btn btn-danger" type="submit" title="Excluir Produto"  onclick="return confirm('Deseja excluir o Produto {{produto.nome}} ?')">Excluir Produto</button>
                             </form>
