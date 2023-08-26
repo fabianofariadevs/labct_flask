@@ -25,7 +25,8 @@
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_pedidosprod_inativos}} inativo </span>
         </div>
          <div>
-             <a href="#" class="btn btn-secondary" title="Imprimir">Imprimir Relação</a>
+             <a href="{{ url_for('historicopedidos') }}" class="btn btn-secondary" title="Ver Histórico">Histórico</a>
+             <a href="#" class="btn btn-secondary" title="Imprimir">Imprimir/Exportar</a>
              <a href="#" class="btn btn-secondary" title="Consultar Pedidos">Consultar</a>
              <a href="{{ url_for('fazer_pedido_producao') }}" methods='POST' class="btn btn-primary" rel="tooltip" title="Cadastrar Pedido Produção">Cadastrar Pedido Produção</a>
          </div>
@@ -42,7 +43,7 @@
                                 <th>Data_pedido</th>
                                 <th>Receita</th>
                                 <th>Qtde_pedido</th>
-                                <th>data_entrega</th>
+                                <th>Data_entrega</th>
                                 <th>Filial</th>
                                 <th>Status</th>
                                 <th class="text-center">Acões</th>

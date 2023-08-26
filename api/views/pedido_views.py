@@ -277,9 +277,9 @@ def listar_pedidosprod():
 
         total_pedidosprod = len(pedidosprod)
         total_pedidosprod_ativos = len(
-            [pedidoproducao for pedidoproducao in pedidosprod if pedidoproducao.status == True])
+    [pedidoproducao for pedidoproducao in pedidosprod if pedidoproducao.status == 1])
         total_pedidosprod_inativos = len(
-            [pedidoproducao for pedidoproducao in pedidosprod if pedidoproducao.status == False])
+            [pedidoproducao for pedidoproducao in pedidosprod if pedidoproducao.status == 0])
 
         return render_template("pedidos/pedidosprod.html", pedidosprod=pedidos_data, total_pedidosprod=total_pedidosprod,
                                total_pedidosprod_ativos=total_pedidosprod_ativos,
