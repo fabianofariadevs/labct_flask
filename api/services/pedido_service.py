@@ -1,7 +1,6 @@
 from sqlalchemy import func
 from ..models import pedido_model
 from api import db
-from datetime import datetime
 
 #TODO ** CRUD ** ESSAS funções fornecem operações básicas de criação, leitura, atualização e remoção (CRUD) para os registros da tabela pedido no banco de dados.
 #       @author Fabiano Faria
@@ -34,7 +33,6 @@ def atualiza_pedido(pedido_anterior, pedido_novo):
     pedido_anterior.data_entrega = pedido_novo.data_entrega
     pedido_anterior.status = pedido_novo.status
     pedido_anterior.obs = pedido_novo.obs
-    #pedido_anterior.tipo = pedido_novo.tipo
     pedido_anterior.produto_id = pedido_novo.produto_id
     pedido_anterior.fornecedor_id = pedido_novo.fornecedor_id
     pedido_anterior.filial_pdv = pedido_novo.filial_pdv
@@ -52,9 +50,9 @@ def remove_pedido(pedido):
 #TODO service para PEDIDO DE PRODUCAO**
 def cadastrar_pedidoprod(pedidoproducao):
     # TODO a função cadastrar_pedido recebe um objeto pedido como argumento e cria uma instância do modelo pedido com os valores do objeto fornecido. Em seguida, adiciona a instância ao banco de dados usando db.session.add() e faz o commit das alterações usando db.session.commit(). Por fim, retorna a instância do pedido cadastrado.
-    pedido_bd = pedido_model.PedidoProducao(data_pedido=pedidoproducao.data_pedido, data_entrega=pedidoproducao.data_entrega, qtde_pedido=pedidoproducao.qtde_pedido,
+    pedido_bd = pedido_model.PedidoProducao(data_pedido=func.now(), data_entrega=pedidoproducao.data_entrega, qtde_pedido=pedidoproducao.qtde_pedido,
                                             status=pedidoproducao.status, obs=pedidoproducao.obs, receita_id=pedidoproducao.receita_id, filial_pdv=pedidoproducao.filial_pdv,
-                                            cadastrado_em=pedidoproducao.cadastrado_em, atualizado_em=pedidoproducao.atualizado_em)
+                                            cadastrado_em=func.now(), atualizado_em=pedidoproducao.atualizado_em)
 
     db.session.add(pedido_bd)
     db.session.commit()

@@ -1,20 +1,10 @@
 from api import ma
 from ..models import pedido_model
 from marshmallow import fields
-from marshmallow.validate import Length, Range, Regexp, ValidationError
-from datetime import datetime
 
 #TODO ** Classe PedidoSchema_Modelo ** este esquema define como os objetos da classe Pedido devem ser convertidos em um formato serializado (como JSON) e vice-versa. Ele fornece uma estrutura clara para lidar com a validação e formatação de dados ao interagir com os modelos.
 #     @author Fabiano Faria
 
-class CustomDateField(fields.Date):
-    def _deserialize(self, value, attr, data, **kwargs):
-        if isinstance(value, datetime):
-            return value.date()  # Se já for um datetime, extrair a parte de data
-        try:
-            return datetime.strptime(value, '%d-%m-%Y').date()
-        except (TypeError, ValueError):
-            raise ValidationError('Not a valid date.')
 class PedidoSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = pedido_model.Pedido
@@ -23,8 +13,8 @@ class PedidoSchema(ma.SQLAlchemyAutoSchema):
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     qtde_pedido = fields.Integer(required=True)
-    data_pedido = CustomDateField(format='%d-%m-%Y')
-    data_entrega = CustomDateField(format='%d-%m-%Y')
+    data_pedido = fields.DateTime(required=False)
+    data_entrega = fields.Date(required=True)
     status = fields.Integer(required=True)
     obs = fields.String(required=True)
     produto_id = fields.Integer(required=False)

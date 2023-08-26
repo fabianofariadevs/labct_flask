@@ -9,7 +9,7 @@ from ..schemas import pedido_schemas
 from ..models import pedido_model
 from api import db, app
 from flask_wtf import FlaskForm
-from wtforms import StringField, HiddenField, BooleanField, SubmitField, SelectField, DateField
+from wtforms import StringField, SubmitField, SelectField, DateField
 from wtforms.validators import DataRequired, ValidationError
 from sqlalchemy.orm import joinedload
 
@@ -19,7 +19,7 @@ from sqlalchemy.orm import joinedload
 class PedidoCForm(FlaskForm):
     qtde_pedido = StringField("Qtde_Pedido", validators=[DataRequired()])
     #data_pedido = DateField("Data_Pedido", format='%Y-%m-%d',validators=[DataRequired()])
-    data_entrega = DateField('Dt_Entrega_limite', format='%Y-%m-%d',validators=[DataRequired()])
+    data_entrega = DateField('Dt_Entrega_limite', format='%Y-%m-%d', validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
     obs = StringField('obs', validators=[DataRequired()])
     produto_id = SelectField('Produto', validators=[DataRequired()])
@@ -167,13 +167,14 @@ def deletar_pedido(id):
 # TODO ** Classe PedidoPForm_Modelo ** ESSA classe recebe os dados do formulario.
 #     @author Fabiano Faria
 
+
 # TODO métodos para PEDIDOS DE PRODUCAO
 class PedidoPForm(FlaskForm):
-    data_pedido = DateField("Data_Pedido", format='%d/%m/%Y',validators=[DataRequired()])
-    data_entrega = DateField('Data_Entrega', format='%d/%m/%Y', validators=[DataRequired()])
+    #data_pedido = DateField("Data_Pedido", format='%d/%m/%Y',validators=[DataRequired()])
+    data_entrega = DateField('Data_Entrega', format='%Y-%m-%d', validators=[DataRequired()])
     qtde_pedido = StringField("Qtde_Pedido", validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
-    obs = StringField('Obs')
+    obs = StringField('Obs', validators=[DataRequired()])
     receita_id = SelectField('Receita', validators=[DataRequired()])
     filial_pdv = SelectField('Filial_pdv', validators=[DataRequired()])
 
@@ -194,15 +195,13 @@ class PedidoPForm(FlaskForm):
     def to_dict(
             self):  # metodo personalizado no seu formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
         return {
-            'data_pedido': self.data_pedido.data,
-            'data_entrega': self.data_entrega.data,
+            'data_entrega': self.data_entrega.data.strftime('%Y-%m-%d'),
             'qtde_pedido': self.qtde_pedido.data,
             'status': self.status.data,
             'obs': self.obs.data,
             'receita_id': self.receita_id.data,
             'filial_pdv': self.filial_pdv.data,
         }
-
 
 @app.route('/pedidoprod/<int:id>/atualizar', methods=['GET', 'POST', 'PUT'])
 def atualizar_pedidoprod(id):
@@ -215,7 +214,7 @@ def atualizar_pedidoprod(id):
         pedidoprod_atualizado = pedido_model.PedidoProducao.query.get(id)
         form.populate_obj(pedidoprod_atualizado)
         pedido_service.atualiza_pedidoprod(pedidoprod, pedidoprod_atualizado)
-        return redirect(url_for("listar_pedidoprod"))
+        return redirect(url_for("listar_pedidosprod"))
 
     return render_template("pedidos/formpedidoprod.html", pedidoprod=pedidoprod, form=form), 400
 
@@ -245,6 +244,13 @@ def visualizar_pedidoprod(id):
         else:
             # Caso o pedido não seja encontrado, retorne uma mensagem de erro
             return render_template('error.html', message='Pedido de Produção não encontrado', status_code=404)
+
+    elif request.method == 'POST':  # método DELETE
+        if request.form.get('_method') == 'DELETE':
+            pedidoprod = pedido_service.listar_pedidoprod_id(id)
+            if pedidoprod:
+                pedido_service.remove_pedidoprod(pedidoprod)
+                return redirect(url_for('listar_pedidosprod'))
 
 
 @app.route('/pedidoprod', methods=['GET'])

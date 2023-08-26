@@ -24,17 +24,16 @@ class PedidoSchema(ma.SQLAlchemyAutoSchema):
     atualizado_em = fields.DateTime(required=False)
 
 
+# TODO ** Classe PedidoProdução Schema_Modelo ** este esquema define como os objetos da classe Pedido devem ser convertidos em um formato serializado (como JSON) e vice-versa. Ele fornece uma estrutura clara para lidar com a validação e formatação de dados ao interagir com os modelos.
 class PedidoProducaoSchema(ma.SQLAlchemyAutoSchema):
-    #tipo = EnumField(pedido_model.TipoEnum)
-
     class Meta:
         model = pedido_model.PedidoProducao
         load_instance = True
-        fields = ("id", "data_pedido", "data_entrega", "qtde_pedido","status", "obs", "receita_id", "filial_pdv", "cadastrado_em", "atualizado_em")
+        fields = ("id", "data_pedido", "data_entrega", "qtde_pedido", "status", "obs", "receita_id", "filial_pdv", "cadastrado_em", "atualizado_em")
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
-    data_pedido = fields.DateTime(required=True)
-    data_entrega = fields.DateTime(required=True)
+    data_pedido = fields.DateTime(required=False)
+    data_entrega = fields.Date(required=True)
     qtde_pedido = fields.Integer(required=True)
     status = fields.Integer(required=False)
     obs = fields.String(required=True)
