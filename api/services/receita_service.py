@@ -32,8 +32,6 @@ def atualiza_receita(receita_anterior, receita_novo):
     receita_anterior.cadastrado_em = receita_novo.cadastrado_em
     receita_anterior.atualizado_em = receita_novo.atualizado_em
     receita_anterior.produto_id = receita_novo.produto_id
-   # receita_anterior.filial = receita_novo.filial
-    #receita_anterior.pedidoprod = receita_novo.pedidoprod
 
     db.session.commit()
 

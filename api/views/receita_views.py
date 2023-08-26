@@ -18,7 +18,7 @@ class ReceitaForm(FlaskForm):
     departamento = StringField('Departamento', validators=[DataRequired()])
     rend_kg = FloatField('Rend_kg', validators=[DataRequired()])
     rend_unid = FloatField('Rend_unid', validators=[DataRequired()])
-    validade = DateField('Validade', format='%d/%m/%Y', validators=[DataRequired()])
+    validade = DateField('Validade', format='%Y-%m-%d', validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
 #    atualizado_em = DateField('atualizado_em', format='%d/%m/%Y')
     produto_id = SelectField('Produtos', validators=[DataRequired()])
@@ -47,13 +47,9 @@ class ReceitaForm(FlaskForm):
             'departamento': self.departamento.data,
             'rend_kg': self.rend_kg.data,
             'rend_unid': self.rend_unid.data,
-            'validade': self.validade.data,
+            'validade': self.validade.data.strftime('%Y-%m-%d'),
             'status': self.status.data,
-           # 'cadastrado_em': self.cadastrado_em.data,
-         #   'atualizado_em': self.atualizado_em.data,
             'produto_id': self.produto_id.data,
-         #   'filial': self.filial.data,
-         #   'pedidoprod': self.pedidoprod.data,
         }
 
 @app.route('/receitas/formulario', methods=['GET', 'POST'])

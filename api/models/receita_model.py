@@ -3,6 +3,8 @@ from ..models import produtoMp_model
 from datetime import datetime
 from sqlalchemy import func
 
+# TODO ** Classe Receita dbModel, responsavel por definir e criar o Banco de dados com as migrations flask db.
+
 class Receita(db.Model):
     __tablename__ = "receita"
     __table_args__ = {"extend_existing": True}
@@ -12,7 +14,7 @@ class Receita(db.Model):
     departamento = db.Column(db.String(50), nullable=False)
     rend_kg = db.Column(db.Float, nullable=False)
     rend_unid = db.Column(db.Float, nullable=False)
-    validade = db.Column(db.Date(), nullable=False)
+    validade = db.Column(db.Date, nullable=False)
     status = db.Column(db.Integer, default=1, nullable=True)
     cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())

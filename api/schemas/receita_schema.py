@@ -18,10 +18,10 @@ class ReceitaSchema(ma.SQLAlchemyAutoSchema):
     rend_kg = fields.Float(required=True)
     rend_unid = fields.Float(required=True)
     validade = fields.Date(required=True)
-    status = fields.Integer(required=True)
+    status = fields.Integer(required=False)
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
-    produto_id = fields.String(required=False)
+    produto_id = fields.Integer(required=False)
    # filial = fields.String(required=False)
    # pedidoprod = fields.String(required=False)
 
