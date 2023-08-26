@@ -1,14 +1,18 @@
 from sqlalchemy import func
 from ..models import pedido_model
 from api import db
-from datetime import datetime
+from datetime import datetime, date
+
 
 #TODO ** CRUD ** ESSAS funções fornecem operações básicas de criação, leitura, atualização e remoção (CRUD) para os registros da tabela pedido no banco de dados.
 #       @author Fabiano Faria
 def cadastrar_pedido(pedido):
     # TODO a função cadastrar_pedido recebe um objeto pedido como argumento e cria uma instância do modelo pedido com os valores do objeto fornecido. Em seguida, adiciona a instância ao banco de dados usando db.session.add() e faz o commit das alterações usando db.session.commit(). Por fim, retorna a instância do pedido cadastrado.
+    # Convertendo as datas para o formato padrão (%Y-%m-%d)
+    data_pedido_formatada = datetime.strftime(pedido.data_pedido, '%Y-%m-%d')
+    data_entrega_formatada = date.strftime(pedido.data_entrega, '%Y-%m-%d')
 
-    pedido_bd = pedido_model.Pedido(qtde_pedido=pedido.qtde_pedido, data_pedido=func.now(), data_entrega=pedido.data_entrega,
+    pedido_bd = pedido_model.Pedido(qtde_pedido=pedido.qtde_pedido, data_pedido=data_pedido_formatada, data_entrega=data_entrega_formatada,
                                     status=pedido.status, obs=pedido.obs, cadastrado_em=func.now(), atualizado_em=pedido.atualizado_em, produto_id=pedido.produto_id,
                                     fornecedor_id=pedido.fornecedor_id, filial_pdv=pedido.filial_pdv)
 

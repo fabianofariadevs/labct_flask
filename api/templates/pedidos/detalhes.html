@@ -57,9 +57,9 @@
                             <i class="fw-bold text-secondary"> Detalhes Pedido de Compra : </i>(id: {{pedido.id}})
                             <i class="breadcrumb-item active fw-bold text-dark"> {{pedido.produto_id}}</i>
                           </div>
-                          <form id="delete-form" action="#" method="post">
+                          <form id="delete-form" action="{{ url_for('visualizar_pedido', id=pedido.id, _method='POST') }}" method="post">
                               <input type="hidden" name="_method" value="DELETE">
-                              <button class="btn btn-danger" type="submit" title="Excluir Pedido"  onclick="return confirm('Deseja excluir o Pedido {{pedido.produto_id}} ?')">Excluir Pedido</button>
+                              <button class="btn btn-danger" type="submit" title="Excluir Pedido de Compra"  onclick="return confirm('Deseja excluir o Pedido {{pedido.produto_id}} ?')">Excluir Pedido</button>
                           </form>
                       </div>
                       <hr>

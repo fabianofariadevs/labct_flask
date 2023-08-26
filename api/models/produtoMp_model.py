@@ -17,7 +17,7 @@ class Produto(db.Model):
     quantidade = db.Column(db.Integer, nullable=True, default=0)
     compra_unid = db.Column(db.Integer, nullable=False)
     peso_pcte = db.Column(db.Numeric(5, 3), nullable=False)
-    valor = db.Column(db.Numeric , nullable=False)
+    valor = db.Column(db.Numeric, nullable=False)
     custo_ultima_compra = db.Column(db.Float, nullable=False)
     whatsapp = db.Column(db.String(50), nullable=False)
     qrcode = db.Column(db.String(50), nullable=False)

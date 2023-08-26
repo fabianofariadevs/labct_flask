@@ -17,8 +17,8 @@
     <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
         <div>
             <span class="badge rounded text-bg-secondary">Total Pedidos: {{ total_clientes }}</span>
-            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success">{{ total_produtos_ativos }} ativo/pendentes</span>
-            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_produtos_inativos }} inativo/realizados</span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success">{{total_produtos_ativos}} ativo/pendentes</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_produtos_inativos}} inativo/realizados</span>
         </div>
         <div>
         <a href="#" class="btn btn-secondary"  title="Produtos Margem Mínima">ReEstoque</a>
@@ -63,9 +63,6 @@
                                    <a href="{{ url_for('visualizar_produto', id=produto.id, _method='GET') }}" class="btn btn-info" role="button">Detalhes</a>
                                    <a href="{{ url_for('atualizar_produto', id=produto.id, _method='PUT') }}" title="Atualizar Produto">
                                        <i class="fa-solid fa-pen m-1"></i>
-                                   </a>
-                                   <a href="{{ url_for('deletar_produto', id=produto.id) }}" methods='DELETE' title="Excluir Produto" onclick="return confirm('Deseja excluir o Produto?')">
-                                       <i class="fa-solid fa-trash m-1"></i>
                                    </a>
                                 </td>
                             </tr>
