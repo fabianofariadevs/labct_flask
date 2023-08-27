@@ -15,12 +15,9 @@
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_filiais_inativos}} inativo </span>
         </div>
         <div>
-            <form action="{{ url_for('gerar_pdf', id=clientev.id) }}" method="POST">
-                <button type="submit">Gerar PDF</button>
-                <a href="{{ url_for('listar_clientes') }}" class="btn btn-outline-dark" title="Voltar para lista de Clientes">Voltar para lista de Clientes</a>
-                <a href="#" class="btn btn-secondary" title="Consultar Filiais">Consultar Filiais</a>
-                <a href="#" class="btn btn-secondary" title="Ver Histórico de Ações">Histórico Serviços</a>
-            </form>
+            <a href="{{ url_for('listar_clientes') }}" class="btn btn-outline-dark" title="Voltar para lista de Clientes">Voltar para lista de Clientes</a>
+            <a href="#" class="btn btn-secondary" title="Consultar Filiais">Consultar Filiais</a>
+            <a href="#" class="btn btn-secondary" title="Ver Histórico de Ações">Histórico Serviços</a>
         </div>
     </div>
     <div class="card-body">
@@ -78,7 +75,7 @@
                             <div>
                                 <form id="delete-form" action="{{ url_for('visualizar_cliente', id=clientev.id, _method='POST') }}" method="post">
                                     <input type="hidden" name="_method" value="DELETE">
-                                        <a href="{{ url_for('imprimir_cliente', id=clientev.id, _method='GET') }}" id=btn-imprimir" class="btn btn-outline-secondary" title="Imprimir Cliente">Imprimir</a>
+                                        <a href="{{ url_for('imprimir_cliente', id=clientev.id, _method='GET') }}" class="btn btn-outline-secondary" title="Imprimir Cliente">Imprimir</a>
                                         <a href="{{ url_for('atualizar_cliente', id=clientev.id, _method='PUT') }}" class="btn btn-outline-primary" title="Atualizar Cliente">Atualizar</a>
                                     <button class="btn btn-danger" type="submit" title="Excluir Cliente e suas ligações"  onclick="return confirm('Deseja excluir o Cliente {{clientev.nome}}?')"> Excluir  </button>
                                 </form>

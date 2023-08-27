@@ -15,6 +15,7 @@ from ..models.filial_pdv_model import Filial
 from..views.filial_pdv_views import FilialForm
 
 from io import BytesIO
+from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from flask import send_file

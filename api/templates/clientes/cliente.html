@@ -24,15 +24,16 @@
             <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{ total_clientes_ativos }} ativo</span>
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_clientes_inativos }} inativo </span>
         </div>
-             <form action="{{ url_for('buscar_cliente') }}" method="get" class="form-inline">
-                <div class="form-group">
-                    <input type="text" class="form-control" name="nome_cliente" placeholder="Buscar por nome">
-                </div>
-             </form>
-                 <button type="submit" class="btn btn-secondary">Buscar</button>
-             <form action="#" method="GET">
-                <button type="submit" class="btn btn-secondary" title="Imprimir">Imprimir</button>
-             </form>
+        <div class="input-group-append">
+            <form action="{{ url_for('buscar_cliente') }}" method="GET">
+                <span class="input-group-text">
+                    <input type="text" class="form-control" name="nome_cliente" placeholder="Buscar Cliente por Nome ">
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </span>
+            </form>
+        </div>
              <a href="{{ url_for('exibir_formulario') }}" methods='POST' class="btn btn-primary" rel="tooltip" title="Cadastrar Cliente">Cadastrar Cliente</a>
     </div>
     <div class="card-body">

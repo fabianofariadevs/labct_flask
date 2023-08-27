@@ -1,6 +1,5 @@
 from flask import request, render_template, redirect, url_for, flash
 from flask_wtf import FlaskForm
-from reportlab.lib.styles import getSampleStyleSheet
 from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired, ValidationError
 from api import app
@@ -13,38 +12,6 @@ from sqlalchemy.orm import joinedload
 from ..paginate import paginate
 from ..models.filial_pdv_model import Filial
 from..views.filial_pdv_views import FilialForm
-
-from io import BytesIO
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
-from flask import send_file
-
-@app.route('/clientes/<int:id>/gerar-pdf', methods=['POST'])
-def gerar_pdf(id):
-    cliente = cliente_service.listar_cliente_id(id)
-
-    if cliente:
-        # Renderize o template detalhes_cliente_pdf.html
-        html = render_template('clientes/pdf_cliente.html', cliente_data=cliente)
-
-        # Crie um “buffer” para armazenar o PDF em memória
-        buffer = BytesIO()
-
-        # Crie o PDF usando a biblioteca reportlab
-        doc = SimpleDocTemplate(buffer, pagesize=letter)
-        story = []
-
-        styles = getSampleStyleSheet()
-        paragraph = Paragraph(html, style=styles["BodyText"])
-        story.append(paragraph)
-
-        doc.build(story)
-
-        # Retorne o PDF gerado como um arquivo para ‘download’
-        buffer.seek(0)
-        return send_file(buffer, attachment_filename='detalhes_cliente.pdf', as_attachment=True)
-    else:
-        return render_template("clientes/cliente_nao_encontrado.html"), 404
 
 # TODO: Classe ClienteForm_Modelo ** ESSA classe recebe os dados do formulario.
 #     @author Fabiano Faria

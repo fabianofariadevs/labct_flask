@@ -1,8 +1,7 @@
 {% extends 'basedetalhes.html' %}
 {% block conteudo %}
 
-<!-- Arquivo views Consultar_Cliente_HTML, apresenta a função buscar_cliente para consultas de cliente.html listar
-#     @author Fabiano Faria -->
+<!--  @author Fabiano Faria -->
 <div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-rigth:2px; margin-top:12px;">
     <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
         <div class="card-header justify-content-between">
@@ -38,36 +37,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% if resultados %}
-                        {% for cliente in resultados %}
                         <tr>
-                            <td>{{cliente.id}}</td>
-                            <td>{{cliente.nome}}</td>
-                            <td>{{cliente.endereco}}</td>
-                            <td>{{cliente.bairro}}</td>
-                            <td>{{cliente.cidade}}</td>
-                            <td>{{cliente.estado}}</td>
-                            <td>{{cliente.telefone}}</td>
-                            <td>{{cliente.email}}</td>
-                            <td>{{cliente.responsavel}}</td>
-                            <td>{{cliente.whatsapp}}</td>
-                            <td>{{cliente.cnpj}}</td>
-                            <td>{{cliente.status}}</td>
-                            <td>{{cliente.filial_id}}</td>
-                            <td>{{cliente.cadastrado_em}}</td>
-                            <td>{{cliente.atualizado_em}}</td>
-                            <td>
-                              <form action="{{ url_for('imprimir_cliente', id=cliente.id) }}" method="GET">
-                                <button type="submit">Imprimir</button>
-                              </form>
-                            </td>
+                            <td>{{cliente_data.id}}</td>
+                            <td>{{cliente_data.nome}}</td>
+                            <td>{{cliente_data.endereco}}</td>
+                            <td>{{cliente_data.bairro}}</td>
+                            <td>{{cliente_data.cidade}}</td>
+                            <td>{{cliente_data.estado}}</td>
+                            <td>{{cliente_data.telefone}}</td>
+                            <td>{{cliente_data.email}}</td>
+                            <td>{{cliente_data.responsavel}}</td>
+                            <td>{{cliente_data.whatsapp}}</td>
+                            <td>{{cliente_data.cnpj}}</td>
+                            <td>{{cliente_data.status}}</td>
+                            <td>{{cliente_data.filial_id}}</td>
+                            <td>{{cliente_data.cadastrado_em}}</td>
+                            <td>{{cliente_data.atualizado_em}}</td>
+
                         </tr>
-                        {% endfor %}
-                        {% else %}
-                        <tr>
-                            <td colspan="10">Nenhum resultado encontrado.</td>
-                        </tr>
-                        {% endif %}
+
                 </tbody>
             </table>
         </div>
