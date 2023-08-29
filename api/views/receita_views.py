@@ -1,30 +1,29 @@
 from api import app, db
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, BooleanField, SubmitField, SelectField
+from wtforms import StringField, DateField, BooleanField, SubmitField, SelectField, FloatField
 from wtforms.validators import DataRequired, ValidationError
 from ..schemas import receita_schema
 from flask import request, make_response, jsonify, render_template, redirect, url_for, flash
 from ..services import receita_service
-from ..models import receita_model
+from ..models.receita_model import Receita
 from ..paginate import paginate
 from ..models.produtoMp_model import Produto
 from ..models.filial_pdv_model import Filial
-from ..models.pedido_model import PedidoProducao
+from sqlalchemy.orm import joinedload
 
 
 class ReceitaForm(FlaskForm):
-    descricao_mix = StringField("descricao_mix", validators=[DataRequired()])
-    modo_preparo = StringField("modo_preparo", validators=[DataRequired()])
-    departamento = StringField('departamento', validators=[DataRequired()])
-    rend_kg = StringField('rend_kg', validators=[DataRequired()])
-    rend_unid = StringField('rend_unid', validators=[DataRequired()])
-    validade = DateField('validade', format='%d/%m/%Y', validators=[DataRequired()])
+    descricao_mix = StringField("Descricao_mix", validators=[DataRequired()])
+    modo_preparo = StringField("Modo_preparo", validators=[DataRequired()])
+    departamento = StringField('Departamento', validators=[DataRequired()])
+    rend_kg = FloatField('Rend_kg', validators=[DataRequired()])
+    rend_unid = FloatField('Rend_unid', validators=[DataRequired()])
+    validade = DateField('Validade', format='%Y-%m-%d', validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
-    cadastrado_em = DateField('cadastrado_em', format='%d/%m/%Y')
-    atualizado_em = DateField('atualizado_em', format='%d/%m/%Y')
-    produto_id = StringField('produtos', validators=[DataRequired()])
-    filial = StringField('Filial Relacionada', validators=[DataRequired()])
-    pedidoprod = StringField('Pedido de Produção', validators=[DataRequired()])
+#    atualizado_em = DateField('atualizado_em', format='%d/%m/%Y')
+    produto_id = SelectField('Produtos', validators=[DataRequired()])
+    #filial = StringField('Filial Relacionada', validators=[DataRequired()])
+   # pedidoprod = StringField('Pedido de Produção', validators=[DataRequired()])
 
     submit = SubmitField('Cadastrar')
 
@@ -32,10 +31,8 @@ class ReceitaForm(FlaskForm):
         super(ReceitaForm, self).__init__(*args, **kwargs)
         self.produto_id.choices = [(produto.id, produto.nome)
                                    for produto in Produto.query.all()]
-        self.filial.choices = [(filial.id, filial.nome)
-                               for filial in Filial.query.all()]
-        self.pedidoprod.choices = [(pedidoproducao.id, pedidoproducao.receitas)
-                               for pedidoproducao in PedidoProducao.query.all()]
+      #  self.filial.choices = [(filial.id, filial.nome) for filial in Filial.query.all()]
+       # self.pedidoprod.choices = [(pedidoproducao.id, pedidoproducao.receitas) for pedidoproducao in PedidoProducao.query.all()]
 
         self.status.choices = self.get_status_choices()
 
@@ -50,15 +47,10 @@ class ReceitaForm(FlaskForm):
             'departamento': self.departamento.data,
             'rend_kg': self.rend_kg.data,
             'rend_unid': self.rend_unid.data,
-            'validade': self.validade.data,
+            'validade': self.validade.data.strftime('%Y-%m-%d'),
             'status': self.status.data,
-            'cadastrado_em': self.cadastrado_em.data,
-            'atualizado_em': self.atualizado_em.data,
             'produto_id': self.produto_id.data,
-            'filial': self.filial.data,
-            'pedidoprod': self.pedidoprod.data,
         }
-
 
 @app.route('/receitas/formulario', methods=['GET', 'POST'])
 def exibir_formreceita():
@@ -66,8 +58,8 @@ def exibir_formreceita():
     if request.method == 'POST' and form.validate_on_submit():
         try:
             form_data = form.to_dict()
-            receitaform = receita_schema.ReceitaSchema().load(form_data)
-            receita_bd = receita_service.cadastrar_receita(receitaform)
+            receita = receita_schema.ReceitaSchema().load(form_data)
+            receita_bd = receita_service.cadastrar_receita(receita)
             receita_data = receita_schema.ReceitaSchema().dump(receita_bd)
             flash("Receita cadastrada com sucesso!")
             # Redirecionar para a página de listagem de Receitas após o cadastro bem-sucedido
@@ -75,6 +67,19 @@ def exibir_formreceita():
         except ValidationError as error:
             flash("Erro ao cadastrar Receita")
     return render_template('receitas/formreceita.html', form=form)
+
+
+@app.route('/receitas/buscar', methods=['GET'])
+def buscar_receita():
+    nome_receita = request.args.get('nome_receita', '').strip().lower()
+    resultados = None
+
+    if nome_receita:
+        # Lógica para buscar a receita por nome
+        receitas = receita_service.listar_receitas()
+        resultados = [receita for receita in receitas if nome_receita in receita.descricao_mix.lower()]
+
+    return render_template("receitas/consultar_receita.html", resultados=resultados, nome_receita=nome_receita)
 
 
 @app.route('/receitas', methods=['GET'])
@@ -96,11 +101,11 @@ def atualizar_receita(id):
     atuareceita = receita_service.listar_receita_id(id)
     if not atuareceita:
         #return "Cliente não encontrado", 404
-        return render_template("receitas/receita.html", error_message="Receita não encontrado"), 404
+        return render_template("receitas/receita.html", error_message="Receita não encontrada"), 404
 
     form = ReceitaForm(obj=atuareceita)
-    if request.method == 'POST' and form.validate_on_submit():
-        receita_atualizado = receita_model.Receita.query.get(id)
+    if form.validate_on_submit():
+        receita_atualizado = Receita.query.get(id)
         form.populate_obj(receita_atualizado)
         receita_service.atualiza_receita(atuareceita, receita_atualizado)
         return redirect(url_for("listar_receitas"))
@@ -135,7 +140,7 @@ def visualizar_receita(id):
             return render_template('receitas/detalhes.html', receita=receita_data)
         else:
             # Caso o pedido não seja encontrado, retorne uma mensagem de erro
-            return render_template('error.html', message='receita não encontrada', status_code=404)
+            return render_template('error.html', message='Receita não encontrada', status_code=404)
 
     elif request.method == 'POST':  # método DELETE
         if request.form.get('_method') == 'DELETE':

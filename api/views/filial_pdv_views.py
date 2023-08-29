@@ -64,7 +64,7 @@ def atualizar_filial(id):
     if not filial:
         return render_template("filiais/filial.html", error_message="Filial não encontrada"), 404
     form = FilialForm(obj=filial)
-    if form.validate_on_submit():
+    if request.method == 'POST' and form.validate_on_submit():
         filial_atualizada = filial_pdv_model.Filial.query.get(id)
         form.populate_obj(filial_atualizada)
         filial_pdv_service.atualiza_filial_pdv(filial, filial_atualizada)
@@ -103,8 +103,19 @@ def exibir_formfilial():
             flash("Erro ao cadastrar filial: " + str(error.messages))
     return render_template('filiais/formfilial.html', form=form)###3
 
+@app.route('/filiais/buscar', methods=['GET'])
+def buscar_filial():
+    nome_filial = request.args.get('nome_filial', '').strip().lower()
+    resultados = None
 
-@app.route('/filiais/<int:id>', methods=['GET', 'PUT'])
+    if nome_filial:
+        # Lógica para buscar a filial por nome
+        filiais = filial_pdv_service.listar_filial_pdv()
+        resultados = [filial for filial in filiais if nome_filial in filial.nome.lower()]
+
+    return render_template("filiais/consultar_filial.html", resultados=resultados, nome_filial=nome_filial)
+
+@app.route('/filiais/<int:id>', methods=['GET', 'POST'])
 def visualizar_filial(id):
     if request.method == 'GET':
         filial = filial_pdv_service.listar_filial_pdv_id(id)
@@ -134,12 +145,12 @@ def visualizar_filial(id):
             # Caso o pedido não seja encontrado, retorne uma mensagem de erro
             return render_template('error.html', message='Pedido não encontrado', status_code=404)
 
- #   elif request.method == 'POST':  # método DELETE
-  #      if request.form.get('_method') == 'DELETE':
-   #         filial = filial_pdv_service.listar_filial_pdv_id(id)
-    #        if filial:
-     #           filial_pdv_service.remove_filial_pdv(filial)
-      #          return redirect(url_for('listar_filiais'))
+    elif request.method == 'POST':  # método DELETE
+        if request.form.get('_method') == 'DELETE':
+            filial = filial_pdv_service.listar_filial_pdv_id(id)
+            if filial:
+                filial_pdv_service.remove_filial_pdv(filial)
+                return redirect(url_for('listar_filiais'))
 
 @app.route('/filiais/<int:id>', methods=['DELETE'])
 def deletar_filial(id):

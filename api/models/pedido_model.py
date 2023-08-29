@@ -1,25 +1,19 @@
 from api import db
-
 from datetime import datetime
 from sqlalchemy import func
 
-
-#TODO ** Classe Pedido dbModel, responsavel por definir e criar o Banco de dados com as migrations flask db.
+# TODO ** Classe Pedido dbModel, responsavel por definir e criar o Banco de dados com as migrations flask db.
 #       @author Fabiano Faria
-
-#class TipoEnum(enum.Enum):
- #   compra = 1
-  #  producao = 2
 
 class Pedido(db.Model):
     __tablename__ = "pedido"
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     qtde_pedido = db.Column(db.Integer, nullable=True, default=0)
-    data_pedido = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
-    data_entrega = db.Column(db.DateTime, nullable=False)
+    data_pedido = db.Column(db.DateTime, nullable=False, default=func.now)
+    data_entrega = db.Column(db.Date, nullable=False)
     status = db.Column(db.Integer, default=1, nullable=True)
-    obs = db.Column(db.Text(), nullable=True)
+    obs = db.Column(db.Text(), nullable=False)
     #tipo = db.Column(db.Enum(TipoEnum), nullable=False)  # tipo
     cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
@@ -41,16 +35,15 @@ class PedidoProducao(db.Model):
     __tablename__ = "pedidoproducao"
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    data_pedido = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
-    data_entrega = db.Column(db.Date(), nullable=False)
+    data_pedido = db.Column(db.DateTime, nullable=False, default=func.now)
+    data_entrega = db.Column(db.Date, nullable=False)
     qtde_pedido = db.Column(db.Integer, nullable=True, default=0)
     status = db.Column(db.Integer, default=1, nullable=True)
     obs = db.Column(db.Text(), nullable=True)
-    #tipo = db.Column(db.Enum(TipoEnum), nullable=False)  # tipo
     cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
-    #TODO relacionamento de N/1 com Receita / pedidos
+    #TODO relacionamento de N/1 com Receita / pedidos PRODUÇÃO
     receita_id = db.Column(db.Integer, db.ForeignKey('receita.id'), nullable=True)
     receitas = db.relationship("Receita", back_populates="pedidosprod", foreign_keys=[receita_id])
 

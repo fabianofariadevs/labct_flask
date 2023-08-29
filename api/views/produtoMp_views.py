@@ -32,9 +32,11 @@ class ProdutoForm(FlaskForm):
         self.fornecedor_id.choices = [(fornecedor.id, fornecedor.nome)
                                       for fornecedor in Fornecedor.query.all()]
         self.status.choices = self.get_status_choices()
+
     @staticmethod
     def get_status_choices():
         return [("1", 'Ativo'), ("0", 'Inativo')]
+
     def to_dict(self):  # metodo personalizado no seu formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
         return {
             'nome': self.nome.data,
@@ -50,11 +52,32 @@ class ProdutoForm(FlaskForm):
             'fornecedor_id': self.fornecedor_id.data,
             #'cliente_id': self.cliente_id.data,
         }
-@app.route('/produtos/<int:id>', methods=['GET'])
-def visualizar_produto(id):
-    produto = produtoMp_service.listar_produto_id(id)
-    return render_template('produtos/detalhes.html', produto=produto)
 
+@app.route('/produtos/buscar', methods=['GET'])
+def buscar_produto():
+    nome_produto = request.args.get('nome_produto', '').strip().lower()
+    resultados = None
+
+    if nome_produto:
+        # Lógica para buscar o produto por nome
+        produtos = produtoMp_service.listar_produtos()
+        resultados = [produto for produto in produtos if nome_produto in produto.nome.lower()]
+
+    return render_template("produtos/consultar_produtos.html", resultados=resultados, nome_produto=nome_produto)
+
+
+@app.route('/produtos/<int:id>', methods=['GET', 'POST'])
+def visualizar_produto(id):
+    if request.method == 'GET':
+        produto = produtoMp_service.listar_produto_id(id)
+        return render_template('produtos/detalhes.html', produto=produto)
+
+    elif request.method == 'POST':  # método DELETE
+        if request.form.get('_method') == 'DELETE':
+            produto = produtoMp_service.listar_produto_id(id)
+            if produto:
+                produtoMp_service.remove_produto(produto)
+                return redirect(url_for('listar_produtos'))
 
 @app.route('/produtos', methods=['GET'])
 def listar_produtos():
@@ -62,8 +85,8 @@ def listar_produtos():
         produtos = produtoMp_service.listar_produtos()
         produtos_data = produtoMp_schema.ProdutoMpSchema().dump(produtos, many=True)
         total_produtos = len(produtos)
-        total_produtos_ativos = len([produto for produto in produtos if produto.status == True])
-        total_produtos_inativos = len([produto for produto in produtos if produto.status == False])
+        total_produtos_ativos = len([produto for produto in produtos if produto.status == 1])
+        total_produtos_inativos = len([produto for produto in produtos if produto.status == 0])
 
         return render_template("produtos/produtos.html", produtos=produtos_data, total_produtos=total_produtos,
                            total_produtos_ativos=total_produtos_ativos,
@@ -74,8 +97,8 @@ def listar_produtos():
 def atualizar_produto(id):
     produto = produtoMp_service.listar_produto_id(id)
     if not produto:
-        #return "Cliente não encontrado", 404
         return render_template("produtos/produtos.html", error_message="Cliente não encontrado"), 404
+
     form = ProdutoForm(obj=produto)
     if form.validate_on_submit():
         produto_atualizado = Produto.query.get(id)
@@ -86,7 +109,7 @@ def atualizar_produto(id):
     return render_template("produtos/formproduto.html", produto=produto, form=form), 400
 
 
-@app.route('/produtos/formulario', methods=['GET', 'POST', 'PUT'])
+@app.route('/produtos/formulario', methods=['GET', 'POST'])
 def exibir_formproduto():
     form = ProdutoForm()
     if request.method == 'POST' and form.validate_on_submit():
@@ -95,11 +118,11 @@ def exibir_formproduto():
             produto = produtoMp_schema.ProdutoMpSchema().load(form_data)
             produto_bd = produtoMp_service.cadastrar_produto(produto)
             produto_data = produtoMp_schema.ProdutoMpSchema().dump(produto_bd)
-            return redirect(url_for("produtos/listar_produtos", form=form, form_data=form_data, produto=produto_bd))
+            flash("Produto cadastrado com sucesso!")
+            return redirect(url_for("listar_produtos"))
         except ValidationError as error:
-            return render_template('produtos/formproduto.html', form=form, error_message=error.messages)
-    else:
-        return render_template('produtos/formproduto.html', form=form, error_message=form.errors)
+            flash("Erro ao cadastrar Produto")
+    return render_template('produtos/formproduto.html', form=form)
 
 @app.route('/produtos/<int:id>/deletar', methods=['DELETE'])
 def deletar_produto(id):
@@ -228,7 +251,6 @@ def compra():
     return redirect(url_for('produtos'))
 
 
-
 @app.route('/inventario/<int:id>', methods=['GET'])
 def visualizar_produo(id):
     produto = produtoMp_service.listar_produto_id(id)
@@ -245,3 +267,7 @@ def listar_inventario():
 
         return render_template("estoque/inventario.html", inventarios=inventarios_data, total_produtos=total_inventarios)
 
+@app.route('/produtos/atencao', methods=['GET'])
+def atencao_vencendo():
+
+    return render_template("produtos/atencao.html")

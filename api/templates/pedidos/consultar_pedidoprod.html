@@ -1,0 +1,66 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<!-- Arquivo views Consultar_Pedidoprod_HTML, apresenta a função buscar_nome_pedidoprod para consultas
+# @author Fabiano Faria -->
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-rigth:2px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+		    <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+            <span class="badge rounded text-bg-secondary">TOTAL de Pedidos Produção: {{total_pedidosprod}}</span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_pedidosprod_ativos}} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_pedidosprod_inativos}} inativo </span>
+        </div>
+        <a href="{{ url_for('listar_pedidosprod') }}" class="btn btn-outline-dark" title="Voltar para lista de Pedidos Produção">Voltar para lista de Pedidos Produção</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive" style="width:100%">
+            <table class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Data_pedido</th>
+                        <th>Qtde_pedido</th>
+                        <th>Receita</th>
+                        <th>Filial</th>
+                        <th>Data_entrega</th>
+                        <th>Obs</th>
+                        <th>Status</th>
+                        <th>Cadastrado_em</th>
+                        <th>Atualizado_em</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if resultados %}
+                        {% for pedidoprod in resultados %}
+                        <tr>
+                           <td>{{pedidoprod.id}}</td>
+                            <td>{{pedidoprod.data_pedido}}</td>
+                            <td>{{pedidoprod.qtde_pedido}}</td>
+                            <td>{{pedidoprod.receita_id}}</td>
+                            <td>{{pedidoprod.filial_pdv}}</td>
+                            <td>{{pedidoprod.data_entrega}}</td>
+                            <td>{{pedidoprod.obs}}</td>
+                            <td>{{pedidoprod.status}}</td>
+                            <td>{{pedidoprod.cadastrado_em}}</td>
+                            <td>{{pedidoprod.atualizado_em}}</td>
+                            <td>
+                              <form action="#" method="GET">
+                                <button type="submit">Imprimir</button>
+                              </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="10">Nenhum resultado encontrado.</td>
+                        </tr>
+                        {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}

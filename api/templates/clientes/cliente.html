@@ -12,7 +12,7 @@
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            Relação de Clientes
+            Relação de <b>Clientes</b>
         </li>
     </ol>
 </nav>
@@ -24,15 +24,16 @@
             <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{ total_clientes_ativos }} ativo</span>
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_clientes_inativos }} inativo </span>
         </div>
-             <form action="{{ url_for('buscar_cliente') }}" method="get" class="form-inline">
-                <div class="form-group">
-                    <input type="text" class="form-control" name="nome_cliente" placeholder="Buscar por nome">
-                </div>
-             </form>
-                 <button type="submit" class="btn btn-secondary">Buscar</button>
-             <form action="#" method="GET">
-                <button type="submit" class="btn btn-secondary" title="Imprimir">Imprimir</button>
-             </form>
+        <div class="input-group-append">
+            <form action="{{ url_for('buscar_cliente') }}" method="GET">
+                <span class="input-group-text">
+                    <input type="text" class="form-control" name="nome_cliente" placeholder="Buscar Cliente por Nome ">
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </span>
+            </form>
+        </div>
              <a href="{{ url_for('exibir_formulario') }}" methods='POST' class="btn btn-primary" rel="tooltip" title="Cadastrar Cliente">Cadastrar Cliente</a>
     </div>
     <div class="card-body">
@@ -54,14 +55,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                    {% for cliente in paginated_result["items"] %}
+                                {% for cliente in paginated_result["items"] %}
                             <tr>
                                 <td>{{cliente.id}}</td>
                                 <td>{{cliente.nome}}</td>
                                 <td>{{cliente.endereco}}</td>
                                 <td>{{cliente.bairro}}</td>
                                 <td>{{cliente.cidade}}</td>
-                                <td class="text-center"><a href="#" data-toggle="modal" data-target="#consultaModal">{{cliente.filial_id}}</a></td>
+                                <td class="text-center">{{ total_clientes }}</td>
                                 <td class="text-center">
                                     {% if cliente.status == 1 %}
                                     <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
@@ -87,7 +88,6 @@
               {% if paginated_result.next %}
                 <a href="{{ url_for('listar_clientes', page=paginated_result.next) }}">Próximo</a>
               {% endif %}
-
         </div>
     </div>
 </div>

@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from ..models import receita_model
 from api import db
 
@@ -6,8 +7,8 @@ from api import db
 
 def cadastrar_receita(receita):
     receita_bd = receita_model.Receita(descricao_mix=receita.descricao_mix, modo_preparo=receita.modo_preparo, departamento=receita.departamento, rend_kg=receita.rend_kg,
-                                       rend_unid=receita.rend_unid, validade=receita.validade, status=receita.status, cadastrado_em=receita.cadastrado_em,
-                                       atualizado_em=receita.atualizado_em, produto_id=receita.produto_id, filial=receita.filial, pedidoprod=receita.pedidoprod)
+                                       rend_unid=receita.rend_unid, validade=receita.validade, status=receita.status, cadastrado_em=func.now(),
+                                       atualizado_em=receita.atualizado_em, produto_id=receita.produto_id)
     db.session.add(receita_bd)
     db.session.commit()
     return receita_bd
@@ -31,8 +32,6 @@ def atualiza_receita(receita_anterior, receita_novo):
     receita_anterior.cadastrado_em = receita_novo.cadastrado_em
     receita_anterior.atualizado_em = receita_novo.atualizado_em
     receita_anterior.produto_id = receita_novo.produto_id
-    receita_anterior.filial = receita_novo.filial
-    receita_anterior.pedidoprod = receita_novo.pedidoprod
 
     db.session.commit()
 

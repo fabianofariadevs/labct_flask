@@ -2,10 +2,8 @@ from api import ma
 from ..models import cliente_model, usuario_model
 from marshmallow import fields
 
-
 #TODO ** Classe Clienteschema_odelo ** este esquema define como os objetos da classe Cliente devem ser convertidos em um formato serializado (como JSON) e vice-versa. Ele fornece uma estrutura clara para lidar com a validação e formatação de dados ao interagir com os modelo
 #     @author Fabiano Faria
-
 class ClienteSchema(ma.SQLAlchemyAutoSchema):
     # TODO Especifica o modelo associado ao esquema, que é cliente_model.Cliente
 

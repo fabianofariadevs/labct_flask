@@ -73,16 +73,16 @@ class Pedido:
     @property
     def filial_pdv(self):
         return self.__filial_pdv
-    @filial_pdv.setter
 
+    @filial_pdv.setter
     def filial_pdv(self, filial_pdv):
         self.__filial_pdv = filial_pdv
 
     @property
     def cadastrado_em(self):
         return self.__cadastrado_em
-    @cadastrado_em.setter
 
+    @cadastrado_em.setter
     def cadastrado_em(self, cadastrado_em):
         self.__cadastrado_em = cadastrado_em
 

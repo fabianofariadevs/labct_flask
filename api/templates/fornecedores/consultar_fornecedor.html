@@ -1,0 +1,76 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<!-- Arquivo views Consultar_Fornecedor, apresenta a função buscar_fornecedor para consultas
+# @author Fabiano Faria -->
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-rigth:2px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+		    <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+            <span class="badge rounded text-bg-secondary">Total Fornecedores: {{ total_fornecedores }} </span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success">{{ total_fornecedores_ativos }} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_fornecedores_inativos }} inativo</span>
+        </div>
+            <a href="{{ url_for('listar_fornecedores') }}" class="btn btn-outline-dark" title="Voltar para lista de Fornecedores">Voltar para lista de Fornecedores</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive" style="width:100%">
+            <table class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                            <th>Nome</th>
+                            <th>Prod.Oferta</th>
+                            <th>Endereco</th>
+                            <th>Bairro</th>
+                            <th>Cidade</th>
+                            <th>Estado</th>
+                            <th>Telefone</th>
+                            <th>Email</th>
+                            <th>Responsavel</th>
+                            <th>Whatsapp</th>
+                            <th>Cnpj</th>
+                            <th>Status</th>
+                            <th>Cadastrado_em</th>
+                            <th>Atualizado_em</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if resultados %}
+                        {% for fornecedor in resultados %}
+                        <tr>
+                             <td>{{fornecedor.id}}</td>
+                            <td>{{fornecedor.nome}}</td>
+                            <td>{{fornecedor.descricao}}</td>
+                            <td>{{fornecedor.endereco}}</td>
+                            <td>{{fornecedor.bairro}}</td>
+                            <td>{{fornecedor.cidade}}</td>
+                            <td>{{fornecedor.estado}}</td>
+                            <td>{{fornecedor.telefone}}</td>
+                            <td>{{fornecedor.email}}</td>
+                            <td>{{fornecedor.responsavel}}</td>
+                            <td>{{fornecedor.whatsapp}}</td>
+                            <td>{{fornecedor.cnpj}}</td>
+                            <td>{{fornecedor.status}}</td>
+                            <td>{{fornecedor.cadastrado_em}}</td>
+                            <td>{{fornecedor.atualizado_em}}</td>
+                            <td>
+                              <form action="#" method="GET">
+                                <button type="submit">Imprimir</button>
+                              </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="10">Nenhum resultado encontrado.</td>
+                        </tr>
+                        {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}

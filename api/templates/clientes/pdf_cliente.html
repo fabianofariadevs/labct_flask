@@ -1,0 +1,65 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<!--  @author Fabiano Faria -->
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-rigth:2px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+		    <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+            <span class="badge rounded text-bg-secondary">FILIAIS Vinculadas / Total: {{total_filiais}}</span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_filiais_ativos}} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_filiais_inativos}} inativo </span>
+        </div>
+
+    </div>
+    <div class="card-body">
+        <div class="table-responsive" style="width:100%">
+            <table class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Nome</th>
+                        <th>Endereco</th>
+                        <th>Bairro</th>
+                        <th>Cidade</th>
+                        <th>Estado</th>
+                        <th>Telefone</th>
+                        <th>Email</th>
+                        <th>Responsavel</th>
+                        <th>Whatsapp</th>
+                        <th>Cnpj</th>
+                        <th>Status</th>
+                        <th>Filial_pdv</th>
+                        <th>Cadastrado_em</th>
+                        <th>Atualizado_em</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>{{cliente_data.id}}</td>
+                            <td>{{cliente_data.nome}}</td>
+                            <td>{{cliente_data.endereco}}</td>
+                            <td>{{cliente_data.bairro}}</td>
+                            <td>{{cliente_data.cidade}}</td>
+                            <td>{{cliente_data.estado}}</td>
+                            <td>{{cliente_data.telefone}}</td>
+                            <td>{{cliente_data.email}}</td>
+                            <td>{{cliente_data.responsavel}}</td>
+                            <td>{{cliente_data.whatsapp}}</td>
+                            <td>{{cliente_data.cnpj}}</td>
+                            <td>{{cliente_data.status}}</td>
+                            <td>{{cliente_data.filial_id}}</td>
+                            <td>{{cliente_data.cadastrado_em}}</td>
+                            <td>{{cliente_data.atualizado_em}}</td>
+
+                        </tr>
+
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+
+{% endblock conteudo %}

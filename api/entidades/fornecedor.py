@@ -1,29 +1,20 @@
 class Fornecedor:
-    def __init__(self, produto_id, descricao, nome, cnpj, endereco, bairro, cidade, estado, email, whatsapp, telefone, responsavel, status, cadastrado_em, atualizado_em):
-        self.__produto_id = produto_id
-        self.__descricao = descricao
+    def __init__(self, nome, descricao, endereco, bairro, cidade, estado, telefone, email, responsavel, whatsapp, cnpj, status, cadastrado_em, atualizado_em):
+
         self.__nome = nome
-        self.__cnpj = cnpj
+        self.__descricao = descricao
         self.__endereco = endereco
         self.__bairro = bairro
         self.__cidade = cidade
         self.__estado = estado
-        self.__email = email
-        self.__whatsapp = whatsapp
         self.__telefone = telefone
+        self.__email = email
         self.__responsavel = responsavel
+        self.__whatsapp = whatsapp
+        self.__cnpj = cnpj
         self.__status = status
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
-
-
-    @property
-    def produto_id(self):
-        return self.__produto_id
-
-    @produto_id.setter
-    def produto_id(self, produto_id):
-        self.__produto_id = produto_id
 
     @property
     def descricao(self):

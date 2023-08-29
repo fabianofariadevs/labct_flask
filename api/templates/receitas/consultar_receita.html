@@ -1,0 +1,72 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<!-- Arquivo views Consultar_Receita_HTML, apresenta a função buscar_receita para consultas de receita.html e listar
+# @author Fabiano Faria -->
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-rigth:2px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+		    <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+            <span class="badge rounded text-bg-secondary">RECEITAS Vinculadas / Total: {{total_receitas}}</span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_receitas_ativos}} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_receitas_inativos}} inativo </span>
+        </div>
+            <a href="{{ url_for('listar_receitas') }}" class="btn btn-outline-dark" title="Voltar para lista de Receitas">Voltar para lista de Receitas</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive" style="width:100%">
+            <table class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Descriçao_mix</th>
+                        <th>Modo_preparo</th>
+                        <th>Departamento</th>
+                        <th class="text-center">Rend_kg</th>
+                        <th class="text-center">Rend_unid</th>
+                        <th>Validade</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Pedidos_Prod</th>
+                        <th class="text-center">Produtos</th>
+                        <th>Filiais</th>
+                        <th class="text-center">Cadastrado_em</th>
+                        <th class="text-center">Atualizado_em</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if resultados %}
+                        {% for receita in resultados %}
+                        <tr>
+                            <td>{{receita.id}}</td>
+                            <td>{{receita.descricao_mix}}</td>
+                            <td>{{receita.modo_preparo}}</td>
+                            <td>{{receita.departamento}}</td>
+                            <td class="text-center">{{receita.rend_kg}}</td>
+                            <td class="text-center">{{receita.rend_unid}}</td>
+                            <td>{{receita.validade}}</td>
+                            <td class="text-center">{{receita.status}}</td>
+                            <td class="text-center">{{receita.pedidosprod}}</td>
+                            <td class="text-center">{{receita.produtos}}</td>
+                            <td>{{receita.filiais}}</td>
+                            <td class="text-center">{{receita.cadastrado_em}}</td>
+                            <td class="text-center">{{receita.atualizado_em}}</td>
+                            <td>
+                              <form action="{{ url_for('imprimir_receita', id=receita.id) }}" method="GET">
+                                <button type="submit">Imprimir</button>
+                              </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="10">Nenhum resultado encontrado.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}

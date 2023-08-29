@@ -10,14 +10,13 @@
              <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
                 <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
             </a>
-            <span class="badge rounded text-bg-secondary">FILIAIS Vinculadas / Total: {{ total_produtos }}</span>
-            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{ total_produtos_ativos }} ativo</span>
-            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_produtos_inativos }} inativo </span>
+             <span class="badge rounded text-bg-secondary">Total Fornecedores: {{ total_fornecedores }} </span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success">{{ total_fornecedores_ativos }} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_fornecedores_inativos }} inativo</span>
         </div>
         <div>
         <a href="{{ url_for('listar_fornecedores') }}" class="btn btn-outline-dark" title="Voltar para lista de Fornecedores">Voltar para lista de Fornecedores</a>
         <a href="{{ url_for('atualizar_fornecedor', id=fornecedor.id, _method='PUT') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Fornecedor">Atualizar Fornecedor</a>
-        <a href="{{ url_for('deletar_fornecedor', id=fornecedor.id) }}" methods='DELETE' onclick="return confirm('Deseja excluir o Fornecedor?')" class="btn btn-danger" title="Excluir Fornecedor">Excluir Fornecedor</a>
         </div>
     </div>
     <div class="card-body">
@@ -26,24 +25,23 @@
                   <thead>
                         <tr>
                             <th>id</th>
-                            <th>nome</th>
-                            <th>descricao</th>
-                            <th>endereco</th>
-                            <th>bairro</th>
-                            <th>cidade</th>
-                            <th>estado</th>
-                            <th>telefone</th>
-                            <th>email</th>
-                            <th>responsavel</th>
-                            <th>whatsapp</th>
-                            <th>cnpj</th>
-                            <th>status</th>
-                            <th>cadastrado_em</th>
-                            <th>atualizado_em</th>
-                            <th>produto_id</th>
+                            <th>Nome</th>
+                            <th>Prod.Oferta</th>
+                            <th>Endereco</th>
+                            <th>Bairro</th>
+                            <th>Cidade</th>
+                            <th>Estado</th>
+                            <th>Telefone</th>
+                            <th>Email</th>
+                            <th>Responsavel</th>
+                            <th>Whatsapp</th>
+                            <th>Cnpj</th>
+                            <th>Status</th>
+                            <th>Cadastrado_em</th>
+                            <th>Atualizado_em</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                  </thead>
+                  <tbody>
                         <tr>
                             <td>{{fornecedor.id}}</td>
                             <td>{{fornecedor.nome}}</td>
@@ -60,14 +58,18 @@
                             <td>{{fornecedor.status}}</td>
                             <td>{{fornecedor.cadastrado_em}}</td>
                             <td>{{fornecedor.atualizado_em}}</td>
-                            <td>{{fornecedor.produto_id}}</td>
-                    </tbody>
+                        </tr>
+                  </tbody>
                   <div class="row">
                       <div class="card-header border-0 d-flex justify-content-between align-items-center">
                           <div>
                             <i class="fw-bold text-secondary"> Detalhes Fornecedor : </i>(id: {{fornecedor.id}})
                             <i class="breadcrumb-item active fw-bold text-dark"> {{fornecedor.nome}}</i>
                           </div>
+                           <form id="delete-form" action="{{ url_for('visualizar_fornecedor', id=fornecedor.id, _method='POST') }}" method="post">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button class="btn btn-danger" type="submit" title="Excluir Fornecedor e seus produtos"  onclick="return confirm('Deseja excluir o Fornecedor {{fornecedor.nome}}?')">Excluir Fornecedor</button>
+                            </form>
                       </div>
                       <hr>
                   </div>

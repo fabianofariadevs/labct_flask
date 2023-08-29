@@ -12,7 +12,7 @@
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            Relação de Pedidos de PRODUÇÃO das Filiais_PDV
+            Relação de Pedidos de <b>PRODUÇÃO</b> das Filiais_PDV
         </li>
     </ol>
 </nav>
@@ -24,11 +24,21 @@
             <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_pedidosprod_ativos}} ativo</span>
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_pedidosprod_inativos}} inativo </span>
         </div>
-         <div>
-             <a href="#" class="btn btn-secondary" title="Imprimir">Imprimir Relação</a>
-             <a href="#" class="btn btn-secondary" title="Consultar Pedidos">Consultar</a>
-             <a href="{{ url_for('fazer_pedido_producao') }}" methods='POST' class="btn btn-primary" rel="tooltip" title="Cadastrar Pedido Produção">Cadastrar Pedido Produção</a>
-         </div>
+        <div class="input-group-append">
+            <form action="{{ url_for('buscar_pedidoprod') }}" method="GET">
+                <span class="input-group-text">
+                    <input type="text" class="form-control" name="nome_pedido" placeholder="Buscar Pedido Prod. Nome">
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </span>
+            </form>
+        </div>
+        <div class="input-group-append">
+             <a href="{{ url_for('historicopedidosprod') }}" class="btn btn-secondary" title="Ver Histórico"><b>Histórico</b></a>
+             <a href="#" class="btn btn-secondary" title="Imprimir">Imprimir/Exportar</a>
+             <a href="{{ url_for('fazer_pedido_producao') }}" methods='POST' class="btn btn-primary" rel="tooltip" title="Cadastrar Pedido Produção">Cadastrar Pedido</a>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive" style="width:100%">
@@ -42,7 +52,7 @@
                                 <th>Data_pedido</th>
                                 <th>Receita</th>
                                 <th>Qtde_pedido</th>
-                                <th>data_entrega</th>
+                                <th>Data_entrega</th>
                                 <th>Filial</th>
                                 <th>Status</th>
                                 <th class="text-center">Acões</th>

@@ -1,0 +1,156 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<!--* * #TODO Arquivo p views Historico_dos_Pedidos_Compras_e_Produção_HTML,
+#     @author Fabiano Faria -->
+
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+		    <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+        </div>
+        <div>
+            <a href="{{ url_for('listar_pedidosprod') }}" class="btn btn-outline-dark" title="Voltar para lista de Pedidos">Voltar para lista de Pedidos Produção</a>
+        </div>
+    </div>
+
+
+    <div class="card-body">
+
+            <!--inicio DA div detalhes abaixo tabela detalhes cliente-->
+        <div class="row card-header bg-secondary">
+             <!--INICIO ULTIMOS PEDIDOS DE COMPRAS FILIAIS/FABRICA-->
+             <div class="col-sm-12 col-md-6 col-xl-6 mb-4">
+                <div class="card border-0 shadow-sm  h-100">
+                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-4">
+                        <h6 class="fw-bold text-secondary">
+                            Histórico Pedidos de Compras
+                        </h6>
+
+                        <a href="{{ url_for('fazer_pedido_compra') }}" class="fs-5" rel="tooltip" title="Cadastrar Pedido de Compras">
+                            <i class="fa-solid fa-circle-plus"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if pedidos %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Produtos</th>
+                                        <th class="text-center">Data</th>
+                                        <th class="text-center">Filiais</th>
+                                        <th class="text-center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pedido in pedidos %}
+                                    <tr>
+                                        <td>
+                                            <span>
+                                                {% if pedido.status == 1 %}
+                                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                {% else %}
+                                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                {% endif %}
+                                            </span>
+                                            {{pedido.produto_id}}
+                                        </td>
+                                        <td class="text-center">
+                                            {{pedido.data_pedido}}
+                                        </td>
+                                        <td class="text-center">
+                                            {{pedido.filial_pdv}}
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{{ url_for('atualizar_pedido', id=pedido.id, _method='PUT') }}" rel="tooltip" title="Editar">
+                                                <i class="fa-solid fa-pen m-1"></i>
+                                            </a>
+                                            <a href="#" rel="tooltip" title="Deletar">
+                                                <i class="fa-solid fa-trash m-1"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            Nenhum Pedido de Compra cadastrado para exibir!
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+             </div>
+             <!--INICIO ULTIMOS PEDIDOS DE PRODUÇÃO FILIAIS/FABRICA-->
+             <div class="col-sm-12 col-md-6 col-xl-6 mb-4">
+                <div class="card border-0 shadow-sm  h-100">
+                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-4">
+                        <h6 class="fw-bold text-secondary">
+                            Histórico Pedidos de Produção
+                        </h6>
+                        <a href="{{ url_for('fazer_pedido_producao') }}" class="fs-5" rel="tooltip" title="Cadastrar Pedido de Produção">
+                            <i class="fa-solid fa-circle-plus"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if pedidosprod %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Receitas</th>
+                                        <th class="text-center">Data</th>
+                                        <th class="text-center">Filiais</th>
+                                        <th class="text-center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pedido in pedidosprod %}
+                                    <tr>
+                                        <td>
+                                            <span>
+                                                {% if pedido.status == 1 %}
+                                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                {% else %}
+                                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                {% endif %}
+                                            </span>
+                                            {{pedido.receita_id}}
+                                        </td>
+                                        <td class="text-center">
+                                            {{pedido.data_pedido}}
+                                        </td>
+                                         <td class="text-center">
+                                            {{pedido.filial_pdv}}
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{{ url_for('atualizar_pedidoprod', id=pedido.id, _method='PUT') }}" rel="tooltip" title="Editar">
+                                                <i class="fa-solid fa-pen m-1"></i>
+                                            </a>
+                                            <a href="#" rel="tooltip" title="Deletar">
+                                                <i class="fa-solid fa-trash m-1"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            Nenhum Pedido de Produção cadastrado para exibir!
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+             </div>
+            <!--FIM ULTIMOS PEDIDOS DE PRODUÇÃO-->
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}
+

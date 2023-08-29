@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from ..models import pedido_model
 from api import db
 
@@ -5,8 +6,9 @@ from api import db
 #       @author Fabiano Faria
 def cadastrar_pedido(pedido):
     # TODO a função cadastrar_pedido recebe um objeto pedido como argumento e cria uma instância do modelo pedido com os valores do objeto fornecido. Em seguida, adiciona a instância ao banco de dados usando db.session.add() e faz o commit das alterações usando db.session.commit(). Por fim, retorna a instância do pedido cadastrado.
-    pedido_bd = pedido_model.Pedido(qtde_pedido=pedido.qtde_pedido, data_pedido=pedido.data_pedido, data_entrega=pedido.data_entrega,
-                                    status=pedido.status, obs=pedido.obs, cadastrado_em=pedido.cadastrado_em, atualizado_em=pedido.atualizado_em, produto_id=pedido.produto_id,
+
+    pedido_bd = pedido_model.Pedido(qtde_pedido=pedido.qtde_pedido, data_pedido=func.now(), data_entrega=pedido.data_entrega,
+                                    status=pedido.status, obs=pedido.obs, cadastrado_em=func.now(), atualizado_em=pedido.atualizado_em, produto_id=pedido.produto_id,
                                     fornecedor_id=pedido.fornecedor_id, filial_pdv=pedido.filial_pdv)
 
     db.session.add(pedido_bd)
@@ -31,7 +33,6 @@ def atualiza_pedido(pedido_anterior, pedido_novo):
     pedido_anterior.data_entrega = pedido_novo.data_entrega
     pedido_anterior.status = pedido_novo.status
     pedido_anterior.obs = pedido_novo.obs
-    #pedido_anterior.tipo = pedido_novo.tipo
     pedido_anterior.produto_id = pedido_novo.produto_id
     pedido_anterior.fornecedor_id = pedido_novo.fornecedor_id
     pedido_anterior.filial_pdv = pedido_novo.filial_pdv
@@ -49,9 +50,9 @@ def remove_pedido(pedido):
 #TODO service para PEDIDO DE PRODUCAO**
 def cadastrar_pedidoprod(pedidoproducao):
     # TODO a função cadastrar_pedido recebe um objeto pedido como argumento e cria uma instância do modelo pedido com os valores do objeto fornecido. Em seguida, adiciona a instância ao banco de dados usando db.session.add() e faz o commit das alterações usando db.session.commit(). Por fim, retorna a instância do pedido cadastrado.
-    pedido_bd = pedido_model.PedidoProducao(data_pedido=pedidoproducao.data_pedido, data_entrega=pedidoproducao.data_entrega, qtde_pedido=pedidoproducao.qtde_pedido,
+    pedido_bd = pedido_model.PedidoProducao(data_pedido=func.now(), data_entrega=pedidoproducao.data_entrega, qtde_pedido=pedidoproducao.qtde_pedido,
                                             status=pedidoproducao.status, obs=pedidoproducao.obs, receita_id=pedidoproducao.receita_id, filial_pdv=pedidoproducao.filial_pdv,
-                                            cadastrado_em=pedidoproducao.cadastrado_em, atualizado_em=pedidoproducao.atualizado_em)
+                                            cadastrado_em=func.now(), atualizado_em=pedidoproducao.atualizado_em)
 
     db.session.add(pedido_bd)
     db.session.commit()

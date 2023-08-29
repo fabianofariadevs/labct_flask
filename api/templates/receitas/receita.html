@@ -9,7 +9,7 @@
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            Relação de Receitas
+            Relaçóes de <b>Receitas</b>
         </li>
     </ol>
 </nav>
@@ -20,11 +20,17 @@
             <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_receitas_ativos}} ativo</span>
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_receitas_inativos}} inativo </span>
         </div>
-        <div>
-        <a href="#" class="btn btn-secondary" title="Ver Histórico">Histórico</a>
-        <a href="#" class="btn btn-secondary" title="Consultar Receitas">Consultar</a>
-        <a href="{{ url_for('exibir_formreceita') }}" methods='POST' class="btn btn-primary" rel="tooltip" title="Cadastrar Receita">Cadastrar Receita</a>
+        <div class="input-group-append">
+            <form action="{{ url_for('buscar_receita') }}" method="GET">
+                <span class="input-group-text">
+                    <input type="text" class="form-control" name="nome_receita" placeholder="Buscar Receita por Nome ">
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </span>
+            </form>
         </div>
+            <a href="{{ url_for('exibir_formreceita') }}" methods='POST' class="btn btn-primary" rel="tooltip" title="Cadastrar Receita">Cadastrar Receita</a>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -35,13 +41,13 @@
                         <thead>
                             <tr>
                                 <th class="text-center">id</th>
-                                <th>descricao_mix</th>
-                                <th>modo_preparo</th>
-                                <th class="text-right">departamento</th>
-                                <th class="text-right">rend_kg</th>
-                                <th>rend_unid</th>
-                                <th class="text-right">status</th>
-                                <th class="text-center">Acões</th>
+                                <th>Descriçao_mix</th>
+                                <th>Modo_preparo</th>
+                                <th class="text-right">Departamento</th>
+                                <th class="text-right">Rend_kg</th>
+                                <th>Rend_unid</th>
+                                <th class="text-right">Status</th>
+                                <th class="text-center">Ações</th>
                             </tr>
                         </thead>
                         <tbody>

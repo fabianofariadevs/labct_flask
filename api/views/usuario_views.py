@@ -1,23 +1,20 @@
+from sqlalchemy.orm import joinedload
 from api import app, api, db
 from ..schemas import usuario_schema
-from flask import request, make_response, jsonify, render_template, url_for, redirect
-from ..models import usuario_model
-from ..entidades import usuario
+from flask import request, make_response, jsonify, render_template, url_for, redirect, flash
 from ..services import usuario_service
 from ..models.cliente_model import Cliente
 from ..models.usuario_model import Funcao, Usuario
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, BooleanField, SubmitField, SelectField
+from wtforms import StringField, IntegerField, BooleanField, SubmitField, SelectField, DateField
 from wtforms.validators import DataRequired, ValidationError
-import uuid
 
 class UsuarioForm(FlaskForm):
     nome = StringField("Nome", validators=[DataRequired()])
-    email = StringField('email', validators=[DataRequired()])
-    senha = StringField('senha', validators=[DataRequired()])
-    is_admin = BooleanField('is_admin', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired()])
+    senha = StringField('Senha', validators=[DataRequired()])
+    is_admin = SelectField('Administrador', choices=[("1", 'Sim'), ("0", 'Não')], validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
-
     empresa = SelectField('Empresa/Cliente', validators=[DataRequired()])
     cargo = SelectField('Função', validators=[DataRequired()])
 
@@ -27,10 +24,15 @@ class UsuarioForm(FlaskForm):
         super(UsuarioForm, self).__init__(*args, **kwargs)
         self.empresa.choices = [(cliente.id, cliente.nome)
                                 for cliente in Cliente.query.all()]
-
         self.cargo.choices = [(funcao.id, funcao.nome)
                               for funcao in Funcao.query.all()]
+
+        self.is_admin.choices = self.get_is_admin_choices()
         self.status.choices = self.get_status_choices()
+
+    @staticmethod
+    def get_is_admin_choices():
+        return [("1", 'Sim'), ("0", 'Não')]
 
     @staticmethod
     def get_status_choices():
@@ -47,14 +49,26 @@ class UsuarioForm(FlaskForm):
             'empresa': self.empresa.data,
             'cargo': self.cargo.data,
         }
+
 @app.route('/usuarios', methods=['GET'])
 def listar_usuarios():
     if request.method == 'GET':
-        usuarios = usuario_service.listar_usuarios()
-        usuarios_data = usuario_schema.UsuarioSchema().dump(usuarios, many=True)
+        usuarios = Usuario.query.options(joinedload("cliente")).options(joinedload("funcao")).all()
+        usuarios_data = []
+        for usuario in usuarios:
+            usuario_dict = usuario_schema.UsuarioSchema().dump(usuario)
+
+            cliente = usuario.cliente
+            usuario_dict['cliente'] = cliente.nome if cliente else None
+
+            funcao = usuario.funcao
+            usuario_dict['funcao'] = funcao.nome if funcao else None
+
+            usuarios_data.append(usuario_dict)
+
         total_usuarios = len(usuarios)
-        total_usuarios_ativos = len([produto for produto in usuarios if produto.status == True])
-        total_usuarios_inativos = len([produto for produto in usuarios if produto.status == False])
+        total_usuarios_ativos = len([usuario for usuario in usuarios if usuario.status == 1])
+        total_usuarios_inativos = len([usuario for usuario in usuarios if usuario.status == 0])
 
         return render_template("usuarios/usuarios.html", usuarios=usuarios_data, total_usuarios=total_usuarios,
                                total_usuarios_ativos=total_usuarios_ativos,
@@ -65,8 +79,8 @@ def listar_usuarios():
 def atualizar_usuario(id):
     usuario = usuario_service.listar_usuario_id(id)
     if not usuario:
-        #return "Cliente não encontrado", 404
         return render_template("usuarios/usuarios.html", error_message="Usuario não encontrado"), 404
+
     form = UsuarioForm(obj=usuario)
     if form.validate_on_submit():
         usuario_atualizado = Usuario.query.get(id)
@@ -76,8 +90,7 @@ def atualizar_usuario(id):
 
     return render_template("usuarios/formusuario.html", usuario=usuario, form=form), 400
 
-
-@app.route('/usuarios/formulario', methods=['GET', 'POST', 'PUT'])
+@app.route('/usuarios/formulario', methods=['GET', 'POST'])
 def exibir_formusuario():
     form = UsuarioForm()
     if request.method == 'POST' and form.validate_on_submit():
@@ -86,17 +99,51 @@ def exibir_formusuario():
             usuario = usuario_schema.UsuarioSchema().load(form_data)
             usuario_bd = usuario_service.cadastrar_usuario(usuario)
             usuario_data = usuario_schema.UsuarioSchema().dump(usuario_bd)
-            return redirect(url_for("usuarios/listar_usuarios", form=form, form_data=form_data, usuario=usuario_bd))
+            flash("Usuário cadastrado com sucesso!")
+            return redirect(url_for("listar_usuarios"))
         except ValidationError as error:
-            return render_template('usuarios/formusuario.html', form=form, error_message=error.messages)
-    else:
-        return render_template('usuarios/formusuario.html', form=form, error_message=form.errors)
+            flash("Erro ao cadastrar Usuário")
+    return render_template('usuarios/formusuario.html', form=form)
 
+@app.route('/usuarios/buscar', methods=['GET'])
+def buscar_usuario():
+    nome_usuario = request.args.get('nome_usuario', '').strip().lower()
+    resultados = None
 
-@app.route('/usuarios/<int:id>', methods=['GET', 'PUT'])
+    if nome_usuario:
+        # Lógica para buscar o usuario por nome
+        usuarios = usuario_service.listar_usuarios()
+        resultados = [usuario for usuario in usuarios if nome_usuario in usuario.nome.lower()]
+
+    return render_template("usuarios/consultar_usuario.html", resultados=resultados, nome_usuario=nome_usuario)
+
+@app.route('/usuarios/<int:id>', methods=['GET', 'POST'])
 def visualizar_usuario(id):
-    usuario = usuario_service.listar_usuario_id(id)
-    return render_template('usuarios/detalhes.html', usuario=usuario)
+    #usuario = usuario_service.listar_usuario_id(id)
+    #return render_template('usuarios/detalhes.html', usuario=usuario)
+    if request.method == 'GET':
+        usuario = usuario_service.listar_usuario_id(id)
+        if usuario:
+            usuario_data = usuario_schema.UsuarioSchema().dump(usuario)
+
+            # Obter o nome da Empresa Contratante
+            cliente = usuario.cliente
+            usuario_data['empresa'] = cliente.nome if cliente else 'Empresa não encontrada'
+
+            funcao = usuario.funcao
+            usuario_data['cargo'] = funcao.nome if funcao else 'Função não encontrada'
+
+            return render_template('usuarios/detalhes.html', usuario=usuario_data)
+        else:
+            # Caso o usuario não seja encontrado, retorne uma mensagem de erro
+            return render_template('error.html', message='Usuário não encontrado', status_code=404)
+
+    elif request.method == 'POST':  # método DELETE
+        if request.form.get('_method') == 'DELETE':
+            usuario = usuario_service.listar_usuario_id(id)
+            if usuario:
+                usuario_service.deletar_usuario(usuario)
+                return redirect(url_for('listar_usuarios'))
 
 
 @app.route('/usuarios/<int:id>/deletar', methods=['DELETE'])

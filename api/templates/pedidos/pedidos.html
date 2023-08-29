@@ -12,7 +12,7 @@
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            Relação de Pedidos de COMPRAS Filiais_PDV
+            Relação de Pedidos de <b>COMPRAS</b> das <b>Filiais_PDV</b>
         </li>
     </ol>
 </nav>
@@ -20,16 +20,25 @@
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
         <div>
-            <span class="badge rounded text-bg-secondary">Total Pedidos: {{total_pedidos}}</span>
+            <span class="badge rounded text-bg-secondary">Total Pedidos Compras: {{total_pedidos}}</span>
             <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_pedidos_ativos}} ativo</span>
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_pedidos_inativos}} inativo </span>
         </div>
-         <div>
-             <a href="{{ url_for('historicocompras') }}" class="btn btn-secondary" title="Ver Histórico">Histórico</a>
-             <a href="#" class="btn btn-secondary" title="Imprimir">Imprimir Relação</a>
-             <a href="#" class="btn btn-secondary" title="Consultar Pedidos">Consultar</a>
+        <div class="input-group-append">
+            <form action="{{ url_for('buscar_pedido') }}" method="GET">
+                <span class="input-group-text">
+                    <input type="text" class="form-control" name="nome_pedido" placeholder="Buscar Pedido por Nome">
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </span>
+            </form>
+        </div>
+        <div class="input-group-append">
+             <a href="{{ url_for('historicopedidos') }}" class="btn btn-secondary" title="Ver Histórico"><b>Histórico</b></a>
+             <a href="#" class="btn btn-secondary" title="Imprimir">Imprimir/Exportar</a>
              <a href="{{ url_for('fazer_pedido_compra') }}" methods='POST' class="btn btn-primary" rel="tooltip" title="Cadastrar Pedido">Cadastrar Pedido</a>
-         </div>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive" style="width:100%">
@@ -73,7 +82,6 @@
                                 </td>
                             </tr>
                         {% endfor %}
-
                         </tbody>
                     </table>
             {% endif %}

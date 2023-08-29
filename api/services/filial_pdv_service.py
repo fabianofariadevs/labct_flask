@@ -1,3 +1,5 @@
+from sqlalchemy import func
+
 from ..models import filial_pdv_model
 from api import db
 
@@ -6,7 +8,7 @@ from api import db
 
 def cadastrar_filial_pdv(filial):
     filial_bd = filial_pdv_model.Filial(nome=filial.nome, endereco=filial.endereco, bairro=filial.bairro, cidade=filial.cidade, estado=filial.estado,
-                                        responsavel=filial.responsavel, whatsapp=filial.whatsapp, cnpj=filial.cnpj, status=filial.status, cadastrado_em=filial.cadastrado_em,
+                                        responsavel=filial.responsavel, whatsapp=filial.whatsapp, cnpj=filial.cnpj, status=filial.status, cadastrado_em=func.now(),
                                         atualizado_em=filial.atualizado_em, receitas=filial.receitas, pedidos=filial.pedidos, clientes=filial.clientes, pedidosprod=filial.pedidosprod)
 
     db.session.add(filial_bd)
@@ -33,13 +35,13 @@ def atualiza_filial_pdv(filial_pdv_anterior, filial_pdv_novo):
     filial_pdv_anterior.status = filial_pdv_novo.status
     filial_pdv_anterior.cadastrado_em = filial_pdv_novo.cadastrado_em
     filial_pdv_anterior.atualizado_em = filial_pdv_novo.atualizado_em
-    filial_pdv_anterior.receitas = filial_pdv_novo.receitas
-    filial_pdv_anterior.pedidos = filial_pdv_novo.pedidos
+    #filial_pdv_anterior.receitas = filial_pdv_novo.receitas
+    #filial_pdv_anterior.pedidos = filial_pdv_novo.pedidos
     filial_pdv_anterior.clientes = filial_pdv_novo.clientes
-    filial_pdv_anterior.pedidosprod = filial_pdv_novo.pedidosprod
+   # filial_pdv_anterior.pedidosprod = filial_pdv_novo.pedidosprod
 
     db.session.commit()
 
-def remove_filial_pdv(filial_pdv):
-    db.session.delete(filial_pdv)
+def remove_filial_pdv(filial):
+    db.session.delete(filial)
     db.session.commit()

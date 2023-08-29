@@ -1,0 +1,82 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<!-- Arquivo views Consultar_Produtos_HTML, apresenta a função buscar_produto para consultas
+# @author Fabiano Faria -->
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-rigth:2px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+		    <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+            <span class="badge rounded text-bg-secondary">FILIAIS Vinculadas / Total: {{total_filiais}}</span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_filiais_ativos}} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_filiais_inativos}} inativo </span>
+        </div>
+            <a href="{{ url_for('listar_produtos') }}" class="btn btn-outline-dark" title="Voltar para lista de Produtos">Voltar para lista de Produtos</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive" style="width:100%">
+            <table class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Nome</th>
+                        <th>Descricao</th>
+                        <th class="text-center">Qtde</th>
+                        <th class="text-center">Compra_unid</th>
+                        <th class="text-center">Peso_pcte</th>
+                        <th class="text-center">Valor</th>
+                        <th class="text-center">Custo_ultima</th>
+                        <th>Whatsapp</th>
+                        <th>Qrcode</th>
+                        <th class="text-center">Status</th>
+                        <th>Fornecedor</th>
+                        <th>Estoque</th>
+                        <th>Mixproduto</th>
+                        <th>Ped.Compra</th>
+                        <th>Receitas</th>
+                        <th>Cadastrado_em</th>
+                        <th>Atualizado_em</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if resultados %}
+                        {% for produto in resultados %}
+                        <tr>
+                            <td>{{produto.id}}</td>
+                            <td>{{produto.nome}}</td>
+                            <td>{{produto.descricao}}</td>
+                            <td class="text-center">{{produto.quantidade}}</td>
+                            <td class="text-center">{{produto.compra_unid}}</td>
+                            <td class="text-center">{{produto.peso_pcte}}</td>
+                            <td class="text-center">{{produto.valor}}</td>
+                            <td class="text-center">{{produto.custo_ultima_compra}}</td>
+                            <td>{{produto.whatsapp}}</td>
+                            <td>{{produto.qrcode}}</td>
+                            <td class="text-center">{{produto.status}}</td>
+                            <td>{{produto.fornecedor}}</td>
+                            <td>{{produto.estoques_produto}}</td>
+                            <td>{{produto.mixproduto}}</td>
+                            <td>{{produto.pedidos}}</td>
+                            <td>{{produto.receitas_produtos}}</td>
+                            <td>{{produto.cadastrado_em}}</td>
+                            <td>{{produto.atualizado_em}}</td>
+                            <td>
+                              <form action="#" method="GET">
+                                <button type="submit">Imprimir</button>
+                              </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="10">Nenhum resultado encontrado.</td>
+                        </tr>
+                        {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}

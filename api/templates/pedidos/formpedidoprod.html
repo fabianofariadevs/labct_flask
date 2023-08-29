@@ -15,7 +15,7 @@
 </nav>
 <div class="card border-0 shadow-sm">
     <div class="card-header">
-    <h3 class="card-title">{% if pedidoprod %}Atualizar Pedido de Produção{% else %}Cadastrar Pedido de Produção{% endif %}</h3>
+        <h3 class="card-title">{% if pedidoprod %}Atualizar Pedido de Produção{% else %}Cadastrando Novo Pedido de Produção{% endif %}</h3>
     </div>
     <div class="card-body">
         <form method="POST" action="#">
@@ -30,12 +30,6 @@
               {% endfor %}
             <p>
             <div class="row">
-                <div class="col-md-2">
-                    <div class="mb-3">
-                        {{ form.data_pedido.label(class="form-label") }}:
-                        {{ form.data_pedido(class="form-control") }}
-                    </div>
-                </div>
                 <div class="col-md-2">
                     <div class="mb-3">
                         {{ form.data_entrega.label(class="form-label") }}:

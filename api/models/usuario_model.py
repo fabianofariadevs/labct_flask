@@ -3,18 +3,19 @@ from passlib.hash import pbkdf2_sha256
 from datetime import datetime
 from sqlalchemy import func
 
-
+#TODO ** Classe Usuário dbModel, responsavel por definir e criar o Banco de dados com as migrations flask db.
+#       @author Fabiano Faria
 class Usuario(db.Model):
     __tablename__ = "usuario"
     __table_args__ = {"extend_existing": True}
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True,nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     nome = db.Column(db.String(50), nullable=False)
     #empresa = db.Column(db.String(100), nullable=False)#CLIENTE
     email = db.Column(db.String(100), nullable=False)
     senha = db.Column(db.String(255), nullable=False)
-    is_admin = db.Column(db.Boolean)
-    status = db.Column(db.Boolean, nullable=True)
-    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
+    is_admin = db.Column(db.Integer, default=0, nullable=True)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
     api_key = db.Column(db.String(100), nullable=True)
 

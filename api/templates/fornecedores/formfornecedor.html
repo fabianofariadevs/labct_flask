@@ -9,13 +9,13 @@
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            Fornecedores Produtos
+            Cadastro de <b>Fornecedores</b>
         </li>
     </ol>
 </nav>
 <div class="card border-0 shadow-sm">
     <div class="card-header">
-    <h3 class="card-title">{% if fornecedor %}Atualizar Fornecedor {% else %} Cadastrar Fornecedor{% endif %}</h3>
+        <h3 class="card-title">{% if fornecedor %}Atualizar Fornecedor {% else %} Cadastrando Novo Fornecedor para Produto{% endif %}</h3>
     </div>
     <div class="card-body">
         <form method="POST" action="#">
@@ -101,12 +101,7 @@
                     </div>
                 </div>
 
-                 <div class="col-md-3">
-                    <div class="mb-3">
-                        {{ form.produtos.label(class="form-label") }}:
-                        {{ form.produtos(class="form-select") }}
-                    </div>
-                 </div>
+
                 <div class="col-md-2">
                      <div class="mb-3">
                          {{ form.status.label(class="form-label") }}:

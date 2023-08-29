@@ -2,7 +2,7 @@
 {% block conteudo %}
 
 <!--* * #TODO Arquivo p views Detalhes_Usuario_HTML, lista um usuarios e apresenta todos os detalhes do usuario
-#     @author Fabiano Faria -->
+    @author Fabiano Faria -->
 
 <div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-top:12px;">
     <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
@@ -15,10 +15,9 @@
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_usuarios_inativos}} inativo </span>
         </div>
         <div>
-            <a href="{{ url_for('listar_usuarios') }}" class="btn btn-dark" title="Voltar a lista">Voltar para lista de Usuário</a>
+            <a href="{{ url_for('listar_usuarios') }}" class="btn btn-outline-dark" title="Voltar para lista de Usuário">Voltar para lista de Usuário</a>
             <a href="#" class="btn btn-secondary" title="Consultar Usuários">Consultar</a>
             <a href="{{ url_for('atualizar_usuario', id=usuario.id, _method='PUT') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Usuário">Atualizar Usuário</a>
-            <a href="{{ url_for('deletar_usuario', id=usuario.id) }}" methods='DELETE' onclick="return confirm('Deseja excluir o Usuário?')" class="btn btn-danger" title="Excluir Usuário">Excluir Usuário</a>
         </div>
     </div>
     <div class="card-body">
@@ -28,15 +27,15 @@
                         <tr>
                             <th>id</th>
                             <th>Nome</th>
-                            <th>email</th>
-                            <th>senha</th>
-                            <th>is_admin</th>
-                            <th>status</th>
-                            <th>cadastrado_em</th>
-                            <th>atualizado_em</th>
-                            <th>api_key</th>
-                            <th>empresa</th>
-                            <th>cargo</th>
+                            <th>Email</th>
+                            <th>Senha</th>
+                            <th>Empresa</th>
+                            <th>Admin?</th>
+                            <th>Cargo</th>
+                            <th>Status</th>
+                            <th>Api_key</th>
+                            <th>Cadastrado_em</th>
+                            <th>Atualizado_em</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,14 +44,28 @@
                             <td>{{usuario.nome}}</td>
                             <td>{{usuario.email}}</td>
                             <td>{{usuario.senha}}</td>
+                            <td>{{usuario.empresa}}</td>
                             <td>{{usuario.is_admin}}</td>
+                            <td>{{usuario.cargo}}</td>
                             <td>{{usuario.status}}</td>
+                            <td>{{usuario.api_key}}</td>
                             <td>{{usuario.cadastrado_em}}</td>
                             <td>{{usuario.atualizado_em}}</td>
-                            <td>{{usuario.api_key}}</td>
-                            <td>{{usuario.empresa}}</td>
-                            <td>{{usuario.cargo}}</td>
                     </tbody>
+                    <div class="row">
+                        <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fw-bold text-secondary">Detalhes do Usuário :</i> ('id': {{usuario.id}})
+                                <i class="breadcrumb-item active fw-bold text-dark">{{usuario.nome}}</i>
+                            </div>
+                             <form id="delete-form" action="{{ url_for('visualizar_usuario', id=usuario.id, _method='POST') }}" method="post">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button class="btn btn-danger" type="submit" title="Excluir Usuario e suas ligações"  onclick="return confirm('Deseja excluir o Usuário {{usuario.nome}}?')">Excluir Usuário</button>
+                            </form>
+                        </div>
+                        <hr>
+                    </div>
+
               </table>
         </div>
     </div>

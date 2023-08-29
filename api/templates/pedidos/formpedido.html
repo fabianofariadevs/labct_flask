@@ -3,7 +3,7 @@
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item">
+        <li class="breadcrumb-item" style="font-size: 11px">
          <a href="#">
                 Admin
          </a>
@@ -15,7 +15,7 @@
 </nav>
 <div class="card border-0 shadow-sm">
     <div class="card-header">
-    <h3 class="card-title">{% if pedido %}Atualizar Pedido de Compras{% else %}Cadastrar Pedido de Compras{% endif %}</h3>
+        <h3 class="card-title">{% if pedido %}Atualizar Pedido de Compras{% else %}Cadastrando Novo Pedido de Compras{% endif %}</h3>
     </div>
     <div class="card-body">
         <form method="POST" action="#">
@@ -30,12 +30,7 @@
             {% endfor %}
             <p>
             <div class="row">
-                <div class="col-md-2">
-                    <div class="mb-3">
-                        {{ form.data_pedido.label(class="form-label") }}:
-                        {{ form.data_pedido(class="form-control") }}
-                    </div>
-                </div>
+
                 <div class="col-md-2">
                     <div class="mb-3">
                         {{ form.data_entrega.label(class="form-label") }}:
@@ -44,8 +39,8 @@
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
-                        {{ form.receita_id.label(class="form-label") }}:
-                        {{ form.receita_id(class="form-select") }}
+                        {{ form.produto_id.label(class="form-label") }}:
+                        {{ form.produto_id(class="form-select") }}
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -82,11 +77,11 @@
                 </div>
             </div>
             {% if pedido %}
-            <input type="submit" class="btn btn-success" value="Atualizar Pedido">
+            <input type="submit" class="btn btn-success" name="Atualizar" value="Atualizar Pedido">
             {% else %}
-            <input type="submit" class="btn btn-primary" value="Cadastrar">
+            <input type="submit" class="btn btn-primary" name="cadastrar" value="Cadastrar">
             {% endif %}
-            <a href="{{ url_for('listar_pedidos') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
+            <a href="{{ url_for('listar_pedidos') }}" class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
         </form>
     </div>
 </div>

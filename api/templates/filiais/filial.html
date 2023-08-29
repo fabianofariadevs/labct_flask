@@ -4,11 +4,11 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item" style="font-size: 11px">
             <a href="#">
-                Admin
+                Admin & Usuários
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            Relação de Filiais Clientes/Fábricas
+            Relação das <b>Filiais</b> Clientes/Fábricas
         </li>
     </ol>
 </nav>
@@ -20,10 +20,17 @@
             <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success">{{ total_filiais_ativos }} ativo</span>
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_filiais_inativos }} inativo </span>
         </div>
-        <div>
-        <a href="#" class="btn btn-secondary" title="Consultar Filiais">Consultar</a>
-        <a href="{{ url_for('exibir_formfilial') }}" methods='POST' class="btn btn-primary" rel="tooltip" title="Cadastrar Filial">Cadastrar Filial</a>
+        <div class="input-group-append">
+            <form action="{{ url_for('buscar_filial') }}" method="GET">
+                <span class="input-group-text">
+                    <input type="text" class="form-control" name="nome_filial" placeholder="Buscar Filial por Nome ">
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </span>
+            </form>
         </div>
+             <a href="{{ url_for('exibir_formfilial') }}" methods='POST' class="btn btn-primary" rel="tooltip" title="Cadastrar Filial">Cadastrar Filial</a>
     </div>
     <div class="card-body">
         <div class="table-responsive">
