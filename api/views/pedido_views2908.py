@@ -240,7 +240,7 @@ def buscar_pedidoprod():
     if nome_pedidoprod:
         # Lógica para buscar Pedido de Produção por nome RECEITA
         pedidoprod = pedido_service.listar_pedidosprod()
-        resultados = [pedidoproducao for pedidoproducao in pedidoprod if nome_pedidoprod in str(pedidoprod.receita.descricao_mix).lower()]
+        resultados = [pedidoprod for pedidoprod in pedidoprod if nome_pedidoprod in pedidoprod.receitas.descricao_mix.lower()]
 
     return render_template("pedidos/consultar_pedidoprod.html", resultados=resultados, nome_pedidoprod=nome_pedidoprod)
 

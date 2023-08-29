@@ -38,82 +38,46 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-                    <table class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th class="text-center">id</th>
-                                <th>Nome</th>
-                                <th>Descrição</th>
-                                <th class="text-center">Qtde</th>
-                                <th class="text-center">Fornecedor</th>
-                                <th class="text-center">Whatsapp</th>
-                                <th class="text-center">Status</th>
-                                <th class="text-center">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                         {% for produto in produtos %}
-                            <tr>
-                                <td class="text-center">{{produto.id}}</td>
-                                <td>{{produto.nome}}</td>
-                                <td>{{produto.descricao}}</td>
-                                <td class="text-center">{{produto.quantidade}}</td>
-                                <td class="text-center">{{produto.fornecedor_id}}</td>
-                                <td class="text-center">{{produto.whatsapp}}</td>
-                                <td class="text-center">
-                                    {% if produto.status == 1 %}
-                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
-                                    {% else %}
-                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
-                                    {% endif %}
-                                </td>
-                                <td class="text-center">
-                                   <a href="{{ url_for('visualizar_produto', id=produto.id, _method='GET') }}" class="btn btn-info" role="button">Detalhes</a>
-                                   <a href="{{ url_for('atualizar_produto', id=produto.id, _method='PUT') }}" title="Atualizar Produto">
-                                       <i class="fa-solid fa-pen m-1"></i>
-                                   </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="mb-3">
-                        <a href="#" class="btn btn-primary" title="Solicitar Pedido">Solicitar Pedidos</a>
-                    </div>
-                </div>
-            </div>
+            <table class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="text-center">id</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th class="text-center">Qtde</th>
+                        <th class="text-center">Fornecedor</th>
+                        <th class="text-center">Whatsapp</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                 {% for produto in produtos %}
+                    <tr>
+                        <td class="text-center">{{produto.id}}</td>
+                        <td>{{produto.nome}}</td>
+                        <td>{{produto.descricao}}</td>
+                        <td class="text-center">{{produto.quantidade}}</td>
+                        <td class="text-center">{{produto.fornecedor_id}}</td>
+                        <td class="text-center">{{produto.whatsapp}}</td>
+                        <td class="text-center">
+                            {% if produto.status == 1 %}
+                            <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                            {% else %}
+                            <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                           <a href="{{ url_for('visualizar_produto', id=produto.id, _method='GET') }}" class="btn btn-info" role="button">Detalhes</a>
+                           <a href="{{ url_for('atualizar_produto', id=produto.id, _method='PUT') }}" title="Atualizar Produto">
+                               <i class="fa-solid fa-pen m-1"></i>
+                           </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
-</div>
-<div class="container">
-
-    <table class="table table-bordered table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Nome</th>
-                <th scope="col">Valor_ult.Compra</th>
-                <th scope="col">Qtde Min.</th>
-                <th scope="col">Qtde em Estoque</th>
-                <th scope="col">ALTERAR</th>
-                <th scope="col">REMOVER</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for estoque in estoques %}
-            <tr>
-                <th scope="row">{{ estoque.id }}</th>
-                <th>{{ estoque.nome }}</th>
-                <th>{{ estoque.valor_ultima_compra }}</th>
-                <th>{{ estoque.quantidade_minima }}</th>
-                <th>{{ estoque.quantidade_estoque }}</th>
-                <th><a href="{{ url_for('alterar_produto', id=produto.id)}}"><img src="{{ url_for('static', filename='editar.png') }}"></a></th>
-                <th><a href="{{ url_for('excluir_produto', id=produto.id)}}"><img src="{{ url_for('static', filename='remover.png') }}"></a></th>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 </div>
 {% endblock conteudo %}

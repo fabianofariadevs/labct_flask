@@ -4,7 +4,7 @@ from ..models.produtoMp_model import Inventario, Produto
 from ..models.estoque_model import Estoque
 from api import api, app, db
 from ..services import produtoMp_service
-from ..schemas import produtoMp_schema, fornecedor_schemas, estoque_schema
+from ..schemas import produtoMp_schema, estoque_schema
 from ..models.fornecedor_model import Fornecedor
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, BooleanField, SubmitField, SelectField

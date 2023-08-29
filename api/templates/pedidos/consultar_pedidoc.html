@@ -35,7 +35,7 @@
                 </thead>
                 <tbody>
                     {% if resultados %}
-                        {% for pedidos in resultados %}
+                        {% for pedido in resultados %}
                         <tr>
                             <td>{{pedido.id}}</td>
                             <td class="text-center">{{pedido.data_pedido}}</td>
@@ -49,9 +49,7 @@
                             <td class="text-center">{{pedido.cadastrado_em}}</td>
                             <td class="text-center">{{pedido.atualizado_em}}</td>
                             <td>
-                              <form action="{{ url_for('imprimir_pedido', id=pedido.id) }}" method="GET">
-                                <button type="submit">Imprimir</button>
-                              </form>
+                                <a href="{{ url_for('visualizar_pedido', id=pedido.id, _method='GET') }}" class="btn btn-info" role="button">Detalhes</a>
                             </td>
                         </tr>
                         {% endfor %}

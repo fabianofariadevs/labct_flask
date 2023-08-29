@@ -79,7 +79,7 @@
                                 <form id="delete-form" action="{{ url_for('visualizar_cliente', id=clientev.id, _method='POST') }}" method="post">
                                     <input type="hidden" name="_method" value="DELETE">
                                         <a href="{{ url_for('atualizar_cliente', id=clientev.id, _method='PUT') }}" class="btn btn-outline-primary" title="Atualizar Cliente">Atualizar</a>
-                                    <button class="btn btn-danger" type="submit" title="Excluir Cliente e suas ligações"  onclick="return confirm('Deseja excluir o Cliente {{clientev.nome}}?')"> Excluir  </button>
+                                    <button class="btn btn-danger" type="submit" title="Excluir Cliente e suas ligações"  onclick="return confirm('Deseja excluir o Cliente {{clientev.nome}}?')">Excluir Cliente</button>
                                 </form>
                             </div>
                         </div>
