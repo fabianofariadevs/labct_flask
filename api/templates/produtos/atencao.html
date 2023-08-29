@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block conteudo %}
+  <title>ATENÇÃO</title>
+
+<div class="d-flex align-items-center justify-content-center vh-100 bg-danger">
+    <div class="card-header">
+        <div class="text-center">
+            <h5 class="display-1 fw-bold">ATENÇÃO AOS PRODUTOS</h5>
+            <p class="fs-3 text-white"> TODOS os produtos proximos ao VENCIMENTO</p>
+            <p class="text-light">
+                Em desenvolvimento...aguarde!!!
+              </p>
+            <a href="{{ url_for('listar_produtos') }}" class="btn btn-light">Voltar para lista Produtos</a>
+        </div>
+    </div>
+</div>
+
+{% endblock conteudo %}

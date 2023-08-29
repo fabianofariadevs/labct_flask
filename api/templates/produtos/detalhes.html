@@ -12,8 +12,10 @@
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_produtos_inativos}} inativo </span>
         </div>
         <div>
-            <a href="{{ url_for('listar_produtos') }}" class="btn btn-outline-dark" title="Voltar para lista de Produtos">Voltar para lista de Produtos</a>
-            <a href="{{ url_for('atualizar_produto', id=produto.id, _method='PUT') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Produto">Atualizar Produto</a>
+            <div class="card-header justify-content-between">
+                <a href="{{ url_for('listar_produtos') }}" class="btn btn-outline-dark" title="Voltar para lista de Produtos">Voltar para lista de Produtos</a>
+                <a href="{{ url_for('atualizar_produto', id=produto.id, _method='PUT') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Produto">Atualizar Produto</a>
+            </div>
         </div>
     </div>
     <div class="card-body">

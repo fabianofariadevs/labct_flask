@@ -9,23 +9,31 @@
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            Relação de Produtos x Matéria_Prima
+            Relação de <b>Produtos x Matéria_Prima</b>
         </li>
     </ol>
 </nav>
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
         <div>
-            <span class="badge rounded text-bg-secondary">Total Pedidos: {{ total_clientes }}</span>
-            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success">{{total_produtos_ativos}} ativo/pendentes</span>
-            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_produtos_inativos}} inativo/realizados</span>
+            <span class="badge rounded text-bg-secondary">TOTAL de Produtos: {{total_produtos}}</span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_produtos_ativos}} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_produtos_inativos}} inativo </span>
         </div>
-        <div>
-        <a href="#" class="btn btn-secondary"  title="Produtos Margem Mínima">ReEstoque</a>
-        <a href="#" class="btn btn-secondary"  title="Consultar Historico">Historico</a>
-        <a href="#" class="btn btn-secondary text-danger" title="Produtos em Falta">ATENÇÃO</a>
-        <a href="#" class="btn btn-secondary"  title="Consultar Produtos">Consultar</a>
-        <a href="{{ url_for('exibir_formproduto') }}"  methods='POST' rel="tooltip" class="btn btn-primary" title="Cadastrar Produto">Cadastrar</a>
+        <div class="input-group-append">
+            <form action="{{ url_for('buscar_produto') }}" method="GET">
+                <span class="input-group-text">
+                    <input type="text" class="form-control" name="nome_produto" placeholder="Buscar Produto por Nome">
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </span>
+            </form>
+        </div>
+        <div class="input-group-append">
+            <a href="{{ url_for('reestoque') }}" class="btn btn-secondary"  title="Conferência Qtde em Estoque">ReEstoque</a>
+            <a href="{{ url_for('atencao_vencendo') }}" class="btn btn-secondary text-danger" title="Produtos em Falta">ATENÇÃO</a>
+            <a href="{{ url_for('exibir_formproduto') }}"  methods='POST' rel="tooltip" class="btn btn-primary" title="Cadastrar Produto">Cadastrar Produto</a>
         </div>
     </div>
     <div class="card-body">

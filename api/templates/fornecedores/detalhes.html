@@ -10,9 +10,9 @@
              <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
                 <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
             </a>
-            <span class="badge rounded text-bg-secondary">FILIAIS Vinculadas / Total: {{ total_produtos }}</span>
-            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{ total_produtos_ativos }} ativo</span>
-            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_produtos_inativos }} inativo </span>
+             <span class="badge rounded text-bg-secondary">Total Fornecedores: {{ total_fornecedores }} </span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success">{{ total_fornecedores_ativos }} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_fornecedores_inativos }} inativo</span>
         </div>
         <div>
         <a href="{{ url_for('listar_fornecedores') }}" class="btn btn-outline-dark" title="Voltar para lista de Fornecedores">Voltar para lista de Fornecedores</a>
@@ -40,8 +40,8 @@
                             <th>Cadastrado_em</th>
                             <th>Atualizado_em</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                  </thead>
+                  <tbody>
                         <tr>
                             <td>{{fornecedor.id}}</td>
                             <td>{{fornecedor.nome}}</td>
@@ -58,7 +58,8 @@
                             <td>{{fornecedor.status}}</td>
                             <td>{{fornecedor.cadastrado_em}}</td>
                             <td>{{fornecedor.atualizado_em}}</td>
-                    </tbody>
+                        </tr>
+                  </tbody>
                   <div class="row">
                       <div class="card-header border-0 d-flex justify-content-between align-items-center">
                           <div>

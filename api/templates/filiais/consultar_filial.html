@@ -13,7 +13,7 @@
             <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_filiais_ativos}} ativo</span>
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_filiais_inativos}} inativo </span>
         </div>
-            <a href="{{ url_for('listar_clientes') }}" class="btn btn-outline-dark" title="Voltar para lista de Clientes">Voltar para lista de Clientes</a>
+         <a href="{{ url_for('listar_filiais') }}" class="btn btn-outline-dark" title="Voltar a lista">Voltar para lista de Filiais</a>
     </div>
     <div class="card-body">
         <div class="table-responsive" style="width:100%">
@@ -71,6 +71,7 @@
                 </tbody>
             </table>
         </div>
+        </div>
     </div>
-</div>
+
 {% endblock conteudo %}

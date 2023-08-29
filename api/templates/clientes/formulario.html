@@ -3,19 +3,19 @@
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item">
+        <li class="breadcrumb-item" style="font-size: 11px">
             <a href="#">
-                Admin
+            Admin & Usuários
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            Clientes
+            Cadastro de <b>Clientes</b>
         </li>
     </ol>
 </nav>
 <div class="card border-0 shadow-sm">
     <div class="card-header">
-    <h3 class="card-title">{% if cliente %}Atualizar Cliente{% else %}Cadastrando Novo Cliente{% endif %}</h3>
+        <h3 class="card-title">{% if cliente %}Atualizar Cliente{% else %}Cadastrando Novo Cliente{% endif %}</h3>
     </div>
     <div class="card-body">
         <form method="POST" action="#">

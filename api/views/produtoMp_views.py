@@ -32,9 +32,11 @@ class ProdutoForm(FlaskForm):
         self.fornecedor_id.choices = [(fornecedor.id, fornecedor.nome)
                                       for fornecedor in Fornecedor.query.all()]
         self.status.choices = self.get_status_choices()
+
     @staticmethod
     def get_status_choices():
         return [("1", 'Ativo'), ("0", 'Inativo')]
+
     def to_dict(self):  # metodo personalizado no seu formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
         return {
             'nome': self.nome.data,
@@ -50,6 +52,20 @@ class ProdutoForm(FlaskForm):
             'fornecedor_id': self.fornecedor_id.data,
             #'cliente_id': self.cliente_id.data,
         }
+
+@app.route('/produtos/buscar', methods=['GET'])
+def buscar_produto():
+    nome_produto = request.args.get('nome_produto', '').strip().lower()
+    resultados = None
+
+    if nome_produto:
+        # Lógica para buscar o produto por nome
+        produtos = produtoMp_service.listar_produtos()
+        resultados = [produto for produto in produtos if nome_produto in produto.nome.lower()]
+
+    return render_template("produtos/consultar_produtos.html", resultados=resultados, nome_produto=nome_produto)
+
+
 @app.route('/produtos/<int:id>', methods=['GET', 'POST'])
 def visualizar_produto(id):
     if request.method == 'GET':
@@ -235,7 +251,6 @@ def compra():
     return redirect(url_for('produtos'))
 
 
-
 @app.route('/inventario/<int:id>', methods=['GET'])
 def visualizar_produo(id):
     produto = produtoMp_service.listar_produto_id(id)
@@ -252,3 +267,7 @@ def listar_inventario():
 
         return render_template("estoque/inventario.html", inventarios=inventarios_data, total_produtos=total_inventarios)
 
+@app.route('/produtos/atencao', methods=['GET'])
+def atencao_vencendo():
+
+    return render_template("produtos/atencao.html")

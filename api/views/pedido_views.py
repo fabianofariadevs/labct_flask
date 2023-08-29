@@ -70,6 +70,19 @@ def atualizar_pedido(id):
     return render_template("pedidos/formpedido.html", pedido=pedido, form=form), 400
 
 
+@app.route('/pedidos/buscar', methods=['GET'])
+def buscar_pedido():
+    nome_pedido = request.args.get('nome_pedido', '').strip().lower()
+    resultados = None
+
+    if nome_pedido:
+        # Lógica para buscar Pedido de Compra por nome
+        pedidos = pedido_service.listar_pedidos()
+        resultados = [pedido for pedido in pedidos if nome_pedido in str(pedido.produto_id).lower()]
+
+    return render_template("pedidos/consultar_pedidoc.html", resultados=resultados, nome_pedido=nome_pedido)
+
+
 @app.route('/pedidos/<int:id>', methods=['GET', 'POST'])
 def visualizar_pedido(id):
     # pedido = pedido_service.listar_pedido_id(id)
@@ -219,6 +232,19 @@ def atualizar_pedidoprod(id):
     return render_template("pedidos/formpedidoprod.html", pedidoprod=pedidoprod, form=form), 400
 
 
+@app.route('/pedidoprod/buscar', methods=['GET'])
+def buscar_pedidoprod():
+    nome_pedidoprod = request.args.get('nome_pedidoprod', '').strip().lower()
+    resultados = None
+
+    if nome_pedidoprod:
+        # Lógica para buscar Pedido de Produção por nome
+        pedidoprod = pedido_service.listar_pedidosprod()
+        resultados = [pedidoprod for pedidoprod in pedidoprod if nome_pedidoprod in pedidoprod.receita_id.lower()]
+
+    return render_template("pedidos/consultar_pedidoprod.html", resultados=resultados, nome_pedidoprod=nome_pedidoprod)
+
+
 @app.route('/pedidoprod/<int:id>', methods=['GET', 'POST'])
 def visualizar_pedidoprod(id):
     #pedido = pedido_service.listar_pedido_id(id)
@@ -277,7 +303,7 @@ def listar_pedidosprod():
 
         total_pedidosprod = len(pedidosprod)
         total_pedidosprod_ativos = len(
-    [pedidoproducao for pedidoproducao in pedidosprod if pedidoproducao.status == 1])
+            [pedidoproducao for pedidoproducao in pedidosprod if pedidoproducao.status == 1])
         total_pedidosprod_inativos = len(
             [pedidoproducao for pedidoproducao in pedidosprod if pedidoproducao.status == 0])
 
@@ -300,6 +326,70 @@ def fazer_pedido_producao():
             return render_template('pedidos/formpedidoprod.html', form=form, error_message=error.messages)
     else:
         return render_template('pedidos/formpedidoprod.html', form=form, error_message=form.errors)
+
+@app.route('/historicopedidosprod', methods=['GET'])
+def historicopedidosprod():
+    global pedidosprod, total_pedidos_ativos, total_pedidos, total_pedidos_inativos
+    pedidos_data = []
+    pedidosprod_data = []
+
+    if request.method == 'GET':
+        # Carregar os pedidos e usar a opção joinedload para incluir os objetos relacionados (produtos) na consulta
+        pedidos = Pedido.query.options(joinedload('produtos')).all()
+        for pedido in pedidos:
+            pedido_dict = pedido_schemas.PedidoSchema().dump(pedido)
+
+            pedido_dict['data_pedido'] = pedido.data_pedido.strftime('%d/%m/%Y')  # Formata a data como dia/mês/ano
+            pedido_dict['data_entrega'] = pedido.data_entrega.strftime('%d/%m/%Y')  # Formata a data como dia/mês/ano
+
+            # Verificar se o objeto do produto está presente e obter o nome, caso contrário, usar uma mensagem padrão
+            produto = pedido.produtos
+            pedido_dict['produto_id'] = produto.nome if produto else 'Produto não encontrado'
+
+            # Obter o nome do fornecedor
+            fornecedor = pedido.fornecedor
+            pedido_dict['fornecedor_id'] = fornecedor.nome if fornecedor else 'Fornecedor não encontrado'
+
+            # Obter o nome da filial
+            filial = pedido.filiais
+            pedido_dict['filial_pdv'] = filial.nome if filial else 'Filial não encontrada'
+
+            pedidos_data.append(pedido_dict)
+
+        total_pedidos = len(pedidos)
+        total_pedidos_ativos = len([pedido for pedido in pedidos if pedido.status == 1])
+        total_pedidos_inativos = len([pedido for pedido in pedidos if pedido.status == 0])
+
+        pedidosprod = PedidoProducao.query.options(joinedload('receitas')).all()
+        for pedido in pedidosprod:
+            pedido_dict = pedido_schemas.PedidoProducaoSchema().dump(pedido)
+
+            pedido_dict['data_pedido'] = pedido.data_pedido.strftime('%d/%m/%Y')  # Formata a data como dia/mês/ano
+            pedido_dict['data_entrega'] = pedido.data_entrega.strftime('%d/%m/%Y')  # Formata a data como dia/mês/ano
+
+            # Verificar se o objeto da Receita está presente e obter o nome, caso contrário, usar uma mensagem padrão
+            receita = pedido.receitas
+            pedido_dict['receita_id'] = receita.descricao_mix if receita else 'Receita não encontrado'
+
+            # Obter o nome do Filial
+            filial = pedido.filiais
+            pedido_dict['filial_pdv'] = filial.nome if filial else 'Filial não encontrado'
+
+            pedidosprod_data.append(pedido_dict)
+
+    total_pedidosprod = len(pedidosprod)
+    total_pedidosprod_ativos = len([pedidoproducao for pedidoproducao in pedidosprod if pedidoproducao.status == 1])
+    total_pedidosprod_inativos = len([pedidoproducao for pedidoproducao in pedidosprod if pedidoproducao.status == 0])
+
+    return render_template("pedidos/historicopedidosprod.html",
+                           pedidos=pedidos_data, total_pedidos=total_pedidos,
+                           total_pedidos_ativos=total_pedidos_ativos,
+                           total_pedidos_inativos=total_pedidos_inativos,
+
+                           pedidosprod=pedidosprod_data, total_pedidosprod=total_pedidosprod,
+                           total_pedidosprod_ativos=total_pedidosprod_ativos,
+                           total_pedidosprod_inativos=total_pedidosprod_inativos)
+
 
 
 @app.route('/pedidoprod/<int:id>/deletar', methods=['DELETE'])

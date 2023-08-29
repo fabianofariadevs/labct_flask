@@ -103,6 +103,17 @@ def exibir_formfilial():
             flash("Erro ao cadastrar filial: " + str(error.messages))
     return render_template('filiais/formfilial.html', form=form)###3
 
+@app.route('/filiais/buscar', methods=['GET'])
+def buscar_filial():
+    nome_filial = request.args.get('nome_filial', '').strip().lower()
+    resultados = None
+
+    if nome_filial:
+        # Lógica para buscar a filial por nome
+        filiais = filial_pdv_service.listar_filial_pdv()
+        resultados = [filial for filial in filiais if nome_filial in filial.nome.lower()]
+
+    return render_template("filiais/consultar_filial.html", resultados=resultados, nome_filial=nome_filial)
 
 @app.route('/filiais/<int:id>', methods=['GET', 'POST'])
 def visualizar_filial(id):

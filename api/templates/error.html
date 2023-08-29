@@ -2,9 +2,15 @@
 {% block conteudo %}
   <title>ERROR</title>
 
-<body>
-  <h1>CONSULTE O ADM SISTEMA</h1>
-  <p>ERRORRR</p>
-</body>
+<div class="d-flex align-items-center justify-content-center vh-100 bg-danger">
+            <div class="text-center">
+                <h1 class="display-1 fw-bold">404</h1>
+                <p class="fs-3 text-white"> Opps! Há, não.</p>
+                <p class="text-light">
+                    Não encontramos a página que você tentou acessar!
+                  </p>
+                <a href="{{ url_for('index') }}" class="btn btn-light">Voltar para Home</a>
+            </div>
+        </div>
 
 {% endblock conteudo %}

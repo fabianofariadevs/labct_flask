@@ -12,7 +12,7 @@
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            Relação de Clientes
+            Relação de <b>Clientes</b>
         </li>
     </ol>
 </nav>
@@ -55,14 +55,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                    {% for cliente in paginated_result["items"] %}
+                                {% for cliente in paginated_result["items"] %}
                             <tr>
                                 <td>{{cliente.id}}</td>
                                 <td>{{cliente.nome}}</td>
                                 <td>{{cliente.endereco}}</td>
                                 <td>{{cliente.bairro}}</td>
                                 <td>{{cliente.cidade}}</td>
-                                <td class="text-center"><a href="#" data-toggle="modal" data-target="#consultaModal">{{cliente.filial_id}}</a></td>
+                                <td class="text-center">{{ total_clientes }}</td>
                                 <td class="text-center">
                                     {% if cliente.status == 1 %}
                                     <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
@@ -88,7 +88,6 @@
               {% if paginated_result.next %}
                 <a href="{{ url_for('listar_clientes', page=paginated_result.next) }}">Próximo</a>
               {% endif %}
-
         </div>
     </div>
 </div>

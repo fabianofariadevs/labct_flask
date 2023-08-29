@@ -69,6 +69,19 @@ def exibir_formreceita():
     return render_template('receitas/formreceita.html', form=form)
 
 
+@app.route('/receitas/buscar', methods=['GET'])
+def buscar_receita():
+    nome_receita = request.args.get('nome_receita', '').strip().lower()
+    resultados = None
+
+    if nome_receita:
+        # Lógica para buscar a receita por nome
+        receitas = receita_service.listar_receitas()
+        resultados = [receita for receita in receitas if nome_receita in receita.descricao_mix.lower()]
+
+    return render_template("receitas/consultar_receita.html", resultados=resultados, nome_receita=nome_receita)
+
+
 @app.route('/receitas', methods=['GET'])
 def listar_receitas():
     if request.method == 'GET':

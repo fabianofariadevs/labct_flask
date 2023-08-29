@@ -18,18 +18,18 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 	<div class="container-fluid">
-		<img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="102" width="222"/>
+		<a href="{{ url_for('index') }}" title="Sobre a LAB página inicial" style="margin-left: 30px;">
+		<img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="54" width="120"/>
+		</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 
-		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<div class="collapse navbar-collapse" id="navbarSupportedContent" style="margin-left: 450px;">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
 				<li class="nav-item">
-				  <a class="nav-link active" aria-current="page" href="{{url_for('sobre')}}">Sobre</a>
-				</li>
-				<li class="nav-item">
-				  <a class="nav-link disabled">Desabilitado(???)</a>
+				  <a class="nav-link disabled" style="margin-left: 150px;">Sobre</a>
 				</li>
 				<li class="nav-item dropdown">
 				  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -44,7 +44,7 @@
 				    </ul>
 						</li>
 						<li class="nav-item dropdown">
-						  <a class="nav-link dropdown-toggle" href="#" id="##navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						  <a class="nav-link dropdown-toggle" href="#" id="##navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="margin-left: 0px;">
 							Fornecedores
 						  </a>
 							 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -70,7 +70,7 @@
 						</li>
 
 					<li class="nav-item">
-					  <a class="nav-link" href="{{url_for('contatos')}}">Contatos</a>
+					  <a class="nav-link" href="{{url_for('contatos')}}"><b>Contatos</b></a>
 					</li>
 			</ul>
 		</div>
@@ -93,7 +93,7 @@
 	</div>
 </div>
 
-<div class="container">
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-rigth:12px; margin-top:2px;">
 		{% block conteudo %}
 		{% endblock conteudo %}
 </div>

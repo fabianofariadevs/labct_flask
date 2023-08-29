@@ -105,6 +105,18 @@ def exibir_formusuario():
             flash("Erro ao cadastrar Usuário")
     return render_template('usuarios/formusuario.html', form=form)
 
+@app.route('/usuarios/buscar', methods=['GET'])
+def buscar_usuario():
+    nome_usuario = request.args.get('nome_usuario', '').strip().lower()
+    resultados = None
+
+    if nome_usuario:
+        # Lógica para buscar o usuario por nome
+        usuarios = usuario_service.listar_usuarios()
+        resultados = [usuario for usuario in usuarios if nome_usuario in usuario.nome.lower()]
+
+    return render_template("usuarios/consultar_usuario.html", resultados=resultados, nome_usuario=nome_usuario)
+
 @app.route('/usuarios/<int:id>', methods=['GET', 'POST'])
 def visualizar_usuario(id):
     #usuario = usuario_service.listar_usuario_id(id)

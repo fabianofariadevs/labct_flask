@@ -20,10 +20,17 @@
             <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success">{{ total_fornecedores_ativos }} ativo</span>
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{ total_fornecedores_inativos }} inativo</span>
         </div>
-        <div>
-        <a href="#" class="btn btn-secondary" title="Consultar Fornecedores">Consultar</a>
-        <a href="{{ url_for('exibir_formfornecedor') }}"  methods='POST' rel="tooltip" class="btn btn-primary" title="Cadastrar Fornecedor">Cadastrar Fornecedor</a>
+         <div class="input-group-append">
+            <form action="{{ url_for('buscar_fornecedor') }}" method="GET">
+                <span class="input-group-text">
+                    <input type="text" class="form-control" name="nome_fornecedor" placeholder="Buscar Fornecedor Nome ">
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </span>
+            </form>
         </div>
+            <a href="{{ url_for('exibir_formfornecedor') }}"  methods='POST' rel="tooltip" class="btn btn-primary" title="Cadastrar Fornecedor">Cadastrar Fornecedor</a>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -35,7 +42,6 @@
                     <tr>
                         <th class="text-center">id</th>
                         <th>Nome</th>
-
                         <th>Produto a cadastar/fornecer</th>
                         <th>Endereco</th>
                         <th>Bairro</th>
@@ -51,7 +57,6 @@
                     <tr>
                         <td>{{fornecedor.id}}</td>
                         <td>{{fornecedor.nome}}</td>
-
                         <td>{{fornecedor.descricao}}</td>
                         <td>{{fornecedor.endereco}}</td>
                         <td>{{fornecedor.bairro}}</td>

@@ -14,38 +14,6 @@ from ..paginate import paginate
 from ..models.filial_pdv_model import Filial
 from..views.filial_pdv_views import FilialForm
 
-from io import BytesIO
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
-from flask import send_file
-
-@app.route('/clientes/<int:id>/gerar-pdf', methods=['POST'])
-def gerar_pdf(id):
-    cliente = cliente_service.listar_cliente_id(id)
-
-    if cliente:
-        # Renderize o template detalhes_cliente_pdf.html
-        html = render_template('clientes/pdf_cliente.html', cliente_data=cliente)
-
-        # Crie um “buffer” para armazenar o PDF em memória
-        buffer = BytesIO()
-
-        # Crie o PDF usando a biblioteca reportlab
-        doc = SimpleDocTemplate(buffer, pagesize=letter)
-        story = []
-
-        styles = getSampleStyleSheet()
-        paragraph = Paragraph(html, style=styles["BodyText"])
-        story.append(paragraph)
-
-        doc.build(story)
-
-        # Retorne o PDF gerado como um arquivo para ‘download’
-        buffer.seek(0)
-        return send_file(buffer, attachment_filename='detalhes_cliente.pdf', as_attachment=True)
-    else:
-        return render_template("clientes/cliente_nao_encontrado.html"), 404
-
 # TODO: Classe ClienteForm_Modelo ** ESSA classe recebe os dados do formulario.
 #     @author Fabiano Faria
 
@@ -221,5 +189,111 @@ def atualizar_cliente(id):
     return render_template("clientes/formulario.html", cliente=atuacliente, form=form), 400
 
 
+@app.route('/clientes/<int:id>/filiais', methods=['GET', 'POST'])
+def listar_filiais_do_cliente(id):
+    clientev = cliente_service.listar_cliente_id(id)
+    if clientev:
+        filiais_do_cliente = clientev.filial  # Obter as filiais do cliente
+        #filiais_do_cliente_data = filial_pdv_schema.FilialSchema().dump(filiais_do_cliente, many=True)
+     #   total_filiais = len(filiais_do_cliente.all())
+        return render_template('clientes/filiais_cliente.html',  cliente=clientev, filiais=filiais_do_cliente)
+    else:
+        # Caso o cliente não seja encontrado, retorne uma mensagem de erro
+        return render_template('error.html', message='Cliente não encontrado', status_code=404)
 
+def listar_filiais():
+    if request.method == 'GET':
+        filiais = filial_pdv_service.listar_filial_pdv()
+        filiais_data = filial_pdv_schema.FilialSchema().dump(filiais, many=True)
+        #filiais_data = [filial_pdv_schema.FilialSchema().add_links(filial_data) for filial_data in filiais_data]
+        total_filiais = len(filiais)
+        total_filiais_ativos = len([filial for filial in filiais if filial.status == 1])
+        total_filiais_inativos = len([filial for filial in filiais if filial.status == 0])
+
+        return render_template('filiais/filial.html', filiais=filiais_data, total_filiais=total_filiais,
+                               total_filiais_ativos=total_filiais_ativos,
+                               total_filiais_inativos=total_filiais_inativos)
+
+# TODO TESTES DE IMPRESSÃO DE PDF
+# DAQUI PARA BAIXO É O QUE TENTEI FAZER PARA GERAR O PDF, MAS AINDA NÃO CONSEGUI....
+
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from flask import send_file
+
+from flask import render_template, make_response
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import PageBreak
+
+@app.route('/clientes/<int:id>/imprimir', methods=['GET'])
+def imprimir_cli(id):
+    clienteimpressao = cliente_service.listar_cliente_id(id)
+
+    if clienteimpressao:
+        cliente_data = cliente_schema.ClienteSchema().dump(clienteimpressao)
+        html = render_template("clientes/pdf_cliente.html", cliente_data=cliente_data)
+
+        pdf = generate_pdf(html)
+        response = make_response(pdf)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'inline; filename=cliente.pdf'
+
+        return response
+    else:
+        return render_template("clientes/cliente.html", error_message="Cliente não encontrado"), 404
+
+def generate_pdf(html):
+    doc = SimpleDocTemplate("output.pdf", pagesize=letter)
+    styles = getSampleStyleSheet()
+
+    # Remove unsupported HTML attributes from the HTML content
+    cleaned_html = remove_unsupported_attributes(html)
+
+    Story = [Paragraph(cleaned_html, style=styles["Normal"])]
+    doc.build(Story)
+
+    with open("output.pdf", "rb") as f:
+        pdf = f.read()
+
+    return pdf
+
+
+def remove_unsupported_attributes(html):
+    # List of unsupported attributes
+    unsupported_attributes = ["rel", "target"]  # Add more if needed
+
+    for attr in unsupported_attributes:
+        html = html.replace(f'{attr}=', '')
+
+    return html
+
+@app.route('/clientes/<int:id>/gerar-pdf', methods=['POST'])
+def gerar_pdf(id):
+    cliente = cliente_service.listar_cliente_id(id)
+
+    if cliente:
+        # Renderize o template detalhes_cliente_pdf.html
+        html = render_template('clientes/pdf_cliente.html', cliente_data=cliente)
+
+        # Crie um “buffer” para armazenar o PDF em memória
+        buffer = BytesIO()
+
+        # Crie o PDF usando a biblioteca reportlab
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        story = []
+
+        styles = getSampleStyleSheet()
+        paragraph = Paragraph(html, style=styles["BodyText"])
+        story.append(paragraph)
+
+        doc.build(story)
+
+        # Retorne o PDF gerado como um arquivo para ‘download’
+        buffer.seek(0)
+        return send_file(buffer, attachment_filename='detalhes_cliente.pdf', as_attachment=True)
+    else:
+        return render_template("clientes/cliente_nao_encontrado.html"), 404
 

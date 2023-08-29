@@ -20,10 +20,19 @@
             <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success">ativo {{ total_usuarios_ativos }}</span>
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">inativo {{ total_usuarios_inativos }}</span>
         </div>
-        <div>
-        <a href="#" class="btn btn-secondary"  title="Consultar Cargos ou Funções">Cargos/Funções</a>
-        <a href="#" class="btn btn-secondary"  title="Consultar Usuários">Consultar</a>
-        <a href="{{ url_for('exibir_formusuario') }}"  methods='POST' rel="tooltip" class="btn btn-primary" title="Cadastrar Usuário">Cadastrar Usuário</a>
+         <div class="input-group-append">
+            <form action="{{ url_for('buscar_usuario') }}" method="GET">
+                <span class="input-group-text">
+                    <input type="text" class="form-control" name="nome_usuario" placeholder="Buscar Usuario por Nome ">
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </span>
+            </form>
+        </div>
+        <div class="input-group-append">
+            <a href="#" class="btn btn-secondary"  title="Consultar Cargos ou Funções">Cargos/Funções</a>
+            <a href="{{ url_for('exibir_formusuario') }}"  methods='POST' rel="tooltip" class="btn btn-primary" title="Cadastrar Usuário">Cadastrar Usuário</a>
         </div>
     </div>
     <div class="card-body">

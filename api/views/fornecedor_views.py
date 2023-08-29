@@ -84,6 +84,19 @@ def listar_fornecedores():
                                total_fornecedores_inativos=total_fornecedores_inativos)
 
 
+@app.route('/fornecedores/buscar', methods=['GET'])
+def buscar_fornecedor():
+    nome_fornecedor = request.args.get('nome_fornecedor', '').strip().lower()
+    resultados = None
+
+    if nome_fornecedor:
+        # Lógica para buscar o fornecedor por nome
+        fornecedores = fornecedor_service.listar_fornecedores()
+        resultados = [fornecedor for fornecedor in fornecedores if nome_fornecedor in fornecedor.nome.lower()]
+
+    return render_template("fornecedores/consultar_fornecedor.html", resultados=resultados, nome_fornecedor=nome_fornecedor)
+
+
 @app.route('/fornecedores/<int:id>', methods=['GET', 'POST'])
 def visualizar_fornecedor(id):
     #fornecedor = fornecedor_service.listar_fornecedor_id(id)
