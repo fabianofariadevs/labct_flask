@@ -235,12 +235,16 @@ def atualizar_pedidoprod(id):
 @app.route('/pedidoprod/buscar', methods=['GET'])
 def buscar_pedidoprod():
     nome_pedidoprod = request.args.get('nome_pedidoprod', '').strip().lower()
-    resultados = None
+    resultados = []
 
     if nome_pedidoprod:
         # Lógica para buscar Pedido de Produção por nome RECEITA
-        pedidoprod = pedido_service.listar_pedidosprod()
-        resultados = [pedidoproducao for pedidoproducao in pedidoprod if nome_pedidoprod in str(pedidoprod.receita.descricao_mix).lower()]
+        pedidosprod = pedido_service.listar_pedidosprod()
+
+        for pedidoproducao in pedidosprod:
+            descricao_mix = pedidoproducao.receitas.descricao_mix.lower()
+            if nome_pedidoprod in descricao_mix:
+                resultados.append(pedidoproducao)
 
     return render_template("pedidos/consultar_pedidoprod.html", resultados=resultados, nome_pedidoprod=nome_pedidoprod)
 
@@ -389,8 +393,6 @@ def historicopedidosprod():
                            pedidosprod=pedidosprod_data, total_pedidosprod=total_pedidosprod,
                            total_pedidosprod_ativos=total_pedidosprod_ativos,
                            total_pedidosprod_inativos=total_pedidosprod_inativos)
-
-
 
 @app.route('/pedidoprod/<int:id>/deletar', methods=['DELETE'])
 def deletar_pedidoprod(id):

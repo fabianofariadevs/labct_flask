@@ -47,16 +47,16 @@ DROP TABLE IF EXISTS `cliente`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cliente` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(50) NOT NULL,
-  `endereco` varchar(150) NOT NULL,
-  `bairro` varchar(20) NOT NULL,
-  `cidade` varchar(20) NOT NULL,
-  `estado` varchar(20) NOT NULL,
-  `telefone` varchar(30) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `responsavel` varchar(50) NOT NULL,
-  `whatsapp` varchar(50) NOT NULL,
-  `cnpj` varchar(17) DEFAULT NULL,
+  `nome` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `endereco` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `bairro` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `cidade` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `estado` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `telefone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `responsavel` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `whatsapp` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `cnpj` varchar(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `status` tinyint(1) DEFAULT NULL,
   `cadastrado_em` datetime NOT NULL,
   `atualizado_em` datetime DEFAULT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE `cliente` (
   PRIMARY KEY (`id`),
   KEY `filial_id` (`filial_id`),
   CONSTRAINT `cliente_ibfk_1` FOREIGN KEY (`filial_id`) REFERENCES `filial` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -86,12 +86,12 @@ DROP TABLE IF EXISTS `estoque`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `estoque` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(80) NOT NULL,
+  `nome` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `preco` float NOT NULL,
   `validade` date NOT NULL,
   `valor_ultima_compra` float NOT NULL,
   `quantidade_minima` int DEFAULT NULL,
-  `obs` text,
+  `obs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `produto_id` int NOT NULL,
   `cliente_id` int DEFAULT NULL,
   `quantidade_op` int DEFAULT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE `estoque` (
   KEY `produto_id` (`produto_id`),
   CONSTRAINT `estoque_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`),
   CONSTRAINT `estoque_ibfk_2` FOREIGN KEY (`produto_id`) REFERENCES `produto` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -121,19 +121,19 @@ DROP TABLE IF EXISTS `filial`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `filial` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(50) NOT NULL,
-  `endereco` varchar(150) NOT NULL,
-  `bairro` varchar(20) NOT NULL,
-  `cidade` varchar(20) NOT NULL,
-  `estado` varchar(20) NOT NULL,
-  `responsavel` varchar(50) NOT NULL,
-  `whatsapp` varchar(50) NOT NULL,
-  `cnpj` varchar(18) NOT NULL,
+  `nome` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `endereco` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `bairro` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `cidade` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `estado` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `responsavel` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `whatsapp` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `cnpj` varchar(18) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `status` tinyint(1) DEFAULT NULL,
   `cadastrado_em` datetime NOT NULL,
   `atualizado_em` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,22 +155,22 @@ DROP TABLE IF EXISTS `fornecedor`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fornecedor` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(50) NOT NULL,
-  `descricao` varchar(200) NOT NULL,
-  `endereco` varchar(150) NOT NULL,
-  `bairro` varchar(20) NOT NULL,
-  `cidade` varchar(20) NOT NULL,
-  `estado` varchar(20) NOT NULL,
-  `telefone` varchar(15) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `responsavel` varchar(50) NOT NULL,
-  `whatsapp` varchar(50) NOT NULL,
-  `cnpj` varchar(18) NOT NULL,
+  `nome` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `descricao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `endereco` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `bairro` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `cidade` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `estado` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `telefone` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `responsavel` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `whatsapp` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `cnpj` varchar(18) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `status` tinyint(1) DEFAULT NULL,
   `cadastrado_em` datetime NOT NULL,
   `atualizado_em` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -192,10 +192,10 @@ DROP TABLE IF EXISTS `funcao`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `funcao` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(40) NOT NULL,
+  `nome` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -217,11 +217,11 @@ DROP TABLE IF EXISTS `inventario`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `inventario` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `descricao` varchar(120) DEFAULT NULL,
-  `nome` varchar(80) DEFAULT NULL,
+  `descricao` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `nome` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `quantidade` int DEFAULT NULL,
-  `detalhes` varchar(80) DEFAULT NULL,
-  `obs` varchar(120) DEFAULT NULL,
+  `detalhes` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `obs` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `data` date DEFAULT NULL,
   `produto_id` int NOT NULL,
   `cliente_id` int DEFAULT NULL,
@@ -230,7 +230,7 @@ CREATE TABLE `inventario` (
   KEY `produto_id` (`produto_id`),
   CONSTRAINT `inventario_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`),
   CONSTRAINT `inventario_ibfk_2` FOREIGN KEY (`produto_id`) REFERENCES `produto` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -253,9 +253,9 @@ DROP TABLE IF EXISTS `mixproduto`;
 CREATE TABLE `mixproduto` (
   `id` int NOT NULL AUTO_INCREMENT,
   `cod_prod_mix` int NOT NULL,
-  `descricao` text NOT NULL,
-  `modo_preparo` text NOT NULL,
-  `departamento` varchar(20) NOT NULL,
+  `descricao` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `modo_preparo` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `departamento` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `rend_kg` float NOT NULL,
   `rend_unid` float NOT NULL,
   `status` tinyint(1) DEFAULT NULL,
@@ -269,7 +269,7 @@ CREATE TABLE `mixproduto` (
   KEY `cliente_id` (`cliente_id`),
   CONSTRAINT `mixproduto_ibfk_2` FOREIGN KEY (`produto_id`) REFERENCES `produto` (`id`),
   CONSTRAINT `mixproduto_ibfk_3` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -290,15 +290,15 @@ DROP TABLE IF EXISTS `operacao`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `operacao` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `cliente_id` varchar(50) NOT NULL,
-  `produto_id` varchar(100) NOT NULL,
+  `cliente_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `produto_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `qtde` int NOT NULL,
-  `tipo` enum('PedCompraentra','PedProducaosai') NOT NULL,
+  `tipo` enum('PedCompraentra','PedProducaosai') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `estoque_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `estoque_id` (`estoque_id`),
   CONSTRAINT `operacao_ibfk_1` FOREIGN KEY (`estoque_id`) REFERENCES `estoque` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -323,7 +323,7 @@ CREATE TABLE `pedido` (
   `data_pedido` datetime NOT NULL,
   `data_entrega` date NOT NULL,
   `status` tinyint(1) DEFAULT NULL,
-  `obs` text NOT NULL,
+  `obs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `cadastrado_em` datetime NOT NULL,
   `atualizado_em` datetime DEFAULT NULL,
   `produto_id` int NOT NULL,
@@ -336,7 +336,7 @@ CREATE TABLE `pedido` (
   CONSTRAINT `pedido_ibfk_1` FOREIGN KEY (`filial_pdv`) REFERENCES `filial` (`id`),
   CONSTRAINT `pedido_ibfk_2` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedor` (`id`),
   CONSTRAINT `pedido_ibfk_3` FOREIGN KEY (`produto_id`) REFERENCES `produto` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -361,7 +361,7 @@ CREATE TABLE `pedidoproducao` (
   `data_pedido` datetime NOT NULL,
   `data_entrega` date NOT NULL,
   `status` tinyint(1) DEFAULT NULL,
-  `obs` text,
+  `obs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `cadastrado_em` datetime NOT NULL,
   `atualizado_em` datetime DEFAULT NULL,
   `receita_id` int DEFAULT NULL,
@@ -372,7 +372,7 @@ CREATE TABLE `pedidoproducao` (
   KEY `receita_id` (`receita_id`),
   CONSTRAINT `pedidoproducao_ibfk_1` FOREIGN KEY (`filial_pdv`) REFERENCES `filial` (`id`),
   CONSTRAINT `pedidoproducao_ibfk_2` FOREIGN KEY (`receita_id`) REFERENCES `receita` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -394,15 +394,15 @@ DROP TABLE IF EXISTS `produto`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `produto` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(50) NOT NULL,
-  `descricao` varchar(150) NOT NULL,
+  `nome` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `descricao` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `quantidade` int DEFAULT NULL,
   `compra_unid` int NOT NULL,
   `peso_pcte` float NOT NULL,
   `valor` double NOT NULL,
   `custo_ultima_compra` float NOT NULL,
-  `whatsapp` varchar(50) NOT NULL,
-  `qrcode` varchar(50) NOT NULL,
+  `whatsapp` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `qrcode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `status` tinyint(1) DEFAULT NULL,
   `cadastrado_em` datetime NOT NULL,
   `atualizado_em` datetime DEFAULT NULL,
@@ -410,7 +410,7 @@ CREATE TABLE `produto` (
   PRIMARY KEY (`id`),
   KEY `fornecedor_id` (`fornecedor_id`),
   CONSTRAINT `produto_ibfk_1` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedor` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -432,9 +432,9 @@ DROP TABLE IF EXISTS `receita`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `receita` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `descricao_mix` text NOT NULL,
-  `modo_preparo` text NOT NULL,
-  `departamento` varchar(50) NOT NULL,
+  `descricao_mix` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `modo_preparo` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `departamento` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `rend_kg` float NOT NULL,
   `rend_unid` float NOT NULL,
   `validade` date NOT NULL,
@@ -445,7 +445,7 @@ CREATE TABLE `receita` (
   PRIMARY KEY (`id`),
   KEY `produto_id` (`produto_id`),
   CONSTRAINT `receita_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produto` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -472,7 +472,7 @@ CREATE TABLE `receita_filial` (
   KEY `filial_id` (`filial_id`),
   CONSTRAINT `receita_filial_ibfk_1` FOREIGN KEY (`filial_id`) REFERENCES `filial` (`id`),
   CONSTRAINT `receita_filial_ibfk_2` FOREIGN KEY (`receita_id`) REFERENCES `receita` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -500,7 +500,7 @@ CREATE TABLE `receita_produto` (
   UNIQUE KEY `produto_id` (`produto_id`),
   CONSTRAINT `receita_produto_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produto` (`id`),
   CONSTRAINT `receita_produto_ibfk_2` FOREIGN KEY (`receita_id`) REFERENCES `receita` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -521,14 +521,14 @@ DROP TABLE IF EXISTS `usuario`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usuario` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(50) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `senha` varchar(255) NOT NULL,
+  `nome` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `senha` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `is_admin` tinyint(1) DEFAULT NULL,
   `status` tinyint(1) DEFAULT NULL,
   `cadastrado_em` datetime NOT NULL,
   `atualizado_em` datetime DEFAULT NULL,
-  `api_key` varchar(100) DEFAULT NULL,
+  `api_key` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `empresa` int DEFAULT NULL,
   `cargo` int NOT NULL,
   PRIMARY KEY (`id`),
@@ -536,7 +536,7 @@ CREATE TABLE `usuario` (
   KEY `empresa` (`empresa`),
   CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`cargo`) REFERENCES `funcao` (`id`),
   CONSTRAINT `usuario_ibfk_2` FOREIGN KEY (`empresa`) REFERENCES `cliente` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -558,4 +558,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-08-29 16:04:26
+-- Dump completed on 2023-08-29 22:49:16

@@ -7,9 +7,6 @@ from flask_marshmallow import Marshmallow
 from flask_wtf import FlaskForm
 import json
 
-#from .views.cliente_views import ClienteForm
-
-
 app = Flask(__name__)
 
 app.config.from_object('config')
