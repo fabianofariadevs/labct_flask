@@ -59,7 +59,7 @@
                           </div>
                           <form id="delete-form" action="{{ url_for('visualizar_pedido', id=pedido.id, _method='POST') }}" method="post">
                               <input type="hidden" name="_method" value="DELETE">
-                              <button class="btn btn-danger" type="submit" title="Excluir Pedido de Compra"  onclick="return confirm('Deseja excluir o Pedido {{pedido.produto_id}} ?')">Excluir Pedido</button>
+                              <button class="btn btn-danger" type="submit" title="Excluir Pedido de Compra" onclick="return confirm('Deseja excluir o Pedido {{pedido.produto_id}} ?')">Excluir Pedido</button>
                           </form>
                       </div>
                       <hr>
@@ -68,20 +68,19 @@
         </div>
         <!--inicio DA div detalhes abaixo tabela detalhes receitas-->
         <div class="row card-header bg-secondary">
-             <!--INICIO ULTIMOS RECEITAS CADASTRADAS-->
+             <!--INICIO FORNECEDORES-->
              <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
                 <div class="card border-0 shadow-sm  h-100">
                     <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
                         <h6 class="fw-bold text-secondary">
-                            Ultimas Receitas Cadastrados
+                            Fornecedores Cadastrados para Produto
                         </h6>
-
-                        <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Receita">
+                        <a href="{{ url_for('exibir_formfornecedor') }}" class="fs-5" rel="tooltip" title="Cadastrar Fornecedor">
                             <i class="fa-solid fa-circle-plus"></i>
                         </a>
                     </div>
                     <div class="card-body">
-                        {% if receita %}
+                        {% if fornecedor %}
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
@@ -93,21 +92,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for receita in receitas %}
+                                    {% for fornecedor in fornecedores %}
                                     <tr>
 
                                         <td>
                                             <span>
-                                                {% if receita.status == 1 %}
+                                                {% if fornecedor.status == 1 %}
                                                 <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
                                                 {% else %}
                                                 <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
                                                 {% endif %}
                                             </span>
-                                            {{receitas.nome}}
+                                            {{fornecedor.nome}}
                                         </td>
                                         <td class="text-center">
-                                            {{receitas.descricao_mix}} {{receitas.filiais}}
+                                            {{fornecedor.nome}}
                                         </td>
                                         <td class="text-center">
                                             <a href="#" rel="tooltip" title="Editar">
@@ -124,19 +123,19 @@
                         </div>
                         {% else %}
                         <div class="alert alert-warning" role="alert">
-                            Nenhum Receita cadastrado para exibir!
+                            Nenhum Fornecedor cadastrado para exibir!
                         </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
 
-             <!--INICIO ULTIMOS PEDIDOS DE PRODUÇÃO RECEITA-->
+             <!--INICIO ULTIMAS COMPRAS-->
              <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
                 <div class="card border-0 shadow-sm  h-100">
                     <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
                         <h6 class="fw-bold text-secondary">
-                            Ultimos Pedidos de Produção da Receita
+                            Ultimos Compras Realizadas
                         </h6>
 
                         <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Pedidos">
@@ -187,20 +186,20 @@
                         </div>
                         {% else %}
                         <div class="alert alert-warning" role="alert">
-                            Nenhum Pedido de Produção cadastrado para exibir!
+                            Nenhum Pedido de Compra Cadastrado para exibir!
                         </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
-            <!--FIM ULTIMOS PEDIDOS DE PRODUÇÃO RECEITA-->
+            <!--FIM ULTIMOS PEDIDOS DE COMPRAS-->
 
             <!--INICIO PRODUTOS RECEITA-->
             <div class="col-sm-6 col-md-6 col-xl-4 mb-4">
                 <div class="card border-0 shadow-sm  h-100">
                     <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
                         <h6 class="fw-bold text-secondary">
-                            Produtos da Receita
+                            Observações para o Produto
                         </h6>
                         <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Produto">
                              <i class="fa-solid fa-circle-plus"></i>
@@ -221,13 +220,13 @@
                         </ul>
                         {% else %}
                         <div class="alert alert-warning" role="alert">
-                            Nenhum Pedido para exibir!
+                            Nenhuma Observação para exibir!
                         </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
-            <!--FIM PRODUTOS RECEITA-->
+            <!--FIM OBSERVAÇÃO-->
 
 
 

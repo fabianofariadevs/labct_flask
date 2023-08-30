@@ -13,7 +13,9 @@
             <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_filiais_ativos}} ativo</span>
             <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_filiais_inativos}} inativo </span>
         </div>
+        <div class="input-group-append">
             <a href="{{ url_for('listar_clientes') }}" class="btn btn-outline-dark" title="Voltar para lista de Clientes">Voltar para lista de Clientes</a>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive" style="width:100%">
@@ -57,9 +59,7 @@
                             <td>{{cliente.cadastrado_em}}</td>
                             <td>{{cliente.atualizado_em}}</td>
                             <td>
-                              <form action="{{ url_for('imprimir_cliente', id=cliente.id) }}" method="GET">
-                                <button type="submit">Imprimir</button>
-                              </form>
+                                <a href="{{ url_for('visualizar_cliente', id=cliente.id, _method='GET') }}" class="btn btn-info" role="button">Detalhes</a>
                             </td>
                         </tr>
                         {% endfor %}

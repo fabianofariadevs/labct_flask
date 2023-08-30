@@ -63,9 +63,7 @@
                             <td>{{produto.cadastrado_em}}</td>
                             <td>{{produto.atualizado_em}}</td>
                             <td>
-                              <form action="#" method="GET">
-                                <button type="submit">Imprimir</button>
-                              </form>
+                               <a href="{{ url_for('visualizar_produto', id=produto.id, _method='GET') }}" class="btn btn-info" role="button">Detalhes</a>
                             </td>
                         </tr>
                         {% endfor %}

@@ -22,44 +22,44 @@
                     <tr>
                         <th>id</th>
                         <th>Nome</th>
-                        <th>Endereco</th>
+                        <th>Endereço</th>
                         <th>Bairro</th>
                         <th>Cidade</th>
                         <th>Estado</th>
-                        <th>Telefone</th>
-                        <th>Email</th>
+                        <th>Cliente/Fábrica</th>
+                        <th>Receitas</th>
+                        <th>Pedido_Compra</th>
+                        <th>Pedido_Produção</th>
                         <th>Responsavel</th>
                         <th>Whatsapp</th>
                         <th>Cnpj</th>
                         <th>Status</th>
-                        <th>Filial_pdv</th>
                         <th>Cadastrado_em</th>
                         <th>Atualizado_em</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% if resultados %}
-                        {% for cliente in resultados %}
+                        {% for filial in resultados %}
                         <tr>
-                            <td>{{cliente.id}}</td>
-                            <td>{{cliente.nome}}</td>
-                            <td>{{cliente.endereco}}</td>
-                            <td>{{cliente.bairro}}</td>
-                            <td>{{cliente.cidade}}</td>
-                            <td>{{cliente.estado}}</td>
-                            <td>{{cliente.telefone}}</td>
-                            <td>{{cliente.email}}</td>
-                            <td>{{cliente.responsavel}}</td>
-                            <td>{{cliente.whatsapp}}</td>
-                            <td>{{cliente.cnpj}}</td>
-                            <td>{{cliente.status}}</td>
-                            <td>{{cliente.filial_id}}</td>
-                            <td>{{cliente.cadastrado_em}}</td>
-                            <td>{{cliente.atualizado_em}}</td>
+                           <td>{{filial.id}}</td>
+                            <td>{{filial.nome}}</td>
+                            <td>{{filial.endereco}}</td>
+                            <td>{{filial.bairro}}</td>
+                            <td>{{filial.cidade}}</td>
+                            <td>{{filial.estado}}</td>
+                            <td>{{filial.clientes}}</td>
+                            <td>{{filial.receitas}}</td>
+                            <td>{{filial.pedidos}}</td>
+                            <td>{{filial.pedidosprod}}</td>
+                            <td>{{filial.responsavel}}</td>
+                            <td>{{filial.whatsapp}}</td>
+                            <td>{{filial.cnpj}}</td>
+                            <td>{{filial.status}}</td>
+                            <td>{{filial.cadastrado_em}}</td>
+                            <td>{{filial.atualizado_em}}</td>
                             <td>
-                              <form action="{{ url_for('imprimir_cliente', id=cliente.id) }}" method="GET">
-                                <button type="submit">Imprimir</button>
-                              </form>
+                                <a href="{{ url_for('visualizar_filial', id=filial.id, _method='GET') }}" class="btn btn-info"  title="Detalhes Filial" role="button">Detalhes</a>
                             </td>
                         </tr>
                         {% endfor %}

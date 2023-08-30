@@ -57,9 +57,7 @@
                             <td>{{fornecedor.cadastrado_em}}</td>
                             <td>{{fornecedor.atualizado_em}}</td>
                             <td>
-                              <form action="#" method="GET">
-                                <button type="submit">Imprimir</button>
-                              </form>
+                                 <a href="{{ url_for('visualizar_fornecedor', id=fornecedor.id, _method='GET') }}" methods='GET' class="btn btn-info" role="button">Detalhes</a>
                             </td>
                         </tr>
                         {% endfor %}

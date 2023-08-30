@@ -29,6 +29,7 @@ class PedidoProducaoSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = pedido_model.PedidoProducao
         load_instance = True
+        include_relationships = True  # Inclui automaticamente os relacionamentos
         fields = ("id", "data_pedido", "data_entrega", "qtde_pedido", "status", "obs", "receita_id", "filial_pdv", "cadastrado_em", "atualizado_em")
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
