@@ -22,8 +22,6 @@ def index():
     return render_template('index.html')
 
 
-
-
 @app.route('/painelestoque')
 def listar_painel():
     return render_template('estoque/estoque.html')
@@ -45,8 +43,6 @@ def sobre():
 @app.route('/contatos')
 def contatos():
     return render_template('contato.html')
-
-
 
 
 from .views import usuario_views, cliente_views, login_views, filial_pdv_views, receita_views, fornecedor_views, produtoMp_views, mix_produto_views, pedido_views, estoque_views
