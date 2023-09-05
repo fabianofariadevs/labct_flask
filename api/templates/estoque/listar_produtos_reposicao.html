@@ -1,0 +1,56 @@
+<!-- template para listar produtos para reposição -->
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Solicitações de Reposição de Estoque</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Produto</th>
+            <th>Data de Solicitação</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reposicao in reposicoes %}
+        <tr>
+            <td>{{ reposicao.id }}</td>
+            <td>{{ reposicao.produto.nome }}</td>
+            <td>{{ reposicao.data_solicitacao }}</td>
+        </tr>
+        {% endfor %}
+        {% if not reposicoes %}
+        <tr>
+            <td colspan="3">Nenhuma solicitação de reposição encontrada.</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Quantidade Atual</th>
+                <th>Nível Mínimo</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in produtos_reposicao %}
+            <tr>
+                <td>{{ produto.nome }}</td>
+                <td>{{ produto.quantidade }}</td>
+                <td>{{ produto.nivel_minimo }}</td>
+                <td>
+                    <form action="{{ url_for('solicitar_reposicao', produto_id=produto.id) }}" method="POST">
+                        <button type="submit">Solicitar Reposição</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

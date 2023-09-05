@@ -2,7 +2,7 @@ from api import app, db
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, BooleanField, SubmitField, SelectField, FloatField, FieldList, FormField
 from wtforms.fields import SelectMultipleField
-from wtforms.validators import DataRequired, ValidationError, length
+from wtforms.validators import DataRequired, ValidationError
 from ..schemas import receita_schema
 from flask import request, make_response, jsonify, render_template, redirect, url_for, flash
 from ..services import receita_service
@@ -67,18 +67,20 @@ def exibir_formreceita():
     if request.method == 'POST' and form.validate_on_submit():
         try:
             form_data = form.to_dict()
-            # Processar os produtos e quantidades selecionados
-            for i in range(form.produto_id.choices | length):
-                produto_id = request.form.get(f"produto_id_{i}")
-                quantidade = request.form.get(f"quantidades_{i}")
+            # Obtenha as quantidades selecionadas
+            quantidades_selecionadas = request.form.getlist('quantidades')
+            # Obtenha os IDs dos produtos selecionados
+            produtos_selecionados = request.form.getlist('produto_id')
+            # processar os produtos selecionados corretamente, é uma lista de IDs de produtos.
 
-                # Validar os valores recebidos, verificar se o produto_id é válido e se a quantidade é um número válido
+            # Criar a Receita
+            #receita = receita_schema.ReceitaSchema().load(form_data)
+            receita_bd = receita_service.cadastrar_receita(form_data)
 
-                # Associar os produtos à Receita (pode ser uma nova receita ou uma atualização)
-                if produto_id and quantidade:
-                    receita_service.adicionar_produto_a_receita(form_data, produto_id, quantidade)
-
-            receita_service.cadastrar_receita(form_data)
+            # Associar os produtos à Receita
+            for produto_id, quantidades in zip(produtos_selecionados, quantidades_selecionadas):
+                # Crie uma associação entre a Receita e o Produto com a quantidade
+                receita_service.adicionar_produto_a_receita(receita_bd, produto_id, quantidades)
 
             flash("Receita cadastrada com sucesso!")
 

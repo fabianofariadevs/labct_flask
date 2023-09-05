@@ -25,7 +25,7 @@
             <input type="hidden" name="_method" value="POST">
             {% endif %}
             {{ form.hidden_tag() }}
-            {% for error in form.errors %}
+            {% for error in form.descricao_mix.errors %}
             <p>{{ error }}</p>
             {% endfor %}
 
@@ -34,90 +34,60 @@
                     <div class="mb-3">
                         {{ form.descricao_mix.label(class="form-label") }}:
                         {{ form.descricao_mix(class="form-control") }}
-                         {% for error in form.descricao_mix.errors %}
-                        <p class="text-danger">{{ error }}</p>
-                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
                         {{ form.modo_preparo.label(class="form-label") }}:
                         {{ form.modo_preparo(class="form-control") }}
-                         {% for error in form.modo_preparo.errors %}
-                        <p class="text-danger">{{ error }}</p>
-                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="mb-3">
                         {{ form.departamento.label(class="form-label") }}:
                         {{ form.departamento(class="form-control") }}
-                         {% for error in form.departamento.errors %}
-                        <p class="text-danger">{{ error }}</p>
-                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="mb-3">
                         {{ form.rend_kg.label(class="form-label") }}:
                         {{ form.rend_kg(class="form-control") }}
-                         {% for error in form.rend_kg.errors %}
-                        <p class="text-danger">{{ error }}</p>
-                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="mb-3">
                         {{ form.rend_unid.label(class="form-label") }}:
                         {{ form.rend_unid(class="form-control") }}
-                         {% for error in form.rend_unid.errors %}
-                        <p class="text-danger">{{ error }}</p>
-                        {% endfor %}
                     </div>
                 </div>
             </div>
-
             <div class="row">
-               <h5>Produtos da Receita</h5>
-                <div id="produtos">
-                    {% for i in range(form.produto_id.choices|length) %}
-                        <div>
-                            <label for="{{ form.produto_id.id }}_{{ i }}">Produto</label>
-                            <select name="{{ form.produto_id.nome }}_{{ i }}" id="{{ form.produto_id.id }}_{{ i }}">
-                                <option value="" disabled selected>Selecione um produto</option>
-                                {% for produto in produtos %}
-                                    <option value="{{ produto.id }}">{{ produto.nome }}</option>
-                                {% endfor %}
+                <h5>Produtos e Quantidades</h5>
+                <div id="produtos-container">
+                    <div class="produto">
+                        <label for="produto">Produto</label>
+                            <select name="produto_id[]" required>
+                              {% for produto in produtos %}
+                                <option value="{{ produto.id }}">{{ produto.nome }}</option>
+                              {% endfor %}
                             </select>
-                            <label for="{{ form.quantidades.id }}_{{ i }}">Quantidade</label>
-                            <input type="number" name="{{ form.quantidades.i }}_{{ i }}" id="{{ form.quantidades.id }}_{{ i }}" min="1" value="1">
-
-                            <a href="#"  class="btn btn-outline-secondary" rel="tooltip" title="Adicionar Produto">Adicionar Produto</a>
-                        </div>
-                    {% endfor %}
+                        <label for="quantidade">Quantidade</label>
+                        <input type="number" name="quantidade[]" required> <button type="button" id="adicionar-produto">Adicionar Produto</button>
+                    </div>
+                    <br>
                 </div>
-
             </div>
-            <br>
-
-
             <div class="row">
                 <div class="col-md-3">
                     <div class="mb-3">
                         {{ form.validade.label(class="form-label") }}:
                         {{ form.validade(class="form-control") }}
-                         {% for error in form.validade.errors %}
-                        <p class="text-danger">{{ error }}</p>
-                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-md-2">
                      <div class="mb-3">
                          {{ form.status.label(class="form-label") }}:
                          {{ form.status(class="form-select") }}
-                         {% for error in form.status.errors %}
-                        <p class="text-danger">{{ error }}</p>
-                        {% endfor %}
                      </div>
                 </div>
             </div>
@@ -130,4 +100,44 @@
         </form>
     </div>
 </div>
+<script>
+    var produtoCount = {{ form.produtos | length }};
+
+    document.getElementById('add-produto').addEventListener('click', function () {
+        var produtosContainer = document.getElementById('produtos-container');
+
+        var produtoDiv = document.createElement('div');
+        produtoDiv.className = 'row';
+
+        var produtoSelect = document.createElement('select');
+        produtoSelect.id = 'produto_id' + produtoCount;
+        produtoSelect.name = 'produto_id' + produtoCount;
+        produtoSelect.innerHTML = '<option value="" disabled selected>Escolha um produto</option>' +
+                          '{% for produto_id, produto_nome in form.produto_id.choices %}' +
+                          '<option value="{{ produto_id }}">{{ produto_nome }}</option>' +
+                          '{% endfor %}';
+
+        var quantidadeInput = document.createElement('input');
+        quantidadeInput.type = 'number';
+        quantidadeInput.id = 'quantidade' + produtoCount;
+        quantidadeInput.name = 'quantidade' + produtoCount;
+        quantidadeInput.className = 'form-control';
+        quantidadeInput.min = '1';
+        quantidadeInput.required = true;
+
+        var produtoDivCol1 = document.createElement('div');
+        produtoDivCol1.className = 'col-md-3';
+        var produtoDivCol2 = document.createElement('div');
+        produtoDivCol2.className = 'col-md-3';
+
+        produtoDivCol1.appendChild(produtoSelect);
+        produtoDivCol2.appendChild(quantidadeInput);
+        produtoDiv.appendChild(produtoDivCol1);
+        produtoDiv.appendChild(produtoDivCol2);
+        produtosContainer.appendChild(produtoDiv);
+
+        produtoCount++;
+    });
+</script>
+
 {% endblock conteudo %}

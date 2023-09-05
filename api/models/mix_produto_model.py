@@ -22,3 +22,4 @@ class Mixproduto(db.Model):
     #TODO Relacionamento com a tabela "Produto"
     produto_id = db.Column(db.Integer, db.ForeignKey("produto.id"))
     produtos = db.relationship("Produto", back_populates="mixproduto")
+

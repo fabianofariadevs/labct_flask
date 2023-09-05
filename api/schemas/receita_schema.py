@@ -9,7 +9,7 @@ class ReceitaSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = receita_model.Receita
         load_instance = True
-        fields = ("id", "descricao_mix", "modo_preparo", "departamento", "rend_kg", "rend_unid", "validade", "status", "cadastrado_em", "atualizado_em", "produto_id")
+        fields = ("id", "descricao_mix", "modo_preparo", "departamento", "rend_kg", "rend_unid", "validade", "status", "cadastrado_em", "atualizado_em", "produto_id", "quantidades")
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     descricao_mix = fields.String(required=True)
@@ -22,6 +22,7 @@ class ReceitaSchema(ma.SQLAlchemyAutoSchema):
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
     produto_id = fields.Integer(required=False)
+    quantidades = fields.Integer(required=False)
    # filial = fields.String(required=False)
    # pedidoprod = fields.String(required=False)
 

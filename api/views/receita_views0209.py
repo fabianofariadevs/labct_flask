@@ -2,7 +2,7 @@ from api import app, db
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, BooleanField, SubmitField, SelectField, FloatField, FieldList, FormField
 from wtforms.fields import SelectMultipleField
-from wtforms.validators import DataRequired, ValidationError, length
+from wtforms.validators import DataRequired, ValidationError
 from ..schemas import receita_schema
 from flask import request, make_response, jsonify, render_template, redirect, url_for, flash
 from ..services import receita_service
@@ -11,6 +11,10 @@ from ..paginate import paginate
 from ..models.produtoMp_model import Produto
 from ..models.filial_pdv_model import Filial
 from sqlalchemy.orm import joinedload
+
+class ReceitaProdutoForm(FlaskForm):
+    produto_id = SelectField('Produtos', validators=[DataRequired()])
+    quantidade = SelectField('Quantidades', coerce=int, validators=[DataRequired()])
 
 class ReceitaForm(FlaskForm):
     descricao_mix = StringField("Descricao_mix", validators=[DataRequired()])
@@ -60,35 +64,26 @@ class ReceitaForm(FlaskForm):
 @app.route('/receitas/formulario', methods=['GET', 'POST'])
 def exibir_formreceita():
     form = ReceitaForm()
-    produtos = Produto.query.all()  # Recupera todos os produtos do banco de dados
-    produtos_selecionados = []
-    quantidades_selecionadas = []
-
     if request.method == 'POST' and form.validate_on_submit():
         try:
             form_data = form.to_dict()
-            # Processar os produtos e quantidades selecionados
-            for i in range(form.produto_id.choices | length):
-                produto_id = request.form.get(f"produto_id_{i}")
-                quantidade = request.form.get(f"quantidades_{i}")
-
-                # Validar os valores recebidos, verificar se o produto_id é válido e se a quantidade é um número válido
-
-                # Associar os produtos à Receita (pode ser uma nova receita ou uma atualização)
-                if produto_id and quantidade:
-                    receita_service.adicionar_produto_a_receita(form_data, produto_id, quantidade)
-
-            receita_service.cadastrar_receita(form_data)
+            # processar os produtos selecionados corretamente, é uma lista de IDs de produtos.
+            produtos_selecionados = form_data.pop('produto_id', [])
+            quantidades_selecionadas = request.form.getlist('quantidade')  # campos de quantidade
+            receita = receita_schema.ReceitaSchema().load(form_data)
+            receita_bd = receita_service.cadastrar_receita(receita)
+            receita_data = receita_schema.ReceitaSchema().dump(receita_bd)
+            # Criar a Receita e associar os produtos selecionados
+            receita = receita_service.cadastrar_receita(form_data)
+            for produto_id, quantidade in zip(produtos_selecionados, quantidades_selecionadas):
+                # Crie uma associação entre a Receita e o Produto com a quantidade
+                receita_service.adicionar_produto_a_receita(receita, produto_id, quantidade)
 
             flash("Receita cadastrada com sucesso!")
-
             return redirect(url_for("listar_receitas"))
         except ValidationError as error:
-            flash("Erro ao cadastrar Receita: " + str(error.messages))
-
-    return render_template('receitas/formreceita.html', form=form, produtos=produtos,
-                           produtos_selecionados=produtos_selecionados,
-                           quantidades_selecionadas=quantidades_selecionadas)
+            flash("Erro ao cadastrar Receita")
+    return render_template('receitas/formreceita.html', form=form)
 
 
 @app.route('/receitas/buscar', methods=['GET'])
