@@ -30,7 +30,7 @@ class PedidoProducaoSchema(ma.SQLAlchemyAutoSchema):
         model = pedido_model.PedidoProducao
         load_instance = True
         include_relationships = True  # Inclui automaticamente os relacionamentos
-        fields = ("id", "data_pedido", "data_entrega", "qtde_pedido", "status", "obs", "receita_id", "filial_pdv", "cadastrado_em", "atualizado_em")
+        fields = ("id", "data_pedido", "data_entrega", "qtde_pedido", "status", "obs", "quantidade", "produto_id", "receita_id", "filial_pdv", "cadastrado_em", "atualizado_em")
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     data_pedido = fields.DateTime(required=False)
@@ -38,9 +38,12 @@ class PedidoProducaoSchema(ma.SQLAlchemyAutoSchema):
     qtde_pedido = fields.Integer(required=True)
     status = fields.Integer(required=False)
     obs = fields.String(required=True)
+    quantidade = fields.Integer(required=True)
+    produto_id = fields.Integer(required=False)
     receita_id = fields.Integer(required=False)
     filial_pdv = fields.Integer(required=False)
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
+
 
 

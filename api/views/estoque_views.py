@@ -1,17 +1,34 @@
+from api import app
 from sqlalchemy.orm import joinedload
-
 from ..models.pedido_model import Pedido, PedidoProducao
 from ..schemas import estoque_schema, pedido_schemas
-from flask import request, render_template, jsonify
+from ..models.produtoMp_model import Produto
+from ..models.estoque_model import Estoque, ReposicaoEstoque
+from flask import request, render_template, jsonify, flash, redirect, url_for
 from ..entidades import estoque
 from ..schemas.pedido_schemas import PedidoProducaoSchema, PedidoSchema
 from ..services import estoque_service
-from api import app
+
 from flask_jwt_extended import jwt_required
 from ..services.pedido_service import listar_pedidos, listar_pedidosprod
 
 #TODO ** Classe EstoqueForm_Modelo ** ESSA classe recebe os dados do formulario.
 #     @author Fabiano Faria
+
+@app.route('/estoque', methods=['GET', 'POST'])
+def solicitar_reposicao(produto_id):
+    produto = Produto.query.get(produto_id)
+
+    if produto:
+        # Cria um registro de solicitação de reposição no banco de dados
+        reposicao = ReposicaoEstoque(produto_id=produto_id)
+
+        flash(f"Solicitação de reposição para o produto {produto.nome} enviada com sucesso!", "success")
+    else:
+        flash("Produto não encontrado.", "error")
+
+    return redirect(url_for('listar_produtos_reposicao'))
+
 
 @app.route('/estoques', methods=['GET'])###1
 def listar_pal():
@@ -19,6 +36,10 @@ def listar_pal():
         le = estoque_service.listar_estoque()
         listas = estoque_schema.EstoqueSchema().dump(le, many=True)
         return render_template('estoque/estoque.html', le=le, listas=listas)
+
+def listar_produtos_reposicao():
+    produtos_reposicao = Produto.query.filter(Produto.quantidade <= Produto.estoque_minimo).all()
+    return render_template("estoque/listar_produtos_reposicao.html", produtos_reposicao=produtos_reposicao)
 
 
 @app.route('/historicopedidos', methods=['GET'])

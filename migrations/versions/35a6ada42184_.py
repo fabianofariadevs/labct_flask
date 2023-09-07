@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 3426b47f968c
+Revision ID: 35a6ada42184
 Revises: 
-Create Date: 2023-07-31 23:56:40.123754
+Create Date: 2023-09-05 14:48:19.465772
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3426b47f968c'
+revision = '35a6ada42184'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,7 +28,7 @@ def upgrade():
     sa.Column('responsavel', sa.String(length=50), nullable=False),
     sa.Column('whatsapp', sa.String(length=50), nullable=False),
     sa.Column('cnpj', sa.String(length=18), nullable=False),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('status', sa.Integer(), nullable=True),
     sa.Column('cadastrado_em', sa.DateTime(), nullable=False),
     sa.Column('atualizado_em', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
@@ -46,10 +46,9 @@ def upgrade():
     sa.Column('responsavel', sa.String(length=50), nullable=False),
     sa.Column('whatsapp', sa.String(length=50), nullable=False),
     sa.Column('cnpj', sa.String(length=18), nullable=False),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('status', sa.Integer(), nullable=True),
     sa.Column('cadastrado_em', sa.DateTime(), nullable=False),
     sa.Column('atualizado_em', sa.DateTime(), nullable=True),
-    sa.Column('produto_id', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('funcao',
@@ -70,7 +69,7 @@ def upgrade():
     sa.Column('responsavel', sa.String(length=50), nullable=False),
     sa.Column('whatsapp', sa.String(length=50), nullable=False),
     sa.Column('cnpj', sa.String(length=17), nullable=True),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('status', sa.Integer(), nullable=True),
     sa.Column('cadastrado_em', sa.DateTime(), nullable=False),
     sa.Column('atualizado_em', sa.DateTime(), nullable=True),
     sa.Column('filial_id', sa.Integer(), nullable=False),
@@ -79,16 +78,19 @@ def upgrade():
     )
     op.create_table('produto',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('nome', sa.String(length=50), nullable=False),
-    sa.Column('descricao', sa.String(length=150), nullable=False),
+    sa.Column('nome', sa.String(length=100), nullable=False),
+    sa.Column('descricao', sa.String(length=250), nullable=False),
     sa.Column('quantidade', sa.Integer(), nullable=True),
     sa.Column('compra_unid', sa.Integer(), nullable=False),
-    sa.Column('peso_pcte', sa.Float(precision=5, asdecimal=3), nullable=False),
-    sa.Column('valor', sa.REAL(), nullable=False),
+    sa.Column('peso_pcte', sa.Numeric(precision=5, scale=3), nullable=False),
+    sa.Column('valor', sa.Numeric(), nullable=False),
     sa.Column('custo_ultima_compra', sa.Float(), nullable=False),
     sa.Column('whatsapp', sa.String(length=50), nullable=False),
     sa.Column('qrcode', sa.String(length=50), nullable=False),
-    sa.Column('status', sa.Boolean(), nullable=True),
+    sa.Column('status', sa.Integer(), nullable=True),
+    sa.Column('estoque_minimo', sa.Integer(), nullable=True),
+    sa.Column('quantidade_em_estoque', sa.Integer(), nullable=True),
+    sa.Column('obs', sa.Text(), nullable=True),
     sa.Column('cadastrado_em', sa.DateTime(), nullable=False),
     sa.Column('atualizado_em', sa.DateTime(), nullable=True),
     sa.Column('fornecedor_id', sa.Integer(), nullable=False),
@@ -101,12 +103,18 @@ def upgrade():
     sa.Column('preco', sa.Float(), nullable=False),
     sa.Column('validade', sa.Date(), nullable=False),
     sa.Column('valor_ultima_compra', sa.Float(), nullable=False),
-    sa.Column('quantidade_estoque', sa.Integer(), nullable=True),
+    sa.Column('quantidade_op', sa.Integer(), nullable=True),
     sa.Column('quantidade_minima', sa.Integer(), nullable=True),
     sa.Column('obs', sa.Text(), nullable=True),
+    sa.Column('quantidade_atual', sa.Integer(), nullable=True),
+    sa.Column('status', sa.Integer(), nullable=True),
     sa.Column('produto_id', sa.Integer(), nullable=False),
     sa.Column('cliente_id', sa.Integer(), nullable=True),
+    sa.Column('filial_pdv', sa.Integer(), nullable=True),
+    sa.Column('cadastrado_em', sa.DateTime(), nullable=False),
+    sa.Column('atualizado_em', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['cliente_id'], ['cliente.id'], ),
+    sa.ForeignKeyConstraint(['filial_pdv'], ['filial.id'], ),
     sa.ForeignKeyConstraint(['produto_id'], ['produto.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -120,7 +128,11 @@ def upgrade():
     sa.Column('data', sa.Date(), nullable=True),
     sa.Column('produto_id', sa.Integer(), nullable=False),
     sa.Column('cliente_id', sa.Integer(), nullable=True),
+    sa.Column('filial_pdv', sa.Integer(), nullable=True),
+    sa.Column('cadastrado_em', sa.DateTime(), nullable=False),
+    sa.Column('atualizado_em', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['cliente_id'], ['cliente.id'], ),
+    sa.ForeignKeyConstraint(['filial_pdv'], ['filial.id'], ),
     sa.ForeignKeyConstraint(['produto_id'], ['produto.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -132,13 +144,30 @@ def upgrade():
     sa.Column('departamento', sa.String(length=20), nullable=False),
     sa.Column('rend_kg', sa.Float(), nullable=False),
     sa.Column('rend_unid', sa.Float(), nullable=False),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('status', sa.Boolean(), nullable=True),
     sa.Column('validade', sa.Date(), nullable=False),
     sa.Column('cadastrado_em', sa.Date(), nullable=False),
     sa.Column('atualizado_em', sa.Date(), nullable=False),
     sa.Column('cliente_id', sa.Integer(), nullable=False),
     sa.Column('produto_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['cliente_id'], ['cliente.id'], ),
+    sa.ForeignKeyConstraint(['cliente_id'], ['cliente.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['produto_id'], ['produto.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('pedido',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('qtde_pedido', sa.Integer(), nullable=True),
+    sa.Column('data_pedido', sa.DateTime(), nullable=False),
+    sa.Column('data_entrega', sa.Date(), nullable=False),
+    sa.Column('status', sa.Integer(), nullable=True),
+    sa.Column('obs', sa.Text(), nullable=False),
+    sa.Column('cadastrado_em', sa.DateTime(), nullable=False),
+    sa.Column('atualizado_em', sa.DateTime(), nullable=True),
+    sa.Column('produto_id', sa.Integer(), nullable=False),
+    sa.Column('fornecedor_id', sa.Integer(), nullable=True),
+    sa.Column('filial_pdv', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['filial_pdv'], ['filial.id'], ),
+    sa.ForeignKeyConstraint(['fornecedor_id'], ['fornecedor.id'], ),
     sa.ForeignKeyConstraint(['produto_id'], ['produto.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -157,13 +186,20 @@ def upgrade():
     sa.ForeignKeyConstraint(['produto_id'], ['produto.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('reposicao_estoque',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('produto_id', sa.Integer(), nullable=False),
+    sa.Column('data_solicitacao', sa.DateTime(), nullable=False),
+    sa.ForeignKeyConstraint(['produto_id'], ['produto.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('usuario',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('nome', sa.String(length=50), nullable=False),
     sa.Column('email', sa.String(length=100), nullable=False),
     sa.Column('senha', sa.String(length=255), nullable=False),
-    sa.Column('is_admin', sa.Boolean(), nullable=True),
-    sa.Column('status', sa.Boolean(), nullable=True),
+    sa.Column('is_admin', sa.Integer(), nullable=True),
+    sa.Column('status', sa.Integer(), nullable=True),
     sa.Column('cadastrado_em', sa.DateTime(), nullable=False),
     sa.Column('atualizado_em', sa.DateTime(), nullable=True),
     sa.Column('api_key', sa.String(length=100), nullable=True),
@@ -178,9 +214,27 @@ def upgrade():
     sa.Column('cliente_id', sa.String(length=50), nullable=False),
     sa.Column('produto_id', sa.String(length=100), nullable=False),
     sa.Column('qtde', sa.Integer(), nullable=False),
-    sa.Column('tipo', sa.Enum('PedCompraentra', 'PedProducaosai', name='tipoenum'), nullable=False),
+    sa.Column('tipo', sa.Enum('compra', 'producao', name='tipoenum'), nullable=False),
     sa.Column('estoque_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['estoque_id'], ['estoque.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('pedidoproducao',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('data_pedido', sa.DateTime(), nullable=False),
+    sa.Column('data_entrega', sa.Date(), nullable=False),
+    sa.Column('qtde_pedido', sa.Integer(), nullable=True),
+    sa.Column('status', sa.Integer(), nullable=True),
+    sa.Column('obs', sa.Text(), nullable=True),
+    sa.Column('quantidade', sa.Integer(), nullable=False),
+    sa.Column('produto_id', sa.Integer(), nullable=False),
+    sa.Column('cadastrado_em', sa.DateTime(), nullable=False),
+    sa.Column('atualizado_em', sa.DateTime(), nullable=True),
+    sa.Column('receita_id', sa.Integer(), nullable=True),
+    sa.Column('filial_pdv', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['filial_pdv'], ['filial.id'], ),
+    sa.ForeignKeyConstraint(['produto_id'], ['produto.id'], ),
+    sa.ForeignKeyConstraint(['receita_id'], ['receita.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('receita_filial',
@@ -190,15 +244,25 @@ def upgrade():
     sa.ForeignKeyConstraint(['receita_id'], ['receita.id'], ),
     sa.PrimaryKeyConstraint('receita_id', 'filial_id')
     )
+    op.create_table('receita_produto',
+    sa.Column('receita_id', sa.Integer(), nullable=False),
+    sa.Column('produto_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['produto_id'], ['produto.id'], ),
+    sa.ForeignKeyConstraint(['receita_id'], ['receita.id'], )
+    )
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('receita_produto')
     op.drop_table('receita_filial')
+    op.drop_table('pedidoproducao')
     op.drop_table('operacao')
     op.drop_table('usuario')
+    op.drop_table('reposicao_estoque')
     op.drop_table('receita')
+    op.drop_table('pedido')
     op.drop_table('mixproduto')
     op.drop_table('inventario')
     op.drop_table('estoque')

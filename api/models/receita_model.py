@@ -1,5 +1,5 @@
 from api import db
-from ..models import produtoMp_model
+from ..models.produtoMp_model import Produto, receita_produto
 from datetime import datetime
 from sqlalchemy import func
 
@@ -25,9 +25,11 @@ class Receita(db.Model):
     # TODO relacionando RECEITA c/ cliente e produtos N/N
     #cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
     #cliente = db.relationship(Cliente, backref=db.backref("receitas", lazy="dynamic"))
-    #N/N
+
+    # Relacionamento N/N com a tabela Produto
     produto_id = db.Column(db.Integer, db.ForeignKey("produto.id"), nullable=False)
-    produtos = db.relationship(produtoMp_model.Produto, backref=db.backref("receitas", lazy="dynamic"))
+    produtos = db.relationship("Produto", secondary=receita_produto, back_populates="receitas", lazy="dynamic")
+   # produtos = db.relationship(produtoMp_model.Produto, backref=db.backref("receitas", lazy="dynamic"))
     #1/N
     pedidosprod = db.relationship("PedidoProducao", back_populates="receitas")
 

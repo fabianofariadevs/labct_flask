@@ -48,17 +48,7 @@ def remove_pedido(pedido):
 
 
 #TODO service para PEDIDO DE PRODUCAO**
-def cadastrar_pedidoprod(pedidoproducao, receita_id, filial_pdv, qtde_pedido, data_entrega, obs, status, cadastrado_em, atualizado_em):
-    receita = receita_model.Receita.query.get(receita_id)
-
-    # Verifique se há estoque suficiente antes de criar o pedido
-    for item in receita.produtos:
-        produto = produtoMp_model.Produto.query.get(item.id)
-        estoque = estoque_model.Estoque.query.filter_by(produto_id=produto.id).first()
-
-        if estoque and estoque.quantidade_atual < (item.quantidade + produto.estoque_minimo):
-            raise ValueError(f"Estoque insuficiente para {produto.nome}")
-
+def cadastrar_pedidoprod(pedidoproducao):
     # TODO a função cadastrar_pedido recebe um objeto pedido como argumento e cria uma instância do modelo pedido com os valores do objeto fornecido. Em seguida, adiciona a instância ao banco de dados usando db.session.add() e faz o commit das alterações usando db.session.commit(). Por fim, retorna a instância do pedido cadastrado.
     pedido_bd = pedido_model.PedidoProducao(data_pedido=func.now(), data_entrega=pedidoproducao.data_entrega, qtde_pedido=pedidoproducao.qtde_pedido,
                                             status=pedidoproducao.status, obs=pedidoproducao.obs, receita_id=pedidoproducao.receita_id, filial_pdv=pedidoproducao.filial_pdv,
@@ -66,23 +56,11 @@ def cadastrar_pedidoprod(pedidoproducao, receita_id, filial_pdv, qtde_pedido, da
 
     db.session.add(pedido_bd)
     db.session.commit()
-
-    # Atualize o estoque após a criação do pedido
-    for item in receita.produtos:
-        produto = produtoMp_model.Produto.query.get(item.id)
-        estoque = estoque_model.Estoque.query.filter_by(produto_id=produto.id).first()
-
-        if estoque:
-            estoque.quantidade_atual -= item.quantidade
-            db.session.commit()
-
     return pedido_bd
-
 
 def listar_pedidosprod():
     #TODO a função listar_pedidos recupera todos os registros da tabela pedido no banco de dados usando pedido_model.pedido.query.all(). Em seguida, retorna uma lista com todos os pedidos encontrados.
     pedidosprod = pedido_model.PedidoProducao.query.all()
-
     return pedidosprod
 
 def listar_pedidoprod_id(id):

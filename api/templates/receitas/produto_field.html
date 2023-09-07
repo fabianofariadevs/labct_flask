@@ -1,0 +1,29 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<!-- Arquivo views Consultar_Receita_HTML, apresenta a função buscar_receita para consultas de receita.html e listar
+# @author Fabiano Faria -->
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-rigth:2px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+		    <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+        </div>
+            <a href="{{ url_for('listar_receitas') }}" class="btn btn-outline-dark" title="Voltar para lista de Receitas">Voltar para lista de Receitas</a>
+    </div>
+
+    <div>
+    <label for="{{ form.produto_id.id }}_{{ index }}">Produto</label>
+    <select name="{{ form.produto_id.name }}_{{ index }}" id="{{ form.produto_id.id }}_{{ index }}">
+        <option value="" disabled selected>Selecione um produto</option>
+        {% for produto in produtos %}
+            <option value="{{ produto.id }}">{{ produto.nome }}</option>
+        {% endfor %}
+    </select>
+    <label for="{{ form.quantidades.id }}_{{ index }}">Quantidade</label>
+    <input type="number" name="{{ form.quantidades.name }}_{{ index }}" id="{{ form.quantidades.id }}_{{ index }}" min="1" value="1">
+</div>
+
+</div>
+{% endblock conteudo %}

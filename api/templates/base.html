@@ -93,6 +93,19 @@
 	</div>
 </div>
 
+<!-- Ajuste de layout para exibição de mensagens de erro e sucesso -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="messages">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+
 <div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-rigth:12px; margin-top:2px;">
 		{% block conteudo %}
 		{% endblock conteudo %}

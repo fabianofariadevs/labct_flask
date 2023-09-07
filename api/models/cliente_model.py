@@ -27,7 +27,7 @@ class Cliente(db.Model):
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
     #TODO a coluna filial_id como uma chave estrangeira referenciando a coluna id da tabela "filial".
-    filial_id = db.Column(db.Integer, db.ForeignKey("filial.id"), nullable=False)
+    filial_id = db.Column(db.Integer, db.ForeignKey("filial.id"), nullable=True)
     #TODO a propriedade filial, que é uma referência à instância de Filial associada a cada Cliente. O argumento backref define uma propriedade adicional no modelo Filial para acessar os clientes associados a uma filial.
     filial = db.relationship(Filial, back_populates="clientes")
 

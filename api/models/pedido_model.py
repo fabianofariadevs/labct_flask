@@ -40,6 +40,10 @@ class PedidoProducao(db.Model):
     qtde_pedido = db.Column(db.Integer, nullable=True, default=0)
     status = db.Column(db.Integer, default=1, nullable=True)
     obs = db.Column(db.Text(), nullable=True)
+    quantidade = db.Column(db.Integer, nullable=False)
+    produto_id = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False)
+    #produtos = db.relationship("Produto", back_populates="pedidosprod", foreign_keys=[produto_id])
+
     cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 

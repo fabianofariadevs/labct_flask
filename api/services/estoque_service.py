@@ -1,6 +1,6 @@
 #TODO método CRUD
 from api import db
-from ..models import estoque_model
+from ..models import estoque_model, produtoMp_model
 
 
 #TODO * Definição do CRUD_Modelo para Estoque, ESSAS funções fornecem operações básicas de criação, leitura, atualização e remoção (CRUD) para os registros da tabela pedido no banco de dados.
@@ -37,29 +37,28 @@ def excluir_estoque(estoque):
     db.session.delete(estoque)
     db.session.commit()
 
-def altera_saldo_estoque(estoque_id, operacao, tipo_funcao, valor_antigo=None):
-    # tipo_funcao -> 1 = Cadastro de Operação // PEDIDO COMPRAS
-    # tipo_funcao -> 2 = Atualização de Operação // PEDIDO PRODUÇÃO
-    # tipo_função -> 3 = Remoção de Operação
-    estoque = listar_estoque_id(estoque_id)
-    if tipo_funcao == 1:
-        if operacao.tipo == "compra":
-            estoque.quantidade_op += operacao.custo
-        else:
-            estoque.valor -= operacao.custo
-    elif tipo_funcao == 2:
-        if operacao.tipo == "compra":
-            estoque.quantidade_op -= valor_antigo
-            estoque.quantidade_op += operacao.custo
-        else:
-            estoque.quantidade_op += valor_antigo
-            estoque.quantidade_op -= operacao.custo
-    else:
-        if operacao.tipo.value == "compra":
-            estoque.quantidade_op -= operacao.custo
-        else:
-            estoque.quantidade_op += operacao.custo
 
+def atualizar_estoque_apos_producao(pedido_producao):
+    for item in pedido_producao.receita.produtos:
+        produto = produtoMp_model.Produto.query.get(item.id)
+        estoque = estoque_model.Estoque.query.filter_by(produto_id=produto.id).first()
+
+        if estoque:
+            estoque.quantidade_atual += item.quantidade
+            db.session.commit()
+
+
+def solicitar_reposicao(produto_id):
+    produto = produtoMp_model.Produto.query.get(produto_id)
+
+    if produto:
+        # Crie um registro de solicitação de reposição no banco de dados
+        reposicao = estoque_model.ReposicaoEstoque(produto_id=produto_id)
+        db.session.add(reposicao)
+        db.session.commit()
+
+def atualizar_estoque_minimo(produto, estoque_minimo):
+    produto.estoque_minimo = estoque_minimo
     db.session.commit()
 
 

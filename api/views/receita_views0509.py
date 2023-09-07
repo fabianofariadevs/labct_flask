@@ -1,8 +1,8 @@
 from api import app, db
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, BooleanField, SubmitField, SelectField, FloatField, FieldList, FormField, Form, IntegerField
+from wtforms import StringField, DateField, BooleanField, SubmitField, SelectField, FloatField, FieldList, FormField
 from wtforms.fields import SelectMultipleField
-from wtforms.validators import DataRequired, ValidationError, length
+from wtforms.validators import DataRequired, ValidationError
 from ..schemas import receita_schema
 from flask import request, make_response, jsonify, render_template, redirect, url_for, flash
 from ..services import receita_service
@@ -22,7 +22,7 @@ class ReceitaForm(FlaskForm):
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
 #    atualizado_em = DateField('atualizado_em', format='%d/%m/%Y')
     produto_id = SelectMultipleField('Produtos', validators=[DataRequired()])
-    quantidades = IntegerField('Quantidades', default=1, validators=[DataRequired()])
+    quantidades = SelectMultipleField('Quantidades', coerce=int, validators=[DataRequired()])
     #filial = StringField('Filial Relacionada', validators=[DataRequired()])
    # pedidoprod = StringField('Pedido de Produção', validators=[DataRequired()])
     #produtos = [(1, 'Produto 1'), (2, 'Produto 2')]  # Exemplo de produtos
@@ -61,99 +61,36 @@ class ReceitaForm(FlaskForm):
 def exibir_formreceita():
     form = ReceitaForm()
     produtos = Produto.query.all()  # Recupera todos os produtos do banco de dados
-    produtos_selecionados = []  # Inicialize a variável para armazenar os produtos cadastrados na receita
+    produtos_selecionados = []
+    quantidades_selecionadas = []
 
     if request.method == 'POST' and form.validate_on_submit():
         try:
             form_data = form.to_dict()
+            # Obtenha as quantidades selecionadas
+            quantidades_selecionadas = request.form.getlist('quantidades')
+            # Obtenha os IDs dos produtos selecionados
+            produtos_selecionados = request.form.getlist('produto_id')
+            # processar os produtos selecionados corretamente, é uma lista de IDs de produtos.
 
-            # Processar os produtos e quantidades selecionados
-            produtos_quantidades = {}
+            # Criar a Receita
+            #receita = receita_schema.ReceitaSchema().load(form_data)
+            receita_bd = receita_service.cadastrar_receita(form_data)
 
-            # Inicialize uma lista para as mensagens de erro
-            errors = []
+            # Associar os produtos à Receita
+            for produto_id, quantidades in zip(produtos_selecionados, quantidades_selecionadas):
+                # Crie uma associação entre a Receita e o Produto com a quantidade
+                receita_service.adicionar_produto_a_receita(receita_bd, produto_id, quantidades)
 
-            for i in range(len(form.produto_id.choices)):
-                produto_id = request.form.get(f"produto_id_{i}")
-                quantidade = request.form.get(f"quantidades_{i}")
+            flash("Receita cadastrada com sucesso!")
 
-                # Validar os valores recebidos, verificar se o produto_id é válido e se a quantidade é um número válido
-                if produto_id and quantidade:
-                    try:
-                        produto_id = int(produto_id)
-                        quantidade = int(quantidade)
-                    except ValueError:
-                        errors.append("Os valores do produto e da quantidade devem ser números inteiros.")
-                        continue
-
-                    # Verifique se o produto selecionado está na lista de produtos do banco de dados
-                    produto_selecionado = Produto.query.get(produto_id)
-
-                    if produto_selecionado:
-                        produtos_quantidades[produto_selecionado] = quantidade
-                        produtos_selecionados.append(produto_selecionado)
-                    else:
-                        errors.append("Produto selecionado não encontrado no banco de dados.")
-                else:
-                    errors.append("Produto e quantidade são campos obrigatórios.")
-
-            # Se houver erros, exiba as mensagens de erro e não prossiga com o cadastro
-            if errors:
-                for error in errors:
-                    flash(error, 'error')
-            else:
-                # Cadastrar a receita no banco de dados
-                receita_id = receita_service.cadastrar_receita(form_data)
-                # Adicionar produtos à receita usando a função adicionar_produtos_a_receita
-                receita_service.adicionar_produtos_a_receita(receita_id, produtos_quantidades)
-                flash("Receita cadastrada com sucesso!")
-                return redirect(url_for("listar_receitas"))
-
+            return redirect(url_for("listar_receitas"))
         except ValidationError as error:
             flash("Erro ao cadastrar Receita: " + str(error.messages))
 
-    # Lidar com adição dinâmica de campos
-    if 'adicionar_produto' in request.form:
-        form.produto_id.choices.append((None, 'Selecione um produto'))
-        form.quantidades.choices.append((None, '1'))
-
-    if 'remover_produto' in request.form:
-        index = int(request.form['remover_produto'])
-        if index < len(form.produto_id.choices):
-            form.produto_id.choices.pop(index)
-            form.quantidades.choices.pop(index)
-
-    return render_template('receitas/formreceita.html', form=form,
-                           produtos_cadastrados=produtos_selecionados, produtos=produtos, produtos_quantidades={})
-
-
-@app.route('/receitas/adicionar_produtos', methods=['GET', 'POST'])
-def adicionar_produtos():
-    form = ReceitaForm()  # formulário ReceitaForm para adicionar produtos
-
-    if request.method == 'POST' and form.validate_on_submit():
-        # Processar os produtos e quantidades selecionados no novo formulário
-        produtos_adicionais = []
-        quantidades_adicionais = []
-
-        for i in range(5):  # Ou quantos campos você desejar, deve corresponder ao número definido no template
-            produto_id = request.form.get(f"produto_id_{i}")
-            quantidade = request.form.get(f"quantidade_{i}")
-
-            # Verificar se o produto_id e quantidade são válidos
-            if produto_id and quantidade:
-                produtos_adicionais.append(produto_id)
-                quantidades_adicionais.append(quantidade)
-
-        # Agora você pode processar e armazenar esses produtos e quantidades no banco de dados ou onde preferir
-        receita_service.adicionar_produtos_a_receita(produtos_adicionais, quantidades_adicionais)
-
-    return render_template('receitas/adicionar_produtos.html', form=form)
-
-
-@app.template_global()
-def selecionar_produto_quantidade(produtos_selecionados, quantidades_selecionadas):
-    return zip(produtos_selecionados, quantidades_selecionadas)
+    return render_template('receitas/formreceita.html', form=form, produtos=produtos,
+                           produtos_selecionados=produtos_selecionados,
+                           quantidades_selecionadas=quantidades_selecionadas)
 
 
 @app.route('/receitas/buscar', methods=['GET'])
@@ -187,6 +124,7 @@ def listar_receitas():
 def atualizar_receita(id):
     atuareceita = receita_service.listar_receita_id(id)
     if not atuareceita:
+        #return "Cliente não encontrado", 404
         return render_template("receitas/receita.html", error_message="Receita não encontrada"), 404
 
     form = ReceitaForm(obj=atuareceita)
@@ -222,9 +160,6 @@ def visualizar_receita(id):
             pedidos_producao_ids = [pedidoprod.receita_id if pedidoprod else 'Pedido de Produção não encontrado'
                                     for pedidoprod in pedidosprod]
             receita_data['pedidosprod'] = pedidos_producao_ids
-
-            produtos_quantidades = receita_service.obter_produtos_da_receita(receita_data['id'])
-            receita_data['produtos_quantidades'] = produtos_quantidades
 
             return render_template('receitas/detalhes.html', receita=receita_data)
         else:

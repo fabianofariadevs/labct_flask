@@ -29,6 +29,7 @@ class Filial(db.Model):
     status = db.Column(db.Integer, default=1, nullable=True)
     cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+    estoques_filial = db.relationship("Estoque", back_populates="filial")  # relacionamento com Estoque
 
     # TODO Relacionamento com a tabela Receita N/N
     # receita = db.Column(db.Integer, db.ForeignKey("receita.id"), nullable=False)
@@ -42,3 +43,4 @@ class Filial(db.Model):
     clientes = db.relationship("Cliente", back_populates="filial", overlaps="filial")
 
     pedidosprod = db.relationship("PedidoProducao", back_populates="filiais")
+
