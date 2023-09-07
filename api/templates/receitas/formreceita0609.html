@@ -19,7 +19,7 @@
         <h3 class="card-title">{% if receita %}Atualizar Receita{% else %}Cadastrando Nova Receita{% endif %}</h3>
     </div>
     <div class="card-body">
-        <form method="POST" action="#" enctype="multipart/form-data">
+        <form method="POST" action="#">
             {% if receita %}
             <input type="hidden" name="_method" value="PUT">
             {% else %}
@@ -77,6 +77,45 @@
                     </div>
                 </div>
             </div>
+
+
+            <div class="row">
+                <h5>Produtos da Receita</h5>
+
+                {{ form.hidden_tag() }}
+
+                    {% for i in range(form.produto_id.choices|length) %}
+
+                        <div class="form-group">
+                            <label for="{{ form.produto_id.id }}_{{ i }}">Produto</label>
+                            {{form.produto_id(class="form-select") }}
+
+                            <label for="{{ form.quantidades.id }}_{{ i }}">Quantidade</label>
+                            {{ form.quantidades(class="form-control", type="number", min="1", value="1", id=form.quantidades.id ~ "_" ~ i) }}
+
+                        <button type="submit" name="remover_produto" value="{{ i }}" class="btn btn-outline-danger" rel="tooltip" title="Remover Produto">Remover Produto</button>
+                        </div>
+                    {% endfor %}
+                     <!-- Botão Adicionar Produto aqui -->
+                <div class="form-group">
+                    <button type="submit" name="adicionar_produto" class="btn btn-outline-secondary" rel="tooltip" title="Adicionar Produto">Adicionar Produto</button>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <h5>Produtos Adicionados</h5>
+                <div id="produtos-adicionados">
+                    <!-- Itere sobre os produtos selecionados e suas quantidades -->
+                    {% for produto_id, quantidade in selecionar_produto_quantidade(produtos_selecionados, quantidades_selecionadas) %}
+                    <div class="form-group">
+                        <ul>Produto: {{ produto_id }}
+                        <li>Quantidade: {{ quantidade }}</li></ul>
+                        <label>Quantidade: {{ quantidade }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-3">
                     <div class="mb-3">
@@ -97,43 +136,6 @@
                      </div>
                 </div>
             </div>
-
-
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>Produtos da Receita</h5>
-                    {% if produtos %}
-                    <ul>
-                        {% for produto, quantidade in produtos_quantidades.items() %}
-                        <li>{{ produto.nome }} - {{ quantidade }} unidades</li>
-                        {% endfor %}
-                    </ul>
-                    {% else %}
-                        <p>Nenhum produto cadastrado nesta receita.</p>
-                    {% endif %}
-                </div>
-
-            <div class="col-md-6">
-                <h5>Selecionar Produtos</h5>
-                <div id="produtos-selecionados">
-                    {% for i in range(form.produto_id.choices|length) %}
-                        <div class="form-group">
-                            {{ form.produto_id(class="form-select", id="produto_id_" + i|string) }}
-                            {{ form.quantidades(class="form-control", type="number", min="1", value="1", id="quantidades_" + i|string) }}
-                        </div>
-                    {% endfor %}
-                </div>
-                <div class="form-group">
-                    <button type="submit" name="adicionar_produto" class="btn btn-outline-secondary">Adicionar Produto</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary">Cadastrar Receita</button>
-        </div>
-
-
             {% if receita %}
             <input type="submit" class="btn btn-success" name="Atualizar" value="Atualizar Receita">
             {% else %}

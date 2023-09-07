@@ -1,0 +1,85 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+		    <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+
+        </div>
+        <div>
+            <a href="{{ url_for('exibir_formreceita') }}" class="btn btn-outline-dark" title="Voltar para lista de Receitas">Voltar para lista de Receitas</a>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <form method="POST" action="#">
+            {% if receita %}
+            <input type="hidden" name="_method" value="PUT">
+            {% else %}
+            <input type="hidden" name="_method" value="POST">
+            {% endif %}
+            {{ form.hidden_tag() }}
+            {% for error in form.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+
+            <div class="row">
+                <h5>Produtos da Receita</h5>
+                <div id="produtos-receita"> <!-- Itere sobre os produtos da receita -->
+                    {% for i in range(0, produtos_selecionados|length) %}
+                        <div class="form-group">
+                            <input type="hidden" name="produto_id_{{ i }}" value="{{ produtos_selecionados[i] }}">
+                            <input type="hidden" name="quantidade_{{ i }}" value="{{ quantidades_selecionadas[i] }}">
+                            <label>Produto: {{ produtos_selecionados[i] }}</label>
+                            <label>Quantidade: {{ quantidades_selecionadas[i] }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Produto:</label>
+                    <select name="produto_id" class="form-select">
+                        {% for produto in produtos_cadastrados %}
+                        <option value="{{ produto.id }}">{{ produto.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" name="remover_produto" value="{{ i }}" class="btn btn-outline-danger" rel="tooltip" title="Remover Produto">Remover Produto</button>
+                <button type="submit" name="adicionar_produto" class="btn btn-outline-secondary" rel="tooltip" title="Adicionar Produto">Adicionar Produto</button>
+            </div>
+
+
+            <br>
+            <div class="row">
+                <h5>Produtos Adicionados</h5>
+                <div id="produtos-adicionados">
+                    <!-- Itere sobre os produtos selecionados e suas quantidades -->
+                    {% for produto_id, quantidade in selecionar_produto_quantidade(produtos_selecionados, quantidades_selecionadas) %}
+                    <div class="form-group">
+                        <ul>Produto: {{ produto_id }}
+                        <li>Quantidade: {{ quantidade }}</li></ul>
+                        <label>Quantidade: {{ quantidade }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+
+            {% if receita %}
+            <input type="submit" class="btn btn-success" name="Atualizar" value="Atualizar Receita">
+            {% else %}
+            <input type="submit" class="btn btn-primary" name="cadastrar" value="Cadastrar">
+            {% endif %}
+            <a href="{{ url_for('exibir_formreceita') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
+        </form>
+
+
+    </div>
+</div>
+{% endblock conteudo %}
+

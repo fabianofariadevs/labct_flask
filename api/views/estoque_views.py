@@ -38,7 +38,7 @@ def listar_pal():
         return render_template('estoque/estoque.html', le=le, listas=listas)
 
 def listar_produtos_reposicao():
-    produtos_reposicao = Produto.query.filter(Produto.quantidade <= Produto.nivel_minimo).all()
+    produtos_reposicao = Produto.query.filter(Produto.quantidade <= Produto.estoque_minimo).all()
     return render_template("estoque/listar_produtos_reposicao.html", produtos_reposicao=produtos_reposicao)
 
 

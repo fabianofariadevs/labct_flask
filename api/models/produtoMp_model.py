@@ -7,7 +7,8 @@ from sqlalchemy.orm import relationship
 
 receita_produto = db.Table('receita_produto',
                            db.Column('receita_id', db.Integer, db.ForeignKey('receita.id'), unique=False, nullable=False),
-                           db.Column('produto_id', db.Integer, db.ForeignKey('produto.id'), unique=False, nullable=False))
+                           db.Column('produto_id', db.Integer, db.ForeignKey('produto.id'), unique=False, nullable=False),
+                           db.Column('quantidade', db.Integer, nullable=False))
 
 class Produto(db.Model):
     __tablename__ = "produto"
