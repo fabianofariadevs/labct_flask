@@ -1,4 +1,4 @@
-from api import db
+from api import db, ma
 from ..models.produtoMp_model import Produto, receita_produto
 from datetime import datetime
 from sqlalchemy import func
@@ -6,6 +6,7 @@ from sqlalchemy import func
 # TODO ** Classe Receita dbModel, responsavel por definir e criar o Banco de dados com as migrations flask db.
 
 class Receita(db.Model):
+
     __tablename__ = "receita"
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
@@ -21,6 +22,7 @@ class Receita(db.Model):
     # Propriedade 'filiais' referenciando a tabela "filial"
     # TODO relacionando RECEITA c/ Filiais N/N
     filiais = db.relationship("Filial", secondary="receita_filial", back_populates="receitas")
+    quantidades = db.Column(db.Integer, nullable=True, default=0)
 
     # TODO relacionando RECEITA c/ cliente e produtos N/N
     #cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
@@ -28,6 +30,7 @@ class Receita(db.Model):
 
     # Relacionamento N/N com a tabela Produto
     produto_id = db.Column(db.Integer, db.ForeignKey("produto.id"), nullable=False)
+
     produtos = db.relationship("Produto", secondary=receita_produto, back_populates="receitas", lazy="dynamic")
    # produtos = db.relationship(produtoMp_model.Produto, backref=db.backref("receitas", lazy="dynamic"))
     #1/N

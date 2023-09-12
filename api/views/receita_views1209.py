@@ -67,19 +67,25 @@ class ReceitaForm(FlaskForm):
 @app.route('/receitas/formulario', methods=['GET', 'POST'])
 def exibir_formreceita():
     form = ReceitaForm()
+    produtos = Produto.query.all()  # Recupera todos os produtos do banco de dados
+  #  produtos_cadastrados = []  # Inicialize a variável para armazenar os produtos cadastrados na receita
 
     if request.method == 'POST' and form.validate_on_submit():
         try:
             form_data = form.to_dict()
 
             # Processar os produtos e quantidades selecionados
-            produtos_quantidades = dict(zip(form.produtos.data, form.quantidades.data))
+            produtos_quantidades = {}
+
+            for produto_id, quantidade in zip(form.produtos.data, form.quantidades.data):
+                produtos_quantidades[produto_id] = quantidade
 
             # Cadastrar a receita no banco de dados
-            receita = receita_service.cadastrar_receita(form_data)
+            receita_id = receita_service.cadastrar_receita(form_data)
 
-            # Adicionar produtos à receita usando a função adicionar_produtos_a_receita
-            receita_service.adicionar_produtos_a_receita(receita, produtos_quantidades)
+            # Adicionar produtos à receita usando a função adicionar_produto_a_receita
+            for produto_id, quantidade in produtos_quantidades.items():
+                receita_service.adicionar_produtos_a_receita(receita_id, produto_id, quantidade)
 
             flash("Receita cadastrada com sucesso!")
             return redirect(url_for("listar_receitas"))
@@ -87,8 +93,24 @@ def exibir_formreceita():
         except ValidationError as error:
             flash("Erro ao cadastrar Receita: " + str(error.messages))
 
-    produtos = Produto.query.all()
     return render_template('receitas/formreceita.html', form=form, produtos=produtos)
+
+    # Lidar com adição dinâmica de campos
+    if 'adicionar_produto' in request.form:
+        form.produto_id.choices.append((None, 'Selecione um produto'))
+        form.quantidades.choices.append((None, '1'))
+
+    if 'remover_produto' in request.form:
+        try:
+            index = int(request.form['remover_produto'])
+            if index < len(form.produto_id.choices):
+                form.produto_id.choices.pop(index)
+                form.quantidades.choices.pop(index)
+        except ValueError:
+            pass
+
+    return render_template('receitas/formreceita.html', form=form,
+                           produtos_cadastrados=produtos_cadastrados, produtos=produtos)
 
 
 @app.route('/receitas/cadastrar_receita', methods=['GET', 'POST'])
@@ -140,22 +162,6 @@ def adicionar_produtos():
         receita_service.adicionar_produtos_a_receita(produtos_adicionais, quantidades_adicionais)
 
     return render_template('receitas/adicionar_produtos.html', form=form)
-
-@app.route('/receitas/adicionar_produto', methods=['POST'])
-def adicionar_produto():
-    form = ReceitaForm(request.form)
-    if form.validate_on_submit():
-        # Processar os dados do formulário aqui, adicionar o produto à lista de produtos da receita
-        # Certifique-se de que você tenha uma maneira de rastrear os produtos da receita, talvez em uma lista ou banco de dados.
-
-        # Redirecione de volta para a página de formulário após adicionar o produto.
-        flash('Produto adicionado com sucesso.')
-        return redirect(url_for('exibir_formreceita'))
-    else:
-        flash('Erro ao adicionar produto.')
-
-    # Se houver um erro, redirecione de volta para a página de formulário com o modal aberto.
-    return render_template('receitas/formreceita.html', form=form)
 
 
 @app.template_global()

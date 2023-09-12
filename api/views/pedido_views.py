@@ -320,8 +320,8 @@ def fazer_pedido():
     # ... lógica para criar o pedido DE PRODUCAO QUE DEVEMOS FAZER UM MIX COM OS PRODUTOS DA RECEITA P DESCONTAR ESTOQUE ...
 
     # Atualizar o estoque após o pedido
-    produto = Produto.query.get(produto_id)
-    produto.atualizar_estoque_apos_pedido(quantidade_pedido)
+    produto = Produto.query.get()
+    produto.atualizar_estoque_apos_pedido()
 
     # ... redirecionar ou renderizar templates ...
 

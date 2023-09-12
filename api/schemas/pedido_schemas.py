@@ -38,7 +38,7 @@ class PedidoProducaoSchema(ma.SQLAlchemyAutoSchema):
     qtde_pedido = fields.Integer(required=True)
     status = fields.Integer(required=False)
     obs = fields.String(required=True)
-    quantidade = fields.Integer(required=True)
+    quantidade = fields.Integer(required=False)
     produto_id = fields.Integer(required=False)
     receita_id = fields.Integer(required=False)
     filial_pdv = fields.Integer(required=False)

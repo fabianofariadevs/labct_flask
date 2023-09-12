@@ -6,29 +6,18 @@ from api import db
 #TODO ** CRUD ** ESSAS funções fornecem operações básicas de criação, leitura, atualização e remoção (CRUD) para os registros da tabela pedido no banco de dados.
 #       @author Fabiano Faria
 
-def cadastrar_receita(receita, produto_ids, quantidades):
+def cadastrar_receita(receita, produto_id, quantidades):
     try:
-        produtos = produtoMp_model.Produto.query.filter(produtoMp_model.Produto.id.in_(produto_ids)).all()
-        if not produtos:
-            raise ValueError("Nenhum produto válido fornecido para a receita.")
+        receita_bd = receita_model.Receita(descricao_mix=receita.descricao_mix, modo_preparo=receita.modo_preparo, departamento=receita.departamento, rend_kg=receita.rend_kg,
+                                           rend_unid=receita.rend_unid, validade=receita.validade, status=receita.status, cadastrado_em=func.now(),
+                                           atualizado_em=receita.atualizado_em)
 
-        receita_bd = receita_model.Receita(
-            descricao_mix=receita.descricao_mix, modo_preparo=receita.modo_preparo, departamento=receita.departamento, rend_kg=receita.rend_kg,
-            rend_unid=receita.rend_unid, validade=receita.validade, status=receita.status, cadastrado_em=func.now(), atualizado_em=receita.atualizado_em,
-            produto_id=receita.produto_id, quantidades=receita.quantidades, produtos=receita.produtos, filiais=receita.filiais, pedidosprod=receita.pedidosprod)
+        produtos = produtoMp_model.Produto.query.filter(produtoMp_model.Produto.id.in_(produto_id)).all()
 
         # Associe os produtos à receita com as quantidades correspondentes
-        for produto_id, quantidade in zip(produto_ids, quantidades):
-            produto_receita = produtoMp_model.Produto.query.get(produto_id)
-            if not produto_receita:
-                raise ValueError(f"Produto com ID {produto_id} não encontrado.")
-            receita_bd.produtos.append(produto_receita)
-            receita_quantidade = receita_produto(
-                receita_id=receita_bd.id,
-                produto_id=produto_id,
-                quantidade=quantidade
-            )
-            db.session.add(receita_quantidade)
+        for produto, quantidade in zip(produtos, quantidades):
+            receita_bd.produtos.append(produto)
+            receita_bd.quantidades[produto.id] = quantidade
 
         db.session.add(receita_bd)
         db.session.commit()
@@ -40,9 +29,6 @@ def cadastrar_receita(receita, produto_ids, quantidades):
 def listar_receitas():
     receitas = receita_model.Receita.query.all()
     return receitas
-
-def listar_produtos():
-    return produtoMp_model.Produto.query.all()
 
 def listar_receita_id(id):
     receita = receita_model.Receita.query.filter_by(id=id).first()
@@ -60,10 +46,6 @@ def atualiza_receita(receita_anterior, receita_novo):
         receita_anterior.cadastrado_em = receita_novo.cadastrado_em
         receita_anterior.atualizado_em = receita_novo.atualizado_em
         receita_anterior.produto_id = receita_novo.produto_id
-        receita_anterior.quantidades = receita_novo.quantidades
-        receita_anterior.produtos = receita_novo.produtos
-        receita_anterior.filiais = receita_novo.filiais
-        receita_anterior.pedidosprod = receita_novo.pedidosprod
 
         db.session.commit()
     except Exception as e:
@@ -108,37 +90,14 @@ def adicionar_produtos_a_receita(receita_id, produtos_quantidades):
 def obter_produtos_da_receita(receita_id):
     try:
         receita = receita_model.Receita.query.get(receita_id)
-        produtos_da_receita = {}
 
-        if receita:
-            produtos_da_receita = {produto: quantidade for produto, quantidade in receita.produto_quantidades.items()}
+        if not receita:
+            raise ValueError(f"Receita com ID {receita_id} não encontrada.")
+
+        produtos_da_receita = {}
+        for produto, quantidade in receita.produto_quantidades.items():
+            produtos_da_receita[produto] = quantidade
 
         return produtos_da_receita
     except Exception as e:
         raise ValueError(f"Não foi possível obter os produtos da receita. Erro: {str(e)}")
-
-def adicionar_produtos_e_quantidades_a_receita(receita, produto_ids, quantidades):
-    try:
-        produtos_quantidades = {}
-
-        for produto_id, quantidade in zip(produto_ids, quantidades):
-            produto = produtoMp_model.Produto.query.get(produto_id)
-
-            if not produto:
-                raise ValueError(f"Produto com ID {produto_id} não encontrado.")
-
-            receita.produtos.append(produto)
-            receita_produto = produtoMp_model.receita_produto(
-                receita_id=receita,
-                produto_id=produto,
-                quantidades=quantidade
-            )
-            db.session.add(receita_produto)
-            produtos_quantidades[produto] = quantidade
-
-        db.session.commit()
-        return produtos_quantidades
-
-    except ValueError as ve:
-        db.session.rollback()
-        raise ve

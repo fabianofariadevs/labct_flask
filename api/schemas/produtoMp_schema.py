@@ -28,8 +28,14 @@ class ProdutoMpSchema(ma.SQLAlchemyAutoSchema):
     obs = fields.String(required=False)
     cadastrado_em = fields.Date(required=False)
     atualizado_em = fields.Date(required=False)
-    fornecedor_id = fields.Integer(required=True)
-    cliente_id = fields.Integer(required=False)
+    fornecedor = fields.Integer(required=True)
+
+    estoques_produto = fields.Nested("EstoqueSchema", many=True, exclude=("produto",))
+    reposicoes = fields.Nested("ReposicaoEstoqueSchema", many=True, exclude=("produto",))
+    receitas = fields.List(fields.Nested("ReceitaSchema", many=True, exclude=("produto",)))
+    #receitas = fields.Nested("ReceitaSchema", many=True, exclude=("produto",))
+    pedidos = fields.Nested("PedidoSchema", many=True, exclude=("produto",))
+    mixproduto = fields.Nested("MixProdutoSchema", many=True, exclude=("produto",))
 
 
 class InventarioSchema(ma.SQLAlchemyAutoSchema):

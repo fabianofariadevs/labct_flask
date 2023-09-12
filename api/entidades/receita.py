@@ -1,6 +1,7 @@
 
 class Receita:
-    def __init__(self, descricao_mix, modo_preparo, departamento, rend_kg, rend_unid, validade, status, cadastrado_em, atualizado_em, produto_id):
+    def __init__(self, descricao_mix, modo_preparo, departamento, rend_kg, rend_unid, validade, status, cadastrado_em, atualizado_em,
+                 produto_id, quantidades, filiais, produtos, pedidosprod):
         self.__descricao_mix = descricao_mix
         self.__modo_preparo = modo_preparo
         self.__departamento = departamento
@@ -11,6 +12,10 @@ class Receita:
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
         self.__produtos_id = produto_id
+        self.__quantidades = quantidades
+        self.__filiais = filiais
+        self.__produtos = produtos
+        self.__pedidosprod = pedidosprod
 
     @property
     def descricao_mix(self):
@@ -92,6 +97,38 @@ class Receita:
     def produto_id(self, produto_id):
         self.__produtos_id = produto_id
 
+    @property
+    def quantidades(self):
+        return self.__quantidades
+
+    @quantidades.setter
+    def quantidades(self, quantidades):
+        self.__quantidades = quantidades
+
+    @property
+    def filiais(self):
+        return self.__filiais
+
+    @filiais.setter
+    def filiais(self, filiais):
+        self.__filiais = filiais
+
+    @property
+    def produtos(self):
+        return self.__produtos
+
+    @produtos.setter
+    def produtos(self, produtos):
+        self.__produtos = produtos
+
+    @property
+    def pedidosprod(self):
+        return self.__pedidosprod
+
+    @pedidosprod.setter
+    def pedidosprod(self, pedidosprod):
+        self.__pedidosprod = pedidosprod
+
     def json(self):
         return {
             "descricao_mix": self.__descricao_mix,
@@ -103,5 +140,10 @@ class Receita:
             "status": self.__status,
             "cadastrado_em": self.__cadastrado_em,
             "atualizado_em": self.__atualizado_em,
-            "produto_id": self.__produtos_id
+            "produto_id": self.__produtos_id,
+            "quantidades": self.__quantidades,
+            "filiais": self.__filiais,
+            "produtos": self.__produtos,
+            "pedidosprod": self.__pedidosprod
         }
+
