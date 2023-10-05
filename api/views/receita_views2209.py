@@ -1,8 +1,7 @@
 from api import app, db
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, BooleanField, SubmitField, SelectField, FloatField, FieldList, FormField, Form, IntegerField, TextAreaField
+from wtforms import StringField, DateField, BooleanField, SubmitField, SelectField, FloatField, FieldList, FormField, Form, IntegerField
 from wtforms.fields import SelectMultipleField
-from wtforms_components import SelectField, SelectMultipleField
 from wtforms.validators import DataRequired, ValidationError, length
 from ..schemas import receita_schema
 from flask import request, make_response, jsonify, render_template, redirect, url_for, flash, session
@@ -14,18 +13,37 @@ from ..models.filial_pdv_model import Filial
 from ..models.cliente_model import Cliente
 from sqlalchemy.orm import joinedload
 
+class ProdutoReceitaForm(FlaskForm):
+    produto_id = SelectField('Produto', validators=[DataRequired()])
+    quantidades = IntegerField('Quantidade', default=1, validators=[DataRequired()])
+
+    submit = SubmitField('Cadastrar')
+
+    def __init__(self, *args, **kwargs):
+        super(ProdutoReceitaForm, self).__init__(*args, **kwargs)
+        self.produto_id.choices = [(produto.id, produto.nome)
+                                   for produto in Produto.query.all()]
+
+        # Adicionar opções para quantidades, por exemplo, de 1 a 10
+        self.quantidades.choices = [(i, int(i)) for i in range(1, 21)]  # Altere o intervalo conforme necessário
+
+    def to_dict(self):
+        return {
+            'produto_id': self.produto_id.data,
+            'quantidade': self.quantidades.data,
+        }
+
 class ReceitaForm(FlaskForm):
     descricao_mix = StringField("Descricao_mix", validators=[DataRequired()])
-    modo_preparo = TextAreaField("Modo_preparo", validators=[DataRequired()])
+    modo_preparo = StringField("Modo_preparo", validators=[DataRequired()])
     departamento = StringField('Departamento', validators=[DataRequired()])
     rend_kg = FloatField('Rend_kg', validators=[DataRequired()])
     rend_unid = FloatField('Rend_unid', validators=[DataRequired()])
-    validade = StringField('Validade', default='10 dias')
-    #validade = DateField('Validade', format='%Y-%m-%d', validators=[DataRequired()])
+    validade = DateField('Validade', format='%Y-%m-%d', validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
-    quantidades = FloatField('Quantidade', validators=[DataRequired()])
-    produtos = SelectField('Produto Relacionado')
-    filiais = SelectField('Filial Relacionada')
+    quantidades = FloatField('Quantidades', validators=[DataRequired()])
+    produtos = SelectMultipleField('Produtos')
+    filiais = StringField('Filial Relacionada')
     clientes = SelectField('Cliente')
    # pedidoprod = StringField('Pedido de Produção', validators=[DataRequired()])
     #produtos = [(1, 'Produto 1'), (2, 'Produto 2')]  # Exemplo de produtos
@@ -43,6 +61,11 @@ class ReceitaForm(FlaskForm):
         self.clientes.choices = [(cliente.id, cliente.nome)
                                  for cliente in Cliente.query.all()]
 
+        # Adicionar opções para quantidades, por exemplo, de 1 a 10
+        #self.quantidades.choices = [(i, str(i)) for i in range(1, 21)]  # Altere o intervalo conforme necessário
+      #  self.filial.choices = [(filial.id, filial.nome) for filial in Filial.query.all()]
+       # self.pedidoprod.choices = [(pedidoproducao.id, pedidoproducao.receitas) for pedidoproducao in PedidoProducao.query.all()]
+
         self.status.choices = self.get_status_choices()
 
     @staticmethod
@@ -56,7 +79,7 @@ class ReceitaForm(FlaskForm):
             'departamento': self.departamento.data,
             'rend_kg': self.rend_kg.data,
             'rend_unid': self.rend_unid.data,
-            'validade': self.validade.data,
+            'validade': self.validade.data.strftime('%Y-%m-%d'),
             'status': self.status.data,
             'quantidades': self.quantidades.data,
             'produtos': self.produtos.data,
@@ -65,65 +88,70 @@ class ReceitaForm(FlaskForm):
 
         }
 
-
 @app.route('/receitas/formulario', methods=['GET', 'POST'])
 def exibir_formreceita():
     form = ReceitaForm()
-    produtos = Produto.query.all()
-    produtos_quantidades = session.get('receita_produtos', [])
 
     if request.method == 'POST' and form.validate_on_submit():
         try:
-            form_data = form.to_dict()  # Obter os dados do formulário como um dicionário
+            form_data = form.to_dict()
 
-            # ... Lógica de validação ...
+            # Processar os produtos e quantidades selecionados
+            produtos_ids = request.form.getlist('produtos')
+            quantidades = request.form.getlist('quantidades')
 
-            produtos_quantidades.append({
-                'produtos': form_data['produtos'],
-                'quantidades': form_data['quantidades']
-            })
+            # Verificar se produtos_ids e quantidades são listas ou sequências
+            if not isinstance(produtos_ids, (list, tuple)):
+                produtos_ids = [produtos_ids]
 
-            session[
-                'receita_produtos'] = produtos_quantidades  # Atualize a sessão com a lista de produtos e quantidades
-            session.modified = True
+            if not isinstance(quantidades, (list, tuple)):
+                quantidades = [quantidades]
 
-            receita_service.cadastrar_receita(form_data)
-            # Redirecionar para a página de listagem de receitas
+            # Certifique-se de que ambos os campos têm a mesma quantidade de itens
+            if len(produtos_ids) != len(quantidades):
+                raise ValueError("Número de produtos e quantidades não correspondem.")
+
+            # Mapeie os produtos e quantidades em um dicionário
+            produtos_quantidades = dict(zip(produtos_ids, quantidades))
+
+            # Cadastrar a receita no banco de dados
+            nova_receita = receita_service.cadastrar_receita(form_data, produtos_quantidades)
+
+            # Limpar a sessão após a receita ser salva com sucesso
+            session.pop('receita_produto', None)
+
+            # Adicionar produtos à receita usando a função adicionar_produtos_a_receita
+            receita_service.adicionar_produtos_e_quantidades_a_receita(produtos_ids, produtos_quantidades)  # ou produtos_ids, quantidades
+
             flash("Receita cadastrada com sucesso!")
 
+            #return redirect(url_for('visualizar_receita', id=nova_receita.id))
             return redirect(url_for("listar_receitas"))
+
         except ValidationError as error:
             flash("Erro ao cadastrar Receita: " + str(error.messages))
 
-    # Lidar com adição dinâmica de campos
-    if 'adicionar_produto' in request.form:
-        form.produtos.choices.append((None, 'Selecione um produto'))
-        form.quantidades.choices.append((None, 'Selecione uma quantidade'))
-    if 'remover_produto' in request.form:
-        index = int(request.form['remover_produto'])
-        if index < len(form.produtos.choices):
-            form.produtos.choices.pop(index)
-            form.quantidades.choices.pop(index)
+    produtos = Produto.query.all()
+    receita_produto = session.get('receita_produto', [])  # Obter produtos da sessão
 
-    return render_template('receitas/formreceita.html', form=form,
-                           produtos_cadastrados=produtos_quantidades, produtos=produtos)
+    return render_template('receitas/formreceita.html', form=form, produtos=produtos, receita_produto=receita_produto)
 
 
 @app.route('/receitas/adicionar_produto_sessao', methods=['GET', 'POST'])
 def adicionar_produto_sessao():
-    form = ReceitaForm()
+    form = ProdutoReceitaForm()
     if request.method == 'POST' and form.validate_on_submit():
         try:
             # Processar os dados do formulário
-            produtos = form.produtos.data
-            quantidades = form.quantidades.data
+            produto_id = form.produto_id.data
+            quantidade = form.quantidades.data
 
             # Verificar se a quantidade é um número válido
-            if not isinstance(quantidades, (int, float)) or quantidades <= 0:
+            if not isinstance(quantidade, (int, float)) or quantidade <= 0:
                 raise ValueError("Quantidade deve ser um número maior que zero.")
 
             # Obter o produto
-            produto = Produto.query.get(produtos)
+            produto = Produto.query.get(produto_id)
 
             # Verificar se o produto existe
             if not produto:
@@ -134,8 +162,8 @@ def adicionar_produto_sessao():
 
             # Adicionar o produto à sessão
             receita_produtos.append({
-                'produtos': produtos,
-                'quantidades': quantidades
+                'produto_id': produto_id,
+                'quantidade': quantidade
             })
 
             # Atualizar a sessão
@@ -143,14 +171,13 @@ def adicionar_produto_sessao():
             session.modified = True
 
             flash("Produto adicionado com sucesso!")
-            return redirect(url_for('exibir_formreceita', produtos=produtos))
+            return redirect(url_for('exibir_formreceita', produto_id=produto_id))
 
         except ValueError as e:
             flash(str(e))
 
     return render_template('receitas/adicionar_produtos.html', form=form, produtos=Produto.query.all(),
                            receita_produtos=session.get('receita_produtos', []))
-
 @app.route('/receitas/remover_produto', methods=['POST'])
 def remover_produto():
     try:
@@ -179,11 +206,8 @@ def remover_produto():
 # Rota para listar os produtos da receita
 @app.route('/receitas/listar_produtos', methods=['GET'])
 def listar_produtosreceita():
-    # Obter o ID da receita
-    receita_id = request.args.get('receita_id')
-    form = ReceitaForm()
     produtos_da_receita = session.get('receita_produto', [])
-    return render_template('receitas/produto_field.html', form=form, receita_produto=produtos_da_receita)
+    return render_template('receitas/listar_produtos.html', receita_produto=receita_produto)
 
 
 @app.template_global()

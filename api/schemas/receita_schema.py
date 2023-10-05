@@ -11,7 +11,7 @@ class ReceitaSchema(ma.SQLAlchemyAutoSchema):
         model = receita_model.Receita
         load_instance = True
         fields = ("id", "descricao_mix", "modo_preparo", "departamento", "rend_kg", "rend_unid", "validade", "status", "cadastrado_em", "atualizado_em",
-                  "produto_id", "quantidades", "filiais", "produtos", "pedidosprod")
+                  "quantidades", "filiais", "clientes", "produtos", "pedidosprod")
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     descricao_mix = fields.String(required=True)
@@ -19,17 +19,16 @@ class ReceitaSchema(ma.SQLAlchemyAutoSchema):
     departamento = fields.String(required=True)
     rend_kg = fields.Float(required=True)
     rend_unid = fields.Float(required=True)
-    validade = fields.Date(required=True)
+    validade = fields.String(required=True)
     status = fields.Integer(required=False)
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
-    produto_id = fields.Integer(required=False)
-    quantidades = fields.Integer(required=False)
+    quantidades = fields.Float(required=False)
     filiais = fields.String(required=False)
+    clientes = fields.String(required=False)
     produtos = fields.String(required=False)
     pedidosprod = fields.String(required=False)
-    #filiais = fields.Nested("Filial", many=True, exclude=("receitas",))
-    #produtos = fields.Nested(ProdutoMpSchema, many=True, exclude=("receitas",))
+    usuario = fields.Integer(required=False)
    # pedidosprod = fields.Nested("PedidoProducao", many=True, exclude=("receitas",))
 
 

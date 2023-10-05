@@ -28,6 +28,7 @@ class ClienteSchema(ma.SQLAlchemyAutoSchema):
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
     filial_id = fields.String(required=False)
+    receitas = fields.String(required=False)
     #filial = fields.List(fields.Nested(usuario_schema.UsuarioSchema(), only=('id', 'nome')))
     #_links = fields.Dict(dump_only=True)
 

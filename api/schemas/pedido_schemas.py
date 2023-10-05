@@ -9,7 +9,7 @@ class PedidoSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = pedido_model.Pedido
         load_instance = True
-        fields = ("id", "qtde_pedido", "data_pedido", "data_entrega", "status", "obs", "produto_id", "fornecedor_id", "filial_pdv", "cadastrado_em", "atualizado_em")
+        fields = ("id", "qtde_pedido", "data_pedido", "data_entrega", "status", "obs", "produto_id", "fornecedor_id", "filial_pdv", "cadastrado_em", "atualizado_em", "produto", "fornecedor", "filial")
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     qtde_pedido = fields.Integer(required=True)
@@ -22,6 +22,9 @@ class PedidoSchema(ma.SQLAlchemyAutoSchema):
     filial_pdv = fields.Integer(required=False)
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
+    produto = fields.String(required=False)
+    fornecedor = fields.String(required=False)
+    filial = fields.String(required=False)
 
 
 # TODO ** Classe PedidoProdução Schema_Modelo ** este esquema define como os objetos da classe Pedido devem ser convertidos em um formato serializado (como JSON) e vice-versa. Ele fornece uma estrutura clara para lidar com a validação e formatação de dados ao interagir com os modelos.

@@ -1,7 +1,8 @@
 
 class Receita:
     def __init__(self, descricao_mix, modo_preparo, departamento, rend_kg, rend_unid, validade, status, cadastrado_em, atualizado_em,
-                 produto_id, quantidades, filiais, produtos, pedidosprod):
+                 quantidades, filiais, clientes, produtos, pedidosprod):
+
         self.__descricao_mix = descricao_mix
         self.__modo_preparo = modo_preparo
         self.__departamento = departamento
@@ -11,9 +12,9 @@ class Receita:
         self.__status = status
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
-        self.__produtos_id = produto_id
         self.__quantidades = quantidades
         self.__filiais = filiais
+        self.__clientes = clientes
         self.__produtos = produtos
         self.__pedidosprod = pedidosprod
 
@@ -90,14 +91,6 @@ class Receita:
         self.__atualizado_em = atualizado_em
 
     @property
-    def produto_id(self):
-        return self.__produtos_id
-
-    @produto_id.setter
-    def produto_id(self, produto_id):
-        self.__produtos_id = produto_id
-
-    @property
     def quantidades(self):
         return self.__quantidades
 
@@ -112,6 +105,14 @@ class Receita:
     @filiais.setter
     def filiais(self, filiais):
         self.__filiais = filiais
+
+    @property
+    def clientes(self):
+        return self.__clientes
+
+    @clientes.setter
+    def clientes(self, clientes):
+        self.__clientes = clientes
 
     @property
     def produtos(self):
@@ -140,9 +141,9 @@ class Receita:
             "status": self.__status,
             "cadastrado_em": self.__cadastrado_em,
             "atualizado_em": self.__atualizado_em,
-            "produto_id": self.__produtos_id,
             "quantidades": self.__quantidades,
             "filiais": self.__filiais,
+            "clientes": self.__clientes,
             "produtos": self.__produtos,
             "pedidosprod": self.__pedidosprod
         }

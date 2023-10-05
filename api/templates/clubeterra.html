@@ -1,0 +1,127 @@
+
+{% extends "base.html" %}
+{% block conteudo %}
+
+    <style>
+        /* Estilos CSS */
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        #globo-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #111; /* Cor de fundo escura */
+            position: relative;
+        }
+        #globo {
+            width: 200px; /* Largura do globo */
+            height: 200px; /* Altura do globo */
+            background-image: url('globo.png'); /* Imagem do globo */
+            background-size: cover;
+            background-repeat: no-repeat;
+            animation: spin 20s linear infinite; /* Animação de rotação */
+        }
+        #saiba-mais {
+            margin-top: 20px;
+            background-color: #4CAF50; /* Cor do botão */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        /* Adicione outros estilos e elementos visuais, como ícones de alerta, aqui */
+
+               /* Estilos CSS */
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #111; /* Cor de fundo escura */
+        }
+        #illustration-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #environmental-illustration {
+            max-width: 80%; /* Largura máxima da ilustração */
+            height: auto;
+        }
+
+         /* Estilos CSS */
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #111; /* Cor de fundo escura */
+        }
+        #text-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #main-text {
+            font-size: 36px;
+            color: #ecf0f1; /* Cor do texto */
+            text-align: center;
+        }
+
+
+    </style>
+<div class="container">
+    <div id="globo-container">
+        <div id="globo"></div>
+        <!-- Adicione ícones de alerta ou outros elementos visuais relevantes aqui -->
+        <button id="saiba-mais">Saiba Mais</button>
+    </div>
+
+     <div id="text-container">
+        <p id="main-text">O planeta Terra precisa de nossa ajuda. Junte-se ao Clube Terra Sustentabilidade e faça a diferença.</p>
+    </div>
+
+
+
+
+    <div id="illustration-container">
+        <img id="environmental-illustration" src="environmental-problems.png" alt="Problemas Ambientais">
+    </div>
+</div>
+<div class="container">
+    <h1>Problemas Ambientais no Mundo</h1>
+
+    <canvas id="myChart" width="400" height="400"></canvas>
+</div>
+    <script>
+        // Crie um gráfico de pizza de exemplo com Chart.js
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Desperdício', 'Reciclagem', 'Consumo Sustentável'],
+                datasets: [{
+                    data: [30, 40, 30], // Valores de exemplo
+                    backgroundColor: ['#e74c3c', '#27ae60', '#f39c12'], // Cores
+                }]
+            },
+        });
+    </script>
+
+
+{% endblock conteudo %}
+```
+- O arquivo `clubeterra.html` é o arquivo que será renderizado na tela do usuário. Ele é composto por 3 seções:
+    - A primeira seção é um globo girando, que representa o planeta Terra.
+    - A segunda seção é uma ilustração de problemas ambientais.
+    - A terceira seção é um gráfico de pizza que representa a distribuição de problemas ambientais no mundo.
+
+

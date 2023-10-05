@@ -1,4 +1,4 @@
-import requests
+import datetime
 from sqlalchemy import func
 from ..models import receita_model, produtoMp_model, receita_produto
 from api import db
@@ -6,36 +6,52 @@ from api import db
 #TODO ** CRUD ** ESSAS funções fornecem operações básicas de criação, leitura, atualização e remoção (CRUD) para os registros da tabela pedido no banco de dados.
 #       @author Fabiano Faria
 
-def cadastrar_receita(receita, produto_ids, quantidades):
+def cadastrar_receita(form_data, produto_ids, produto_quantidades):
     try:
         produtos = produtoMp_model.Produto.query.filter(produtoMp_model.Produto.id.in_(produto_ids)).all()
         if not produtos:
             raise ValueError("Nenhum produto válido fornecido para a receita.")
 
+        # Criar uma instância de Receita com base nos dados do formulário
         receita_bd = receita_model.Receita(
-            descricao_mix=receita.descricao_mix, modo_preparo=receita.modo_preparo, departamento=receita.departamento, rend_kg=receita.rend_kg,
-            rend_unid=receita.rend_unid, validade=receita.validade, status=receita.status, cadastrado_em=func.now(), atualizado_em=receita.atualizado_em,
-            produto_id=receita.produto_id, quantidades=receita.quantidades, produtos=receita.produtos, filiais=receita.filiais, pedidosprod=receita.pedidosprod)
+            descricao_mix=form_data['descricao_mix'],
+            modo_preparo=form_data['modo_preparo'],
+            departamento=form_data['departamento'],
+            rend_kg=form_data['rend_kg'],
+            rend_unid=form_data['rend_unid'],
+            validade=form_data['validade'],
+            status=form_data['status'],
+            cadastrado_em=func.now(),  # Você pode ajustar isso conforme necessário
+            atualizado_em=datetime.datetime.now(),  # Ajuste conforme necessário
+            quantidades=form_data['quantidades'],  # Este campo também não é necessário aqui
+            produtos=form_data['produtos'],  # E este campo também
+           # filiais=form_data['filiais'],  # E este
+            clientes=form_data['clientes'],  # E este
+           # pedidosprod=form_data['pedidosprod']  # E este
+        )
 
         # Associe os produtos à receita com as quantidades correspondentes
-        for produto_id, quantidade in zip(produto_ids, quantidades):
-            produto_receita = produtoMp_model.Produto.query.get(produto_id)
-            if not produto_receita:
-                raise ValueError(f"Produto com ID {produto_id} não encontrado.")
-            receita_bd.produtos.append(produto_receita)
-            receita_quantidade = receita_produto(
+        for produtos, quantidades in zip(produto_ids, produto_quantidades):
+            produto = produtoMp_model.Produto.query.get(produtos)
+            if not produto:
+                raise ValueError(f"Produto com ID {produtos} não encontrado.")
+            receita_bd.produtos.append(produto)
+            receita_quantidade = produtoMp_model.receita_produto(
                 receita_id=receita_bd.id,
-                produto_id=produto_id,
-                quantidade=quantidade
+                produto_id=produto.id,
+                quantidade=quantidades
             )
             db.session.add(receita_quantidade)
 
         db.session.add(receita_bd)
         db.session.commit()
+
         return receita_bd
+
     except Exception as e:
         db.session.rollback()
-        raise ValueError(f"Não foi possível cadastrar a receita {receita.descricao_mix}. Erro: {e}")
+        raise ValueError(f"Não foi possível cadastrar a receita. Erro: {e}")
+
 
 def listar_receitas():
     receitas = receita_model.Receita.query.all()
@@ -59,10 +75,10 @@ def atualiza_receita(receita_anterior, receita_novo):
         receita_anterior.status = receita_novo.status
         receita_anterior.cadastrado_em = receita_novo.cadastrado_em
         receita_anterior.atualizado_em = receita_novo.atualizado_em
-        receita_anterior.produto_id = receita_novo.produto_id
         receita_anterior.quantidades = receita_novo.quantidades
         receita_anterior.produtos = receita_novo.produtos
         receita_anterior.filiais = receita_novo.filiais
+        receita_anterior.clientes = receita_novo.clientes
         receita_anterior.pedidosprod = receita_novo.pedidosprod
 
         db.session.commit()
@@ -79,66 +95,58 @@ def remove_receita(receita):
         raise ValueError(f"Não foi possível remover a receita {receita.descricao_mix}. Erro: {e}")
 
 
-def adicionar_produtos_a_receita(receita_id, produtos_quantidades):
+def obter_produtos_da_receita(receita_id):
     try:
         receita = receita_model.Receita.query.get(receita_id)
 
         if not receita:
             raise ValueError(f"Receita com ID {receita_id} não encontrada.")
 
-        for produto_id, quantidade in produtos_quantidades.items():
-            produto = produtoMp_model.Produto.query.get(produto_id)
+     #   produtos_da_receita = {}
+      #  for produto, quantidade in receita.produtos.items():
+       #     produtos_da_receita[produto] = quantidade
+#        return produtos_da_receita
+        # Acesse os produtos relacionados à receita (você deve ter um relacionamento definido em seu modelo)
+        produtos_da_receita = receita.produtos
 
-            if not produto:
-                raise ValueError(f"Produto com ID {produto_id} não encontrado.")
+        # Aqui, você pode retornar os produtos como uma lista, dicionário ou da maneira que preferir
+        # Por exemplo, para retornar um dicionário de produtos com suas quantidades:
+        produtos_quantidades = {produto.nome: quantidade for
+                                produto, quantidade in produtos_da_receita}
 
-            # Verifique se o produto já está associado à receita
-            if produto not in receita.produtos:
-                # Se não estiver associado, adicione o produto à receita
-                receita.produtos.append(produto)
+        return produtos_quantidades
 
-            # Registre a quantidade associada ao produto na receita
-            receita.produto_quantidades[produto] = quantidade
-
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        raise ValueError(f"Não foi possível adicionar produtos à receita. Erro: {str(e)}")
-
-def obter_produtos_da_receita(receita_id):
-    try:
-        receita = receita_model.Receita.query.get(receita_id)
-        produtos_da_receita = {}
-
-        if receita:
-            produtos_da_receita = {produto: quantidade for produto, quantidade in receita.produto_quantidades.items()}
-
-        return produtos_da_receita
     except Exception as e:
         raise ValueError(f"Não foi possível obter os produtos da receita. Erro: {str(e)}")
 
-def adicionar_produtos_e_quantidades_a_receita(receita, produto_ids, quantidades):
+def adicionar_produtos_e_quantidades_a_receita(receita_id, produtos_quantidades):
     try:
-        produtos_quantidades = {}
+        # Verifique se produtos_quantidades é um dicionário
+        if not isinstance(produtos_quantidades, dict):
+            raise ValueError("produtos_quantidades deve ser um dicionário válido.")
 
-        for produto_id, quantidade in zip(produto_ids, quantidades):
-            produto = produtoMp_model.Produto.query.get(produto_id)
+        receitaprod = receita_model.Receita.query.get(receita_id)
+       # produtos_quantidades = {}
 
-            if not produto:
-                raise ValueError(f"Produto com ID {produto_id} não encontrado.")
+        if not receitaprod:
+            raise ValueError(f"Receita com ID {receita_id} não encontrada.")
 
-            receita.produtos.append(produto)
-            receita_produto = produtoMp_model.receita_produto(
-                receita_id=receita,
-                produto_id=produto,
-                quantidades=quantidade
-            )
-            db.session.add(receita_produto)
-            produtos_quantidades[produto] = quantidade
+        for produtos, quantidades in produtos_quantidades.items():
+            if produtos in receitaprod.produtos_quantidades:
+             # Atualize a quantidade do produto na receita
+                receita_produtos = next(filter(lambda p: p.produtos == produtos, receitaprod.produtos_quantidades))
+                receita_produtos.quantidades += quantidades
+            else:
+                # Adicione o produto à receita
+                receita_produtos = produtoMp_model.receita_produto(
+                    receita_id=receita_id,
+                    produto_id=produtos,
+                    quantidades=quantidades
+                )
+                receitaprod.produtos_quantidades.append(receita_produtos)
 
         db.session.commit()
-        return produtos_quantidades
 
-    except ValueError as ve:
+    except Exception as e:
         db.session.rollback()
-        raise ve
+        raise ValueError(f"Não foi possível adicionar produtos à receita. Erro: {str(e)}")

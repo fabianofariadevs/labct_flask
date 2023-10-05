@@ -4,7 +4,6 @@ def paginate(query, schema, page, per_page):
    # items = ClienteSchema().dump(result.items, many=True)
     items = schema.dump(result.items, many=True)
 
-
     return {
         "items": items,
         "total": result.total,

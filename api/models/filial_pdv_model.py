@@ -31,6 +31,10 @@ class Filial(db.Model):
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
     estoques_filial = db.relationship("Estoque", back_populates="filial")  # relacionamento com Estoque
 
+    # TODO Relacionamento com a tabela Mixproduto N/N
+    mixproduto = db.Column(db.Integer, db.ForeignKey("mixproduto.id"), nullable=False)
+    mixprodutos = db.relationship("Mixproduto", secondary="mixproduto_filial", back_populates="filiais")
+
     # TODO Relacionamento com a tabela Receita N/N
     # receita = db.Column(db.Integer, db.ForeignKey("receita.id"), nullable=False)
     receitas = db.relationship(Receita, secondary="receita_filial", back_populates="filiais")

@@ -14,16 +14,8 @@
     </div>
 
     <div>
-    <label for="{{ form.produto_id.id }}_{{ index }}">Produto</label>
-    <select name="{{ form.produto_id.name }}_{{ index }}" id="{{ form.produto_id.id }}_{{ index }}">
-        <option value="" disabled selected>Selecione um produto</option>
-        {% for produto in produtos %}
-            <option value="{{ produto.id }}">{{ produto.nome }}</option>
-        {% endfor %}
-    </select>
-    <label for="{{ form.quantidades.id }}_{{ index }}">Quantidade</label>
-    <input type="number" name="{{ form.quantidades.name }}_{{ index }}" id="{{ form.quantidades.id }}_{{ index }}" min="1" value="1">
-</div>
+
+    </div>
 
 </div>
 {% endblock conteudo %}

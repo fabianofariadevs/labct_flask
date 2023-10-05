@@ -111,7 +111,7 @@
 
             <h5 class="text-bold">Produtos Relacionados a Receita</h5>
 
-            <input type="hidden" id="#produtos-quantidades" name="produtos-quantidades" value="{{ produtos_quantidades }}">
+            <input type="hidden" id="produtos-quantidades" name="produtos-quantidades" value="{{ produtos_quantidades }}">
 
            <!-- Tabela para listar os produtos e quantidades adicionados -->
             <div class="card-body">
@@ -155,29 +155,7 @@
                 {% endif %}
                 <a href="{{ url_for('listar_receitas') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
             </div>
-
-
-             <!-- Produtos e Quantidades -->
-              <div id="produtos-quantidades">
-                {% for fieldset in form.produtos_quantidades %}
-                <div class="produto-quantidade">
-                  {{ fieldset.produtos.label(class="form-label") }}
-                  {{ fieldset.produtos(class="form-control") }}
-                  {{ fieldset.quantidades.label(class="form-label") }}
-                  {{ fieldset.quantidades(class="form-control") }}
-                </div>
-                {% endfor %}
-              </div>
-
-              <!-- Botão para adicionar mais produtos e quantidades -->
-              <button type="button" id="add-produto-quantidade">Adicionar Produto e Quantidade</button>
-
-              <!-- Outros campos do formulário -->
-
-              <input type="submit" value="Salvar Receita">
-            </form>
-
-
+        </form>
     </div>
 </div>
 
@@ -215,85 +193,7 @@
         </div>
     </div>
 
-<!-- JavaScript para adicionar campos dinâmicos -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-var form = document.getElementById("form-cadastro-receita");
-var produtosQuantidadesContainer = document.getElementById("produtos-quantidades");
-var addProdutoQuantidadeButton = document.getElementById("add-produto-quantidade");
 
- // Função para adicionar campos de produto e quantidade
-    function addProdutoQuantidade() {
-
-        var newProdutoQuantidade = produtosQuantidadesContainer.querySelector(".produto-quantidade").cloneNode(true);
-        var removeButton = document.createElement("button");
-        removeButton.type = "button";
-        removeButton.className = "remover-produto-quantidade";
-        removeButton.textContent = "Remover";
-        newProdutoQuantidade.appendChild(removeButton);
-        produtosQuantidadesContainer.appendChild(newProdutoQuantidade);
-  }
-
-  // Função para remover campos de produto e quantidade
-    function removerProdutoQuantidade(event) {
-        var target = event.target;
-            if (target.classList.contains("remover-produto-quantidade")) {
-            target.closest(".produto-quantidade").remove();
-    }
-  }
-
-
-  addProdutoQuantidadeButton.addEventListener("click", function () {
-    addProdutoQuantidade();
-    });
-
-    produtosQuantidadesContainer.addEventListener("click", function (event) {
-    removerProdutoQuantidade(event);
-    });
-
-    form.addEventListener("submit", function () {
-    var produtosQuantidades = produtosQuantidadesContainer.querySelectorAll(".produto-quantidade");
-    var produtosQuantidadesInput = document.getElementById("produtos-quantidades");
-    var produtosQuantidadesArray = [];
-    produtosQuantidades.forEach(function (produtoQuantidade) {
-    var produto = produtoQuantidade.querySelector(".produtos");
-    var quantidade = produtoQuantidade.querySelector(".quantidades");
-    produtosQuantidadesArray.push({
-    produto: produto.value,
-    quantidade: quantidade.value
-    });
-    });
-    produtosQuantidadesInput.value = JSON.stringify(produtosQuantidadesArray);
-    });
-
-    var produtosQuantidades = JSON.parse(produtosQuantidadesInput.value);
-    produtosQuantidades.forEach(function (produtoQuantidade) {
-    var produto = produtoQuantidade.produto;
-    var quantidade = produtoQuantidade.quantidade;
-
-
-    var produtosQuantidadesContainer = document.getElementById("produtos-quantidades");
-
-
-    var newProdutoQuantidade = produtosQuantidadesContainer.querySelector(".produto-quantidade").cloneNode(true);
-    produtosQuantidadesContainer.appendChild(newProdutoQuantidade);
-
-    var produto = newProdutoQuantidade.querySelector(".produtos");
-    var quantidade = newProdutoQuantidade.querySelector(".quantidades");
-
-    produto.value = produtoQuantidade.produto;
-    quantidade.value = produtoQuantidade.quantidade;
-    });
-
-    var produtosQuantidadesInput = document.getElementById("produtos-quantidades");
-    var produtosQuantidades = JSON.parse(produtosQuantidadesInput.value);
-    produtosQuantidades.forEach(function (produtoQuantidade) {
-    var produto = produtoQuantidade.produto;
-    var quantidade = produtoQuantidade.quantidade;
-
-
-  });
-});
-</script>
-
+<!-- Adicione este código no final do seu arquivo HTML, antes do fechamento da tag </body> -->
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 {% endblock conteudo %}
