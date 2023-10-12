@@ -11,7 +11,8 @@ class ClienteSchema(ma.SQLAlchemyAutoSchema):
         model = cliente_model.Cliente
         load_instance = True  # TODO Define se o esquema Cliente deve carregar uma instância do modelo ao fazer a desserialização. Nesse caso, está definido como True.
         # Uma tupla que especifica quais os campos do modelo devem ser serializados/desserializados. Aqui, são listados vários campos do modelo Cliente.
-        fields = ("id", "nome", "endereco", "bairro", "cidade", "estado", "telefone", "email", "responsavel", "whatsapp", "cnpj", "status", "cadastrado_em", "atualizado_em", "filial_id")
+        fields = ("id", "nome", "endereco", "bairro", "cidade", "estado", "telefone", "email", "responsavel",
+                  "whatsapp", "cnpj", "status", "cadastrado_em", "atualizado_em", "filiais", "receitas", "pedidos", "estoques_cliente")
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     nome = fields.String(required=True)
@@ -27,10 +28,12 @@ class ClienteSchema(ma.SQLAlchemyAutoSchema):
     status = fields.Integer(required=True)
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
-    filial_id = fields.String(required=False)
+
+    filiais = fields.String(required=False)
     receitas = fields.String(required=False)
-    #filial = fields.List(fields.Nested(usuario_schema.UsuarioSchema(), only=('id', 'nome')))
-    #_links = fields.Dict(dump_only=True)
+    pedidos = fields.String(required=False)
+    estoques_cliente = fields.String(required=False)
+
 
 class FuncaoSchema(ma.SQLAlchemyAutoSchema):
     class Meta:

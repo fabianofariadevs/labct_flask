@@ -1,6 +1,7 @@
 from api import db
 from datetime import datetime
 from sqlalchemy import func
+from .receita_model import Receita
 
 # TODO ** Classe Pedido dbModel, responsavel por definir e criar o Banco de dados com as migrations flask db.
 #       @author Fabiano Faria
@@ -14,7 +15,6 @@ class Pedido(db.Model):
     data_entrega = db.Column(db.Date, nullable=False)
     status = db.Column(db.Integer, default=1, nullable=True)
     obs = db.Column(db.Text(), nullable=False)
-    #tipo = db.Column(db.Enum(TipoEnum), nullable=False)  # tipo
     cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
@@ -22,14 +22,11 @@ class Pedido(db.Model):
     produto_id = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False)
     produtos = db.relationship("Produto", back_populates="pedidos", foreign_keys=[produto_id])
 
-    #cliente_id = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable=False)
-    #cliente = db.relationship("Cliente", backref=db.backref("clientes", lazy="dynamic"))
+    cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=True)
+    clientes = db.relationship("Cliente", back_populates="pedidos")
 
-    fornecedor_id = db.Column(db.Integer, db.ForeignKey("fornecedor.id"), nullable=True)
-    fornecedor = db.relationship("Fornecedor", back_populates="pedidos")
-
-    filial_pdv = db.Column(db.Integer, db.ForeignKey("filial.id"), nullable=True)
-    filiais = db.relationship("Filial", back_populates="pedidos", foreign_keys=[filial_pdv])
+    fornecedor = db.Column(db.Integer, db.ForeignKey("fornecedor.id"), nullable=True)
+    fornecedores = db.relationship("Fornecedor", back_populates="pedidos")
 
 class PedidoProducao(db.Model):
     __tablename__ = "pedidoproducao"
@@ -40,16 +37,12 @@ class PedidoProducao(db.Model):
     qtde_pedido = db.Column(db.Integer, nullable=True, default=0)
     status = db.Column(db.Integer, default=1, nullable=True)
     obs = db.Column(db.Text(), nullable=True)
-    quantidade = db.Column(db.Integer, nullable=True)
-    produto_id = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=True)
-    #produtos = db.relationship("Produto", back_populates="pedidosprod", foreign_keys=[produto_id])
-
     cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
     #TODO relacionamento de N/1 com Receita / pedidos PRODUÇÃO
     receita_id = db.Column(db.Integer, db.ForeignKey('receita.id'), nullable=False)
-    receitas = db.relationship("Receita", back_populates="pedidosprod", foreign_keys=[receita_id])
+    receitas = db.relationship(Receita, back_populates="pedidosprod", foreign_keys=[receita_id])
 
     filial_pdv = db.Column(db.Integer, db.ForeignKey("filial.id"), nullable=True)
     filiais = db.relationship("Filial", back_populates="pedidosprod", foreign_keys=[filial_pdv])

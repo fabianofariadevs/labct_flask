@@ -25,8 +25,6 @@ class Usuario(db.Model):
     cargo = db.Column(db.Integer, db.ForeignKey('funcao.id'), nullable=False)
     funcao = db.relationship('Funcao', back_populates="usuarios", foreign_keys=[cargo])
 
-
-
     def encriptar_senha(self):
         self.senha = pbkdf2_sha256.hash(self.senha)
 

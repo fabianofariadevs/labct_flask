@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship
 receita_produto = db.Table('receita_produto',
                            db.Column('receita_id', db.Integer, db.ForeignKey('receita.id'), unique=False, nullable=False),
                            db.Column('produto_id', db.Integer, db.ForeignKey('produto.id'), unique=False, nullable=False),
-                           db.Column('quantidades', db.Integer, unique=False, nullable=False)
+                           db.Column('quantidade', db.Float, unique=False, nullable=False)
                            )
 
 class Produto(db.Model):
@@ -34,16 +34,14 @@ class Produto(db.Model):
     #TODO Chave estrangeira referenciando o fornecedor
     fornecedor_id = db.Column(db.Integer, db.ForeignKey('fornecedor.id'), nullable=False)
     fornecedor = db.relationship(Fornecedor, back_populates="produtos")
+
     estoques_produto = db.relationship("Estoque", back_populates="produto")
-    #mixproduto_id = db.Column(db.Integer, db.ForeignKey('mixproduto.id'), nullable=False)
-   # mixprodutos = db.relationship("Mixproduto", secondary="mixproduto_produto", back_populates="produtos")
 
     # Relacionamento com a tabela "pedidosProducao N/N"
     pedidos = db.relationship(Pedido, back_populates="produtos")
     receitas = db.relationship("Receita", secondary="receita_produto", back_populates="produtos", lazy="dynamic")
     # Relacionamento com ReposicaoEstoque
     reposicoes = relationship("ReposicaoEstoque", back_populates="produto")
-   # inventarios = relationship("Inventario", back_populates="produto", lazy="dynamic")
 
 
 class Inventario(db.Model):

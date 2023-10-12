@@ -1,7 +1,7 @@
 
 class Receita:
     def __init__(self, descricao_mix, modo_preparo, departamento, rend_kg, rend_unid, validade, status, cadastrado_em, atualizado_em,
-                 quantidades, filiais, clientes, produtos, pedidosprod):
+                 filiais, clientes, ingredientes, pedidosprod, usuario):
 
         self.__descricao_mix = descricao_mix
         self.__modo_preparo = modo_preparo
@@ -12,11 +12,11 @@ class Receita:
         self.__status = status
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
-        self.__quantidades = quantidades
         self.__filiais = filiais
         self.__clientes = clientes
-        self.__produtos = produtos
+        self.__ingredientes = ingredientes
         self.__pedidosprod = pedidosprod
+        self.__usuario = usuario
 
     @property
     def descricao_mix(self):
@@ -91,14 +91,6 @@ class Receita:
         self.__atualizado_em = atualizado_em
 
     @property
-    def quantidades(self):
-        return self.__quantidades
-
-    @quantidades.setter
-    def quantidades(self, quantidades):
-        self.__quantidades = quantidades
-
-    @property
     def filiais(self):
         return self.__filiais
 
@@ -115,12 +107,12 @@ class Receita:
         self.__clientes = clientes
 
     @property
-    def produtos(self):
-        return self.__produtos
+    def ingredientes(self):
+        return self.__ingredientes
 
-    @produtos.setter
-    def produtos(self, produtos):
-        self.__produtos = produtos
+    @ingredientes.setter
+    def ingredientes(self, ingredientes):
+        self.__ingredientes = ingredientes
 
     @property
     def pedidosprod(self):
@@ -129,6 +121,14 @@ class Receita:
     @pedidosprod.setter
     def pedidosprod(self, pedidosprod):
         self.__pedidosprod = pedidosprod
+
+    @property
+    def usuario(self):
+        return self.__usuario
+
+    @usuario.setter
+    def usuario(self, usuario):
+        self.__usuario = usuario
 
     def json(self):
         return {
@@ -144,7 +144,65 @@ class Receita:
             "quantidades": self.__quantidades,
             "filiais": self.__filiais,
             "clientes": self.__clientes,
-            "produtos": self.__produtos,
-            "pedidosprod": self.__pedidosprod
+            "ingredientes": self.ingredientes,
+            "pedidosprod": self.__pedidosprod,
+            "usuario": self.__usuario
         }
 
+class Ingredientes:
+    def __init__(self, nome, quantidade, unidade, receita_id, receita):
+
+        self.__nome = nome
+        self.__quantidade = quantidade
+        self.__unidade = unidade
+        self.__receita_id = receita_id
+        self.__receita = receita
+
+    @property
+    def nome(self):
+        return self.__nome
+
+    @nome.setter
+    def nome(self, nome):
+        self.__nome = nome
+
+    @property
+    def quantidade(self):
+        return self.__quantidade
+
+    @quantidade.setter
+    def quantidade(self, quantidade):
+        self.__quantidade = quantidade
+
+    @property
+    def unidade(self):
+        return self.__unidade
+
+    @unidade.setter
+    def unidade(self, unidade):
+        self.__unidade = unidade
+
+    @property
+    def receita_id(self):
+        return self.__receita_id
+
+    @receita_id.setter
+    def receita_id(self, receita_id):
+        self.__receita_id = receita_id
+
+    @property
+    def receita(self):
+        return self.__receita
+
+    @receita.setter
+    def receita(self, receita):
+        self.__receita = receita
+
+    def json(self):
+        return {
+            "nome": self.__nome,
+            "quantidade": self.__quantidade,
+            "unidade": self.__unidade,
+            "receita_id": self.__receita_id,
+            "receita": self.__receita
+        }

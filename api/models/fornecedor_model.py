@@ -24,13 +24,9 @@ class Fornecedor(db.Model):
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
     #TODO relacionando FORNECEDOR com  PRODUTO 1/N
-    #produto_id = db.Column(db.Integer, db.ForeignKey("produto.id"), nullable=False)
-    #produto_id = db.Column(db.Integer, db.ForeignKey("produto.id"), nullable=False)
     produtos = db.relationship("Produto", back_populates='fornecedor')
-    #produtos = db.relationship(produtoMp_model.Produto, backref=db.backref("fornecedor", foreign_keys=[produtoMp_model.Produto.fornecedor_id]),                               lazy="dynamic")
-    ##cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
-    ##cliente = db.relationship("Cliente", backref=db.backref("fornecedor", lazy="dynamic"))
-    pedidos = db.relationship('Pedido', back_populates='fornecedor')
+
+    pedidos = db.relationship('Pedido', back_populates='fornecedores')
 
     def __repr__(self):
         return f"<Fornecedor {self.nome}>"

@@ -6,10 +6,10 @@ from api import db
 #TODO ** CRUD ** ESSAS funções fornecem operações básicas de criação, leitura, atualização e remoção (CRUD) para os registros da tabela pedido no banco de dados.
 #       @author Fabiano Faria
 
-def cadastrar_receita(form_data, produto_ids, produto_quantidades):
+def cadastrar_receita(form_data, ingredientes_ids, produto_quantidades):
     try:
-        produtos = produtoMp_model.Produto.query.filter(produtoMp_model.Produto.id.in_(produto_ids)).all()
-        if not produtos:
+        ingredientes = receita_model.Ingredientes.query.filter(receita_model.Ingredientes.id.in_(ingredientes_ids)).all()
+        if not ingredientes:
             raise ValueError("Nenhum produto válido fornecido para a receita.")
 
         # Criar uma instância de Receita com base nos dados do formulário
@@ -23,25 +23,24 @@ def cadastrar_receita(form_data, produto_ids, produto_quantidades):
             status=form_data['status'],
             cadastrado_em=func.now(),  # Você pode ajustar isso conforme necessário
             atualizado_em=datetime.datetime.now(),  # Ajuste conforme necessário
-            quantidades=form_data['quantidades'],  # Este campo também não é necessário aqui
-            produtos=form_data['produtos'],  # E este campo também
+            ingredientes=form_data['ingredientes'],  # E este campo também
            # filiais=form_data['filiais'],  # E este
             clientes=form_data['clientes'],  # E este
            # pedidosprod=form_data['pedidosprod']  # E este
         )
 
         # Associe os produtos à receita com as quantidades correspondentes
-        for produtos, quantidades in zip(produto_ids, produto_quantidades):
-            produto = produtoMp_model.Produto.query.get(produtos)
+        for ingredientes in zip(ingredientes_ids, produto_quantidades):
+            produto = produtoMp_model.Produto.query.get(ingredientes)
             if not produto:
-                raise ValueError(f"Produto com ID {produtos} não encontrado.")
+                raise ValueError(f"Produto com ID {ingredientes} não encontrado.")
             receita_bd.produtos.append(produto)
             receita_quantidade = produtoMp_model.receita_produto(
                 receita_id=receita_bd.id,
                 produto_id=produto.id,
-                quantidade=quantidades
+                quantidade=ingredientes
             )
-            db.session.add(receita_quantidade)
+            db.session.add(ingredientes)
 
         db.session.add(receita_bd)
         db.session.commit()
@@ -75,11 +74,10 @@ def atualiza_receita(receita_anterior, receita_novo):
         receita_anterior.status = receita_novo.status
         receita_anterior.cadastrado_em = receita_novo.cadastrado_em
         receita_anterior.atualizado_em = receita_novo.atualizado_em
-        receita_anterior.quantidades = receita_novo.quantidades
-        receita_anterior.produtos = receita_novo.produtos
+        receita_anterior.ingredientes = receita_novo.ingredientes
         receita_anterior.filiais = receita_novo.filiais
         receita_anterior.clientes = receita_novo.clientes
-        receita_anterior.pedidosprod = receita_novo.pedidosprod
+       # receita_anterior.pedidosprod = receita_novo.pedidosprod
 
         db.session.commit()
     except Exception as e:

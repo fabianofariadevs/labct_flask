@@ -12,7 +12,7 @@ class ProdutoMpSchema(ma.SQLAlchemyAutoSchema):
         model = produtoMp_model.Produto
         load_instance = True
         fields = ("id", "nome", "descricao", "quantidade", "compra_unid", "peso_pcte", "valor", "custo_ultima_compra", "whatsapp", "qrcode", "status", "estoque_minimo", "obs", "cadastrado_em", "atualizado_em",
-                  "fornecedor", "estoques_produto", "mixproduto", "pedidos", "receitas", "reposicoes")
+                  "fornecedor", "estoques_produto", "mixprodutos", "pedidos", "receitas", "reposicoes")
 
     nome = fields.String(required=True)
     descricao = fields.String(required=True)
@@ -31,7 +31,7 @@ class ProdutoMpSchema(ma.SQLAlchemyAutoSchema):
     fornecedor = fields.String(required=True)
 
     estoques_produto = fields.Nested("EstoqueSchema", many=True, exclude=("produto",))
-    mixproduto = fields.Nested(mix_produto_schema.MixprodutoSchema, many=True, exclude=("produto",))
+    mixprodutos = fields.Nested(mix_produto_schema.MixprodutoSchema, many=True, exclude=("produto",))
     pedidos = fields.Nested("PedidoSchema", many=True, exclude=("produto",))
     receitas = fields.List(fields.Nested("ReceitaSchema", many=True, exclude=("produto",)))
     reposicoes = fields.Nested(ReposicaoEstoqueSchema, many=True, exclude=("produto",))

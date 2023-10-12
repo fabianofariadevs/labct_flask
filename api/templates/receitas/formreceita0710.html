@@ -104,30 +104,10 @@
                             {% endfor %}
                      </div>
                 </div>
+
             </div>
 
             <hr>
-
-              <h1>Cadastro de Materiais</h1>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        {{ form.csrf_token }}
-        <label for="nome">Nome do Material:</label>
-        {{ form.nome }}
-        <br>
-        <label for="quantidade">Quantidade:</label>
-        {{ form.quantidade }}
-        <br>
-        {{ form.submitmat }}
-    </form>
-    <h2>Lista de Materiais:</h2>
-    <ul>
-        {% for material in materiais %}
-            <li>{{ material.nome }} - {{ material.quantidade }}</li>
-        {% endfor %}
-    </ul>
-            <hr>
-
 
             <h5 class="text-bold">Produtos Relacionados a Receita</h5>
 
@@ -215,25 +195,17 @@
                 </div>
                 <div class="modal-body">
                     <!-- form para adicionar produtos e quantidades -->
-
-                     <h1>Cadastro de Materiais</h1>
-    <form id="form-adicionar-produto" method="POST">
-        {{ form.hidden_tag() }}
-        {{ form.csrf_token }}
-        <label for="nome">Nome do Material:</label>
-        {{ form.nome }}
-        <br>
-        <label for="quantidade">Quantidade:</label>
-        {{ form.quantidade }}
-        <br>
-        {{ form.submit }}
-    </form>
-    <h2>Lista de Materiais:</h2>
-    <ul>
-        {% for material in materiais %}
-            <li>{{ material.nome }} - {{ material.quantidade }}</li>
-        {% endfor %}
-    </ul>
+                    <form id="form-adicionar-produto" method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            {{ form.produtos.label(class="form-label") }}:
+                            {{ form.produtos(class="form-control", id="produtos") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.quantidades.label(class="form-label") }}:
+                            {{ form.quantidades(class="form-control", id="quantidades") }}
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -243,5 +215,42 @@
             </div>
         </div>
     </div>
+
+<!-- JavaScript para adicionar campos dinâmicos -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var form = document.getElementById("form-cadastro-receita");
+    var produtosQuantidadesContainer = document.getElementById("produtos-quantidades");
+    var addProdutoQuantidadeButton = document.getElementById("add-produto-quantidade");
+
+ // Função para adicionar campos de produto e quantidade
+    function addProdutoQuantidade() {
+
+        var newProdutoQuantidade = produtosQuantidadesContainer.querySelector(".produto-quantidade").cloneNode(true);
+        var removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.className = "remover-produto-quantidade";
+        removeButton.textContent = "Remover";
+        newProdutoQuantidade.appendChild(removeButton);
+        produtosQuantidadesContainer.appendChild(newProdutoQuantidade);
+  }
+
+  // Função para remover campos de produto e quantidade
+    function removerProdutoQuantidade(event) {
+        var target = event.target;
+            if (target.classList.contains("remover-produto-quantidade")) {
+            target.closest(".produto-quantidade").remove();
+    }
+  }
+
+
+  addProdutoQuantidadeButton.addEventListener("click", function () {
+    addProdutoQuantidade();
+    });
+
+
+
+});
+</script>
 
 {% endblock conteudo %}

@@ -1,5 +1,4 @@
 from api import db
-#from ..models.cliente_model import Cliente
 
 # TODO ** Classe Mixproduto dbModel, responsavel por definir e criar o Banco de dados com as migrations flask db.
 #       @Author Fabiano Faria
@@ -13,7 +12,6 @@ class Mixproduto(db.Model):
     __tablename__ = "mixproduto"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     cod_prod_mix = db.Column(db.Integer, nullable=True)
-    usuario = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=False)
     status = db.Column(db.Integer, default=1, nullable=True)
     cadastrado_em = db.Column(db.Date, nullable=False)
     atualizado_em = db.Column(db.Date, nullable=False)
@@ -26,8 +24,8 @@ class Mixproduto(db.Model):
     filial_id = db.Column(db.Integer, db.ForeignKey('filial.id', ondelete="CASCADE"), nullable=False)
     filiais = db.relationship("Filial", secondary="mixproduto_filial", back_populates="mixprodutos")
 
-    # TODO relacionando mixproduto com CLIENTE/Fabrica 1/N
-    cliente_id = db.Column(db.Integer, db.ForeignKey('cliente.id', ondelete="CASCADE"), nullable=False)
-    cliente = db.relationship("Cliente", back_populates="mixprodutos")
+    # TODO relacionamento usuario 1/1
+    usuarios = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=False)
+
 
 

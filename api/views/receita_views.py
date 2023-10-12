@@ -7,12 +7,30 @@ from wtforms.validators import DataRequired, ValidationError, length
 from ..schemas import receita_schema
 from flask import request, make_response, jsonify, render_template, redirect, url_for, flash, session
 from ..services import receita_service
-from ..models.receita_model import Receita
+from ..models.receita_model import Receita, Ingredientes
 from ..paginate import paginate
 from ..models.produtoMp_model import Produto, receita_produto
 from ..models.filial_pdv_model import Filial
 from ..models.cliente_model import Cliente
 from sqlalchemy.orm import joinedload
+
+class IngredienteForm(FlaskForm):
+    ingredientes = SelectField('Ingrediente', choices=[], validators=[DataRequired()])
+    quantidade = FloatField('Quantidade', validators=[DataRequired()])
+    unidade = SelectField('Unidade', choices=[("kg", 'Kg'), ("g", 'Grama'), ("l", 'Litro'), ("ml", 'Mililitro')],
+                          validators=[DataRequired()])
+
+    def __init__(self, *args, **kwargs):
+        super(IngredienteForm, self).__init__(*args, **kwargs)
+        self.ingredientes.choices = [(ingredientes.id, ingredientes.nome)
+                                     for ingredientes in Ingredientes.query.all()]
+
+    def to_dict(self):
+        return {
+            'ingredientes': self.ingredientes.data,
+            'quantidade': self.quantidade.data,
+            'unidade': self.unidade.data
+        }
 
 class ReceitaForm(FlaskForm):
     descricao_mix = StringField("Descricao_mix", validators=[DataRequired()])
@@ -23,19 +41,18 @@ class ReceitaForm(FlaskForm):
     validade = StringField('Validade', default='10 dias')
     #validade = DateField('Validade', format='%Y-%m-%d', validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
-    quantidades = FloatField('Quantidade', validators=[DataRequired()])
-    produtos = SelectField('Produto Relacionado')
+    ingredientes = FieldList(FormField(IngredienteForm), min_entries=1)
     filiais = SelectField('Filial Relacionada')
-    clientes = SelectField('Cliente')
+    clientes = SelectField('Cliente/Fábrica Relacionada')
    # pedidoprod = StringField('Pedido de Produção', validators=[DataRequired()])
     #produtos = [(1, 'Produto 1'), (2, 'Produto 2')]  # Exemplo de produtos
 
-    submit = SubmitField('Cadastrar')
+    submit = SubmitField('Cadastrar Receita')
 
     def __init__(self, *args, **kwargs):
         super(ReceitaForm, self).__init__(*args, **kwargs)
-        self.produtos.choices = [(produto.id, produto.nome)
-                                 for produto in Produto.query.all()]
+        self.ingredientes.choices = [(ingredientes.id, ingredientes.nome)
+                                     for ingredientes in Ingredientes.query.all()]
 
         self.filiais.choices = [(filial.id, filial.nome)
                                 for filial in Filial.query.all()]
@@ -58,23 +75,71 @@ class ReceitaForm(FlaskForm):
             'rend_unid': self.rend_unid.data,
             'validade': self.validade.data,
             'status': self.status.data,
-            'quantidades': self.quantidades.data,
-            'produtos': self.produtos.data,
+            'ingredientes': self.ingredientes.data,
             'filiais': self.filiais.data,
             'clientes': self.clientes.data,
 
         }
 
 
+class Material(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    quantidade = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return f'<Material {self.nome}>'
+
+
+class MaterialForm(FlaskForm):
+    nome = StringField('Nome do Material', validators=[DataRequired()])
+    quantidade = FloatField('Quantidade', validators=[DataRequired()])
+    submitmat = SubmitField('Adicionar Material')
+
+class IngredientesForm(FlaskForm):
+    ingredientes = SelectField('Ingrediente', choices=[], validators=[DataRequired()])
+    quantidade = FloatField('Quantidade', validators=[DataRequired()])
+    unidade = SelectField('Unidade', choices=[("kg", 'Kg'), ("g", 'Grama'), ("l", 'Litro'), ("ml", 'Mililitro')],
+                          validators=[DataRequired()])
+
+    def __init__(self, *args, **kwargs):
+        super(IngredientesForm, self).__init__(*args, **kwargs)
+        self.ingredientes.choices = [(ingredientes.id, ingredientes.nome)
+                                     for ingredientes in Ingredientes.query.all()]
+
+    def to_dict(self):
+        return {
+            'ingredientes': self.ingredientes.data,
+            'quantidade': self.quantidade.data,
+            'unidade': self.unidade.data
+        }
+
+
+@app.route('/cadastro_material', methods=['GET', 'POST'])
+def cadastro_material():
+    form = MaterialForm()
+    if form.validate_on_submit():
+        nome = form.nome.data
+        quantidade = form.quantidade.data
+        material = Material(nome=nome, quantidade=quantidade)
+        db.session.add(material)
+        db.session.commit()
+        return redirect(url_for('cadastro_material'))
+    materiais = Material.query.all()
+    return render_template('cadastro_material.html', form=form, materiais=materiais)
+
+
 @app.route('/receitas/formulario', methods=['GET', 'POST'])
 def exibir_formreceita():
     form = ReceitaForm()
-    produtos = Produto.query.all()
+    form.ingredientes.append_entry()
     produtos_quantidades = session.get('receita_produtos', [])
 
     if request.method == 'POST' and form.validate_on_submit():
         try:
             form_data = form.to_dict()  # Obter os dados do formulário como um dicionário
+
+
 
             # ... Lógica de validação ...
 
@@ -106,7 +171,7 @@ def exibir_formreceita():
             form.quantidades.choices.pop(index)
 
     return render_template('receitas/formreceita.html', form=form,
-                           produtos_cadastrados=produtos_quantidades, produtos=produtos)
+                           produtos_cadastrados=produtos_quantidades)
 
 
 @app.route('/receitas/adicionar_produto_sessao', methods=['GET', 'POST'])

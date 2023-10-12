@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Materiais</title>
+</head>
+<body>
+    <h1>Cadastro de Materiais</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+        <label for="nome">Nome do Material:</label>
+        {{ form.nome }}
+        <br>
+        <label for="quantidade">Quantidade:</label>
+        {{ form.quantidade }}
+        <br>
+        {{ form.submit }}
+    </form>
+    <h2>Lista de Materiais:</h2>
+    <ul>
+        {% for material in materiais %}
+            <li>{{ material.nome }} - {{ material.quantidade }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
