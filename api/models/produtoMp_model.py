@@ -37,8 +37,9 @@ class Produto(db.Model):
 
     estoques_produto = db.relationship("Estoque", back_populates="produto")
 
-    # Relacionamento com a tabela "pedidosProducao N/N"
+    # TODO Relacionamento com a Produto c tabela "pedidosCompra 1/N"
     pedidos = db.relationship(Pedido, back_populates="produtos")
+    # Relacionamento com a tabela Receita N/N
     receitas = db.relationship("Receita", secondary="receita_produto", back_populates="produtos", lazy="dynamic")
     # Relacionamento com ReposicaoEstoque
     reposicoes = relationship("ReposicaoEstoque", back_populates="produto")

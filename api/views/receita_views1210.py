@@ -7,12 +7,30 @@ from wtforms.validators import DataRequired, ValidationError, length
 from ..schemas import receita_schema
 from flask import request, make_response, jsonify, render_template, redirect, url_for, flash, session
 from ..services import receita_service
-from ..models.receita_model import Receita
+from ..models.receita_model import Receita, Ingredientes
 from ..paginate import paginate
 from ..models.produtoMp_model import Produto, receita_produto
 from ..models.filial_pdv_model import Filial
 from ..models.cliente_model import Cliente
 from sqlalchemy.orm import joinedload
+
+class IngredienteForm(FlaskForm):
+    ingredientes = SelectField('Ingrediente', choices=[], validators=[DataRequired()])
+    quantidade = FloatField('Quantidade', validators=[DataRequired()])
+    unidade = SelectField('Unidade', choices=[("kg", 'Kg'), ("g", 'Grama'), ("l", 'Litro'), ("ml", 'Mililitro')],
+                          validators=[DataRequired()])
+
+    def __init__(self, *args, **kwargs):
+        super(IngredienteForm, self).__init__(*args, **kwargs)
+        self.ingredientes.choices = [(ingredientes.id, ingredientes.nome)
+                                     for ingredientes in Ingredientes.query.all()]
+
+    def to_dict(self):
+        return {
+            'ingredientes': self.ingredientes.data,
+            'quantidade': self.quantidade.data,
+            'unidade': self.unidade.data
+        }
 
 class ReceitaForm(FlaskForm):
     descricao_mix = StringField("Descricao_mix", validators=[DataRequired()])
@@ -25,6 +43,7 @@ class ReceitaForm(FlaskForm):
     produtos = SelectMultipleField('Produtos', choices=[], validators=[DataRequired()])
     filiais = SelectField('Filial Relacionada')
     clientes = SelectField('Cliente/Fábrica Relacionada')
+
 
     submit = SubmitField('Cadastrar Receita')
 
@@ -60,9 +79,58 @@ class ReceitaForm(FlaskForm):
 
         }
 
+
+class Material(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    quantidade = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return f'<Material {self.nome}>'
+
+
+class MaterialForm(FlaskForm):
+    nome = StringField('Nome do Material', validators=[DataRequired()])
+    quantidade = FloatField('Quantidade', validators=[DataRequired()])
+    submitmat = SubmitField('Adicionar Material')
+
+class IngredientesForm(FlaskForm):
+    ingredientes = SelectField('Ingrediente', choices=[], validators=[DataRequired()])
+    quantidade = FloatField('Quantidade', validators=[DataRequired()])
+    unidade = SelectField('Unidade', choices=[("kg", 'Kg'), ("g", 'Grama'), ("l", 'Litro'), ("ml", 'Mililitro')],
+                          validators=[DataRequired()])
+
+    def __init__(self, *args, **kwargs):
+        super(IngredientesForm, self).__init__(*args, **kwargs)
+        self.ingredientes.choices = [(ingredientes.id, ingredientes.nome)
+                                     for ingredientes in Ingredientes.query.all()]
+
+    def to_dict(self):
+        return {
+            'ingredientes': self.ingredientes.data,
+            'quantidade': self.quantidade.data,
+            'unidade': self.unidade.data
+        }
+
+
+@app.route('/cadastro_material', methods=['GET', 'POST'])
+def cadastro_material():
+    form = MaterialForm()
+    if form.validate_on_submit():
+        nome = form.nome.data
+        quantidade = form.quantidade.data
+        material = Material(nome=nome, quantidade=quantidade)
+        db.session.add(material)
+        db.session.commit()
+        return redirect(url_for('cadastro_material'))
+    materiais = Material.query.all()
+    return render_template('cadastro_material.html', form=form, materiais=materiais)
+
+
 @app.route('/receitas/formulario', methods=['GET', 'POST'])
 def exibir_formreceita():
     form = ReceitaForm()
+    form.ingredientes.append_entry()
     produtos_quantidades = session.get('receita_produtos', [])
 
     if request.method == 'POST' and form.validate_on_submit():
@@ -93,7 +161,7 @@ def exibir_formreceita():
     # Lidar com adição dinâmica de campos
     if 'adicionar_produto' in request.form:
         form.produtos.choices.append((None, 'Selecione um produto'))
-        form.quantidade.choices.append((None, 'Selecione uma quantidade'))
+        form.quantidades.choices.append((None, 'Selecione uma quantidade'))
     if 'remover_produto' in request.form:
         index = int(request.form['remover_produto'])
         if index < len(form.produtos.choices):
@@ -103,62 +171,6 @@ def exibir_formreceita():
     return render_template('receitas/formreceita.html', form=form,
                            produtos_cadastrados=produtos_quantidades)
 
-##
-# Rota para exibir os produtos da receita
-@app.route('/receita/<int:receita_id>/produtos', methods=['GET'])
-def produtos_da_receita(receita_id):
-    try:
-        # Chame a função para obter os produtos da receita
-        produtos_quantidades = receita_service.obter_produtos_da_receita(receita_id)
-        return render_template('produtos_da_receita.html', produtos_quantidades=produtos_quantidades)
-
-    except ValueError as e:
-        return str(e)
-
-# Rota para adicionar produtos à receita
-@app.route('/receita/<int:receita_id>/adicionar_produtos', methods=['POST'])
-def adicionar_produtos_a_receita(receita_id):
-    try:
-        # Obtenha os dados do formulário
-        produtos_quantidades = {}
-        for produto in request.form:
-            if produto.startswith('produto_'):
-                produto_nome = produto.replace('produto_', '')
-                quantidade = int(request.form[produto])
-                produtos_quantidades[produto_nome] = quantidade
-
-        # Chame a função para adicionar produtos à receita
-        receita_service.adicionar_produtos_e_quantidades_a_receita(receita_id, produtos_quantidades)
-
-        return redirect(url_for('produtos_da_receita', receita_id=receita_id))
-
-    except ValueError as e:
-        return str(e)
-#
-# Rota para exibir o formulário de cadastro de receita
-@app.route('/receita/cadastrar', methods=['GET'])
-def formulario_cadastro_receita():
-    # Aqui você pode renderizar um template HTML com o formulário de cadastro de receita
-    return render_template('formulario_cadastro_receita.html')
-
-# Rota para processar o cadastro da receita
-@app.route('/receita/cadastrar', methods=['POST'])
-def cadastrar_receita_route():
-    try:
-        # Obtenha os dados do formulário
-        form_data = request.form
-        produtos_ids = request.form.getlist('produtos')  # Campos de seleção múltipla para produtos
-        produto_quantidades = request.form.getlist('quantidades')  # Campos de quantidades associadas aos produtos
-
-        # Chame a função do serviço para cadastrar a receita
-        nova_receita = receita_service.cadastrar_receita(form_data, produtos_ids, produto_quantidades)
-
-        # Redirecione para a página de detalhes da nova receita ou outra ação apropriada
-        return redirect(url_for('detalhes_receita', receita_id=nova_receita.id))
-
-    except ValueError as e:
-        return str(e)
-##
 
 @app.route('/receitas/adicionar_produto_sessao', methods=['GET', 'POST'])
 def adicionar_produto_sessao():
@@ -225,6 +237,21 @@ def remover_produto():
         return redirect(url_for('exibir_formreceita', id=receita_id))
     except Exception as e:
         return render_template('error.html', message=str(e), status_code=500)
+
+
+# Rota para listar os produtos da receita
+@app.route('/receitas/listar_produtos', methods=['GET'])
+def listar_produtosreceita():
+    # Obter o ID da receita
+    receita_id = request.args.get('receita_id')
+    form = ReceitaForm()
+    produtos_da_receita = session.get('receita_produto', [])
+    return render_template('receitas/produto_field.html', form=form, receita_produto=produtos_da_receita)
+
+
+@app.template_global()
+def selecionar_produto_quantidade(produtos_selecionados, quantidades_selecionadas):
+    return zip(produtos_selecionados, quantidades_selecionadas)
 
 
 @app.route('/receitas/buscar', methods=['GET'])

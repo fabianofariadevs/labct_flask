@@ -18,7 +18,7 @@ class Mixproduto(db.Model):
 
     # TODO relacionamento com tabela receita 1/1
     receita_id = db.Column(db.Integer, db.ForeignKey('receita.id', ondelete="CASCADE"), nullable=False)
-    receitas = db.relationship("Receita", back_populates="mixprodutos")
+    receita = db.relationship("Receita", back_populates="mixproduto")
 
     # TODO relacionamento com tabela filial N/N
     filial_id = db.Column(db.Integer, db.ForeignKey('filial.id', ondelete="CASCADE"), nullable=False)

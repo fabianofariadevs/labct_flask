@@ -8,13 +8,13 @@ class MixprodutoSchema(ma.SQLAlchemyAutoSchema):
         model = mix_produto_model.Mixproduto
         load_instance = True
         fields = ("id", "cod_prod_mix", "status", "cadastrado_em", "atualizado_em",
-                  "receitas", "filiais", "usuarios")
+                  "receita", "filiais", "usuarios")
 
     cod_prod_mix = fields.Integer(required=True)
     status = fields.Integer(required=True)
     cadastrado_em = fields.DateTime(required=True)
     atualizado_em = fields.DateTime(required=True)
 
-    receitas = fields.Nested("ReceitaSchema", many=True)
+    receita = fields.Nested("ReceitaSchema", many=True)
     filiais = fields.Nested("FilialSchema", many=True)
     usuarios = fields.Nested("UsuarioSchema", many=True)

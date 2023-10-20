@@ -11,7 +11,7 @@ class ReceitaSchema(ma.SQLAlchemyAutoSchema):
         model = receita_model.Receita
         load_instance = True
         fields = ("id", "descricao_mix", "modo_preparo", "departamento", "rend_kg", "rend_unid", "validade", "status", "cadastrado_em", "atualizado_em",
-                  "clientes", "ingredientes", "pedidosprod", "usuario")
+                  "clientes", "pedidosprod", "usuario")
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     descricao_mix = fields.String(required=True)
@@ -26,20 +26,10 @@ class ReceitaSchema(ma.SQLAlchemyAutoSchema):
 
     usuario = fields.Integer(required=False)
     clientes = fields.String(required=False)
-    ingredientes = fields.Nested("IngredientesSchema", many=True, exclude=("receita",))
+   # ingredientes = fields.Nested("IngredientesSchema", many=True, exclude=("receita",))
     pedidosprod = fields.String(required=False)
 
-
-class IngredientesSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = receita_model.Ingredientes
-        load_instance = True
-        fields = ("id", "nome", "quantidade", "unidade", "receita_id", "receita")
-
-    id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
-    nome = fields.String(required=True)
-    quantidade = fields.Float(required=True)
-    unidade = fields.String(required=True)
-    receita_id = fields.Integer(required=True)
-    receita = fields.Nested("ReceitaSchema", only=('id', 'descricao_mix'))
+    #TODO Relacionamento com a tabela Cliente 1/N
+    #cliente_id = fields.Integer(required=False)
+    #cliente = fields.Nested("ClienteSchema", many=True, exclude=("receitas",))
 

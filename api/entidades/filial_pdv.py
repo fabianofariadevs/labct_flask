@@ -1,6 +1,6 @@
 class Filial:
     def __int__(self, nome, endereco, bairro, cidade, estado, whatsapp, responsavel, cnpj, status,
-                cadastrado_em, atualizado_em, clientes, mixprodutos, pedidosprod):
+                cadastrado_em, atualizado_em, cliente):
         self.__nome = nome
         self.__endereco = endereco
         self.__bairro = bairro
@@ -12,9 +12,7 @@ class Filial:
         self.__status = status
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
-        self.__clientes = clientes
-        self.__mixprodutos = mixprodutos
-        self.__pedidosprod = pedidosprod
+        self.__cliente = cliente
 
     @property
     def nome(self):
@@ -91,8 +89,8 @@ class Filial:
     @property
     def cadastrado_em(self):
         return self.__cadastrado_em
-    @cadastrado_em.setter
 
+    @cadastrado_em.setter
     def cadastrado_em(self, cadastrado_em):
         self.__cadastrado_em = cadastrado_em
 
@@ -142,7 +140,5 @@ class Filial:
             "cadastrado_em": self.__cadastrado_em,
             "atualizado_em": self.__atualizado_em,
             "cliente": self.__cliente,
-            "mixprodutos": self.__mixprodutos,
-            "pedidosprod": self.__pedidosprod
         }
 

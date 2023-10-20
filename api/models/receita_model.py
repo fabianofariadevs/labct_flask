@@ -23,33 +23,19 @@ class Receita(db.Model):
     # TODO relacionando Receita c/ usuario 1/1
     usuario = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=False)
 
-    # TODO relacionando RECEITA c/ cliente e produtos N/N
-    clientes = db.relationship("Cliente", secondary="receita_cliente", back_populates="receitas")
+    # TODO relacionando RECEITA c/ cliente N/1
+    cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
+    clientes = db.relationship("Cliente", back_populates="receitas", foreign_keys=[cliente_id])
 
     # TODO relacionando RECEITA c/ produtos N/N = receita_produto TESTANDO C INGREDIENTES ABAIXO
     produtos = db.relationship("Produto", secondary="receita_produto", back_populates="receitas")
-
-    # Relacionamento N/N com a tabela Ingredientes
-    ingredientes = db.relationship("Ingredientes", back_populates="receita", cascade="all, delete-orphan", lazy="dynamic")
 
     # Relacionamento N/N com a tabela PedidoProducao
     pedidosprod = db.relationship("PedidoProducao", back_populates="receitas")
 
     # Relacionamento 1/1 com tabela mixproduto
-    #mixproduto_id = db.Column(db.Integer, db.ForeignKey("mixproduto.id"), nullable=False)
-    mixprodutos = db.relationship(Mixproduto, back_populates="receitas")
+    mixproduto = db.relationship(Mixproduto, back_populates="receita")
 
     def __repr__(self):
         return f"<Receita {self.descricao_mix}>"
 
-
-class Ingredientes(db.Model):
-    __tablename__ = "ingredientes"
-    __table_args__ = {"extend_existing": True}
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    nome = db.Column(db.String(50), nullable=False)
-    quantidade = db.Column(db.Float, nullable=False)
-    unidade = db.Column(db.String(10), nullable=False)
-    receita_id = db.Column(db.Integer, db.ForeignKey("receita.id"), nullable=False)
-    receita = db.relationship(Receita, back_populates="ingredientes")

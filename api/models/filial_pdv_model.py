@@ -28,8 +28,9 @@ class Filial(db.Model):
     mixprodutos = db.relationship("Mixproduto", secondary="mixproduto_filial", back_populates="filiais")
 
     # TODO Relacionamento com a tabela Filial N/1
-   # cliente = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
-    clientes = db.relationship("Cliente", back_populates="filiais", overlaps="filiais")
+    #cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
+    cliente = db.relationship("Cliente", back_populates="filiais", overlaps="filiais")
 
+    #pedidosprod_id = db.Column(db.Integer, db.ForeignKey("pedidoproducao.id"), nullable=False)
     pedidosprod = db.relationship("PedidoProducao", back_populates="filiais")
 

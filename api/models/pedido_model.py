@@ -47,3 +47,4 @@ class PedidoProducao(db.Model):
     filial_pdv = db.Column(db.Integer, db.ForeignKey("filial.id"), nullable=True)
     filiais = db.relationship("Filial", back_populates="pedidosprod", foreign_keys=[filial_pdv])
 
+    cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=True)

@@ -25,7 +25,7 @@ class FilialForm(FlaskForm):
     cnpj = StringField('CNPJ', validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
   #  receitas = SelectField('Receitas', validators=[DataRequired()])
-    cliente = SelectField('Vincular Fábrica', validators=[DataRequired()])
+    cliente = SelectField('Cliente', validators=[DataRequired()])
     #pedidos = SelectField('Pedidos_Compras', validators=[DataRequired()])
     #pedidosprod = SelectField('Pedidos_Compras', validators=[DataRequired()])
     submit = SubmitField('Cadastrar')

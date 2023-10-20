@@ -52,4 +52,4 @@ def clubeterra():
 
 
 from .views import usuario_views, cliente_views, login_views, filial_pdv_views, receita_views, fornecedor_views, produtoMp_views, mix_produto_views, pedido_views, estoque_views
-from .models import usuario_model, cliente_model, filial_pdv_model, receita_model, fornecedor_model, produtoMp_model, mix_produto_model, pedido_model, estoque_model
+from .models import usuario_model, cliente_model, filial_pdv_model, ingredientes_model, receita_model, fornecedor_model, produtoMp_model, mix_produto_model, pedido_model, estoque_model
