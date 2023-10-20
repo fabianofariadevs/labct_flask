@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" style="font-size: 11px">
+            <a href="#">
+            Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Receitas
+        </li>
+    </ol>
+</nav>
+<div class="card border-0 shadow-sm">
+    <div class="card-header">
+        <h3 class="card-title">{% if receita %}Atualizar Receita{% else %}Cadastrar Nova Receita{% endif %}</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST" id="form-cadastro-receita" action="#" enctype="multipart/form-data">
+            {% if receita %}
+            <input type="hidden" name="_method" value="PUT">
+            {% else %}
+            <input type="hidden" name="_method" value="POST">
+            {% endif %}
+            {{ form.hidden_tag() }}
+            {% for error in form.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.descricao_mix.label(class="form-label") }}:
+                        {{ form.descricao_mix(class="form-control") }}
+                         {% for error in form.descricao_mix.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="mb-3">
+                        {{ form.modo_preparo.label(class="form-label") }}:
+                        {{ form.modo_preparo(class="form-control") }}
+                         {% for error in form.modo_preparo.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.departamento.label(class="form-label") }}:
+                        {{ form.departamento(class="form-control") }}
+                         {% for error in form.departamento.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="mb-3">
+                        {{ form.rend_kg.label(class="form-label") }}:
+                        {{ form.rend_kg(class="form-control") }}
+                         {% for error in form.rend_kg.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="mb-3">
+                        {{ form.rend_unid.label(class="form-label") }}:
+                        {{ form.rend_unid(class="form-control") }}
+                         {% for error in form.rend_unid.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.validade.label(class="form-label") }}:
+                        {{ form.validade(class="form-control") }}
+                         {% for error in form.validade.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                     <div class="mb-3">
+                         {{ form.status.label(class="form-label") }}:
+                         {{ form.status(class="form-select") }}
+                         {% for error in form.status.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                     </div>
+                </div>
+                <div class="col-md-3">
+                     <div class="mb-3">
+                            {{ form.clientes.label(class="form-label") }}:
+                            {{ form.clientes(class="form-select") }}
+                            {% for error in form.clientes.errors %}
+                            <p class="text-danger">{{ error }}</p>
+                            {% endfor %}
+                     </div>
+                </div>
+            </div>
+        </form>
+            <br>
+
+            <hr>
+             <!-- Botão para abrir o modal de adicionar produtos e quantidades -->
+            <div class="form-group">
+                <button type="button"  class="btn btn-outline-primary" id="btn-adicionar-produto" data-toggle="modal" data-target="#adicionarProdutoModal">
+                    <i class="fa fa-save"></i>  Produtos na Receita
+                </button>
+            </div>
+
+         <form method="POST" action="{{ url_for('adicionar_produto_sessao') }}" enctype="multipart/form-data">
+            {% if produto %}
+            <input type="hidden" name="_method" value="PUT">
+            {% else %}
+            <input type="hidden" name="_method" value="POST">
+            {% endif %}
+            {{ form.hidden_tag() }}
+            {% for error in form.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+
+            <div class="row">
+                <div class="col-md-3">
+                     <div class="mb-3">
+                        {{ form.produtos.label(class="form-label") }}:
+                        {{ form.produtos(class="form-select") }}
+                        {% for error in form.produtos.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                     </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.quantidades.label(class="form-label") }}:
+                        {{ form.quantidades(class="form-control") }}
+                         {% for error in form.quantidades.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                <button type="submit" class="btn btn-primary">Adicionar Produto9</button>
+
+                    <a href="{{ url_for('adicionar_produto_sessao') }}" methods="POST" class="btn btn-outline-secondary" rel="tooltip" title="adicionar produto a receita">Adicionar Produto a Receita</a>
+                </div>
+            </div>
+            <hr>
+            <h5>Produtos da Receita</h5>
+
+           <!-- Tabela para listar os produtos e quantidades adicionados -->
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="tabela-produtos-quantidades" style="width:40%">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Produto</th>
+                                <th class="text-center">Quantidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Os produtos e quantidades adicionados serão listados aqui -->
+                            {% for produto in produtos %}
+                                <tr>
+                                    <td>{{ produto.nome_produto }}</td>
+                                    <td>{{ produto.quantidades }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                            <a href="{{ url_for('listar_receitas') }}" class="btn btn-primary">Voltar para Receitas</a>
+
+                </div>
+            </div>
+            <br>
+
+
+
+            {% if receita %}
+            <div class="form-group">
+                <input type="submit" class="btn btn-success" name="Atualizar" value="Atualizar Receita">
+                {% else %}
+                <input type="submit" class="btn btn-primary" name="cadastrar" value="Cadastrar Receita">
+                {% endif %}
+                <a href="{{ url_for('listar_receitas') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
+            </div>
+
+            <br>
+            <hr>
+            <br>
+
+
+
+    </div>
+</div>
+
+            <h5>Produtos e Quantidades</h5>
+            <hr>
+            <div class="row"> <!-- Linha para exibir os produtos e quantidades -->
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="produto">Produto</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        <label for="quantidade">Quantidade</label>
+                    </div>
+                </div>
+            </div>
+            {% for produto in produtos %}
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" value="{{ produto.nome }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        <input type="number" class="form-control" value="{{ produto.quantidade }}" readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <a href="#" class="btn btn-info" rel="tooltip" title="Atualizar Produto"><i class="fa-solid fa-plus"></i></a>
+                        <a href="#" class="btn btn-danger" rel="tooltip" title="Remover Produto"><i class="fa-solid fa-trash"></i></a>
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+<hr>
+
+
+
+<!-- Modal para adicionar produtos e quantidades -->
+<div class="modal fade" id="adicionarProdutoModal" tabindex="-1" role="dialog" aria-labelledby="adicionarProdutoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adicionarProdutoModalLabel">Adicionar Produto e Quantidade</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="form-adicionar-produto" method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.produtos.label(class="form-label") }}:
+                        {{ form.produtos(class="form-control", id="produtos") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.quantidades.label(class="form-label") }}:
+                        {{ form.quantidades(class="form-control", id="quantidades") }}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="adicionar-produto">Adicionar produto</button>
+                <button type="button" class="btn btn-danger" id="remover-produto">Remover</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Adicione este código no final do seu arquivo HTML, antes do fechamento da tag </body> -->
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+
+{% endblock conteudo %}

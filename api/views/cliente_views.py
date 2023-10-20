@@ -9,6 +9,7 @@ from ..services import cliente_service, filial_pdv_service
 from ..models.cliente_model import Cliente
 from ..schemas import cliente_schema, filial_pdv_schema
 from ..schemas.cliente_schema import ClienteSchema
+from ..models.receita_model import Receita
 from sqlalchemy.orm import joinedload
 from ..paginate import paginate
 from ..models.filial_pdv_model import Filial
@@ -29,15 +30,18 @@ class ClienteForm(FlaskForm):
     whatsapp = StringField('Whatsapp', validators=[DataRequired()])
     cnpj = StringField('Cnpj')
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
-    #status = BooleanField('Status')
-    filial_id = SelectField('Selecionar Filial', validators=[DataRequired()])
+    filiais = SelectField('Filial', coerce=int, validators=[DataRequired()])
+    receitas = SelectField('Receita', coerce=int, validators=[DataRequired()])
 
     submit = SubmitField('Cadastrar')
 
     def __init__(self, *args, **kwargs):
         super(ClienteForm, self).__init__(*args, **kwargs)
-        self.filial_id.choices = [(filial.id, filial.nome)
-                                  for filial in Filial.query.all()]
+        self.filiais.choices = [(filial.id, filial.nome)
+                                for filial in Filial.query.all()]
+        self.receitas.choices = [(receita.id, receita.descricao_mix)
+                                 for receita in Receita.query.all()]
+
         self.status.choices = self.get_status_choices()
 
     @staticmethod
@@ -57,7 +61,8 @@ class ClienteForm(FlaskForm):
             'whatsapp': self.whatsapp.data,
             'cnpj': self.cnpj.data,
             'status': self.status.data,
-            'filial_id': self.filial_id.data,
+            'filiais': self.filiais.data,
+            'receitas': self.receitas.data
         }
 
 @app.route('/clientes/formulariofilial', methods=['GET', 'POST'])
@@ -128,7 +133,7 @@ def visualizar_cliente(id):
             cliente_data = cliente_schema.ClienteSchema().dump(clientev)
 
             # Obter o nome da filial
-            filial = clientev.filial
+            filial = clientev.filiais
             cliente_data['filial_id'] = filial.nome if filial else 'Filial não encontrada'
 
             return render_template('clientes/detalhes.html', clientev=cliente_data)
@@ -148,14 +153,14 @@ def listar_clientes():
     page = request.args.get('page', 1, type=int)
     per_page = 6  # Escolha o número de clientes por página
 
-    clientes = Cliente.query.options(joinedload('filial')).all()
+    clientes = Cliente.query.options(joinedload('filiais')).all()
 
     clientes_data = []
     for cliente in clientes:
         cliente_dict = cliente_schema.ClienteSchema().dump(cliente)
 
         # Obter o nome da filial
-        filial = cliente.filial
+        filial = cliente.filiais
         cliente_dict['filial_id'] = filial.nome if filial else 'Filial não encontrada'
 
         clientes_data.append(cliente_dict)

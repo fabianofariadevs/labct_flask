@@ -5,6 +5,8 @@ from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
 #from flask_jwt_extended import JWTManager
 from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, IntegerField, FloatField, DateField, DateTimeField
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
 import json
 
 app = Flask(__name__)
@@ -44,7 +46,10 @@ def sobre():
 def contatos():
     return render_template('contato.html')
 
+@app.route('/clubeterra')
+def clubeterra():
+    return render_template('clubeterra.html')
+
 
 from .views import usuario_views, cliente_views, login_views, filial_pdv_views, receita_views, fornecedor_views, produtoMp_views, mix_produto_views, pedido_views, estoque_views
-from .models import usuario_model, cliente_model, filial_pdv_model, receita_model, fornecedor_model, produtoMp_model, mix_produto_model, pedido_model, estoque_model
-
+from .models import usuario_model, cliente_model, filial_pdv_model, ingredientes_model, receita_model, fornecedor_model, produtoMp_model, mix_produto_model, pedido_model, estoque_model

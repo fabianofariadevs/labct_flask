@@ -8,7 +8,8 @@ from sqlalchemy.orm import relationship
 receita_produto = db.Table('receita_produto',
                            db.Column('receita_id', db.Integer, db.ForeignKey('receita.id'), unique=False, nullable=False),
                            db.Column('produto_id', db.Integer, db.ForeignKey('produto.id'), unique=False, nullable=False),
-                           db.Column('quantidade', db.Integer, nullable=False))
+                           db.Column('quantidade', db.Float, unique=False, nullable=False)
+                           )
 
 class Produto(db.Model):
     __tablename__ = "produto"
@@ -25,20 +26,20 @@ class Produto(db.Model):
     qrcode = db.Column(db.String(50), nullable=False)
     status = db.Column(db.Integer, default=1, nullable=True)
     estoque_minimo = db.Column(db.Integer, nullable=True, default=0)
-    quantidade_em_estoque = db.Column(db.Integer, default=0)
     obs = db.Column(db.Text(), nullable=True)
     cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
+    # Relacionamento com a tabela "Fornecedor"
     #TODO Chave estrangeira referenciando o fornecedor
     fornecedor_id = db.Column(db.Integer, db.ForeignKey('fornecedor.id'), nullable=False)
-    # Relacionamento com a tabela "Fornecedor"
     fornecedor = db.relationship(Fornecedor, back_populates="produtos")
-    ##cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=True)
+
     estoques_produto = db.relationship("Estoque", back_populates="produto")
-    mixproduto = db.relationship("Mixproduto", back_populates="produtos")
-    # Relacionamento com a tabela "pedidosProducao N/N"
+
+    # TODO Relacionamento com a Produto c tabela "pedidosCompra 1/N"
     pedidos = db.relationship(Pedido, back_populates="produtos")
+    # Relacionamento com a tabela Receita N/N
     receitas = db.relationship("Receita", secondary="receita_produto", back_populates="produtos", lazy="dynamic")
     # Relacionamento com ReposicaoEstoque
     reposicoes = relationship("ReposicaoEstoque", back_populates="produto")

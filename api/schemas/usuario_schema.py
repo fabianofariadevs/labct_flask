@@ -19,6 +19,6 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
     atualizado_em = fields.DateTime(required=False)
     api_key = fields.String(required=False)
     empresa = fields.String(required=False)
-    #empresa = fields.List(fields.Nested(cliente_schema.ClienteSchema(), only=('id', 'nome')))
     cargo = fields.String(required=False)
-
+    clientes = fields.List(fields.Nested(cliente_schema.ClienteSchema(), only=('id', 'nome')))
+    funcao = fields.String(required=False)

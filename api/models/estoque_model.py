@@ -9,7 +9,7 @@ class Estoque(db.Model):
     __tablename__ = "estoque"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    nome = db.Column(db.String(80), nullable=False)
+    nome = db.Column(db.String(80), nullable=True)
     preco = db.Column(db.Float, nullable=False)
     validade = db.Column(db.Date(), nullable=False)
     valor_ultima_compra = db.Column(db.Float, nullable=False)

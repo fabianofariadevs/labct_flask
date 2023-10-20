@@ -2,7 +2,7 @@
 #TODO CLASSE PARA ENTIDADES PEDIDO E PEDIDOPRODUCAO
 
 class Pedido:
-    def __init__(self, qtde_pedido, data_pedido, data_entrega, status, obs, produto_id, fornecedor_id, filial_pdv, cadastrado_em, atualizado_em):
+    def __init__(self, qtde_pedido, data_pedido, data_entrega, status, obs, produto_id, fornecedor_id, filial_pdv, cadastrado_em, atualizado_em, produto):
         self.__qtde_pedido = qtde_pedido
         self.__data_pedido = data_pedido
         self.__data_entrega = data_entrega
@@ -13,6 +13,7 @@ class Pedido:
         self.__filial_pdv = filial_pdv
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
+        self.__produto = produto
 
     @property
     def qtde_pedido(self):
@@ -93,6 +94,14 @@ class Pedido:
     @atualizado_em.setter
     def atualizado_em(self, atualizado_em):
         self.__atualizado_em = atualizado_em
+
+    @property
+    def produto(self):
+        return self.__produto
+
+    @produto.setter
+    def produto(self, produto):
+        self.__produto = produto
 
 
 class PedidoProducao:

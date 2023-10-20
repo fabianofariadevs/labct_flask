@@ -77,7 +77,7 @@ def exibir_formreceita():
             receita = receita_service.cadastrar_receita(form_data)
             for produto_id, quantidade in zip(produtos_selecionados, quantidades_selecionadas):
                 # Crie uma associação entre a Receita e o Produto com a quantidade
-                receita_service.adicionar_produto_a_receita(receita, produto_id, quantidade)
+                receita_service.adicionar_produtos_e_quantidades_a_receita(receita, produto_id, quantidade)
 
             flash("Receita cadastrada com sucesso!")
             return redirect(url_for("listar_receitas"))

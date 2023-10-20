@@ -48,8 +48,8 @@ def remove_pedido(pedido):
 
 
 #TODO service para PEDIDO DE PRODUCAO**
-def cadastrar_pedidoprod(pedidoproducao, receita_id, filial_pdv, qtde_pedido, data_entrega, obs, status, cadastrado_em, atualizado_em):
-    receita = receita_model.Receita.query.get(receita_id)
+def cadastrar_pedidoprod(pedidoproducao):
+    receita = receita_model.Receita.query.get(pedidoproducao.receita_id)
 
     # Verifique se há estoque suficiente antes de criar o pedido
     for item in receita.produtos:
@@ -62,7 +62,7 @@ def cadastrar_pedidoprod(pedidoproducao, receita_id, filial_pdv, qtde_pedido, da
     # TODO a função cadastrar_pedido recebe um objeto pedido como argumento e cria uma instância do modelo pedido com os valores do objeto fornecido. Em seguida, adiciona a instância ao banco de dados usando db.session.add() e faz o commit das alterações usando db.session.commit(). Por fim, retorna a instância do pedido cadastrado.
     pedido_bd = pedido_model.PedidoProducao(data_pedido=func.now(), data_entrega=pedidoproducao.data_entrega, qtde_pedido=pedidoproducao.qtde_pedido,
                                             status=pedidoproducao.status, obs=pedidoproducao.obs, receita_id=pedidoproducao.receita_id, filial_pdv=pedidoproducao.filial_pdv,
-                                            cadastrado_em=func.now(), atualizado_em=pedidoproducao.atualizado_em)
+                                            cadastrado_em=func.now(), atualizado_em=pedidoproducao.atualizado_em, quantidade=pedidoproducao.quantidade, produto_id=pedidoproducao.produto_id)
 
     db.session.add(pedido_bd)
     db.session.commit()

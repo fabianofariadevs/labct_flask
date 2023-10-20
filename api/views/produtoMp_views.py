@@ -89,8 +89,8 @@ def listar_produtos():
         total_produtos_inativos = len([produto for produto in produtos if produto.status == 0])
 
         return render_template("produtos/produtos.html", produtos=produtos_data, total_produtos=total_produtos,
-                           total_produtos_ativos=total_produtos_ativos,
-                           total_produtos_inativos=total_produtos_inativos)
+                               total_produtos_ativos=total_produtos_ativos,
+                               total_produtos_inativos=total_produtos_inativos)
 
 
 @app.route('/produtos/<int:id>/atualizar', methods=['GET', 'POST', 'PUT'])

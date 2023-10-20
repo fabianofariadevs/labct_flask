@@ -12,14 +12,24 @@ class EstoqueSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = estoque_model.Estoque
         load_instance = True
-     ##   fields = ("id", "nome", "validade", "valor_ultima_compra", "quantidade_estoque", "quantidade_minima", "obs", "produto_id", "cliente_id")
+        fields = ("id", "nome", "validade", "valor_ultima_compra", "quantidade_op", "quantidade_minima", "obs", "produto", "cliente")
 
-        nome = fields.String(required=False)
-        validade = fields.Date(required=True)
-        valor_ultima_compra = fields.Float(required=False)
-        quantidade_op = fields.Float(required=True)
-        quantidade_minima = fields.Integer(required=False)
-        obs = fields.String(required=False)
+    nome = fields.String(required=False)
+    validade = fields.Date(required=True)
+    valor_ultima_compra = fields.Float(required=False)
+    quantidade_op = fields.Float(required=True)
+    quantidade_minima = fields.Integer(required=False)
+    obs = fields.String(required=False)
+    produto = fields.Integer(required=False)
+    cliente = fields.Integer(required=False)
 
-        produto_id = fields.Integer(required=False)
-        cliente_id = fields.Integer(required=False)
+
+class ReposicaoEstoqueSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = estoque_model.ReposicaoEstoque
+        load_instance = True
+        fields = ("id", "produto_id", "data_solicitacao", "produto")
+
+    produto_id = fields.Integer(required=False)
+    data_solicitacao = fields.Date(required=True)
+    produto = fields.Integer(required=False)

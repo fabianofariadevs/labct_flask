@@ -208,18 +208,13 @@
                             </a>
                         </div>
                         <div class="card-body">
-                            {% if cliente %}
-                            <ul class="list-group list-group-flush">
-                                #for
-                                <li class="list-group-item">
-                                    <p>
-                                        <i class="fa-solid fa-user me-2"></i>
-                                        <span class="fw-bold">#</span>
-                                    </p>
-                                    <small class="text-muted"># em # às #</small>
-                                </li>
-                                #end
+                            {% if produtos %}
+                            <ul>
+                                {% for produto, quantidade in produtos_quantidades.items() %}
+                                    <li>{{ produto.nome }} - Quantidade: {{ quantidades }}</li>
+                                {% endfor %}
                             </ul>
+
                             {% else %}
                             <div class="alert alert-warning" role="alert">
                                 Nenhum Produto para exibir!

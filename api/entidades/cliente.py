@@ -1,6 +1,6 @@
 
 class Cliente:
-    def __init__(self, nome, endereco, bairro, cidade, estado, telefone, email, responsavel, whatsapp, cnpj, status,  filial, cadastrado_em, atualizado_em):
+    def __init__(self, nome, endereco, bairro, cidade, estado, telefone, email, responsavel, whatsapp, cnpj, status,  filiais, cadastrado_em, atualizado_em, receitas, pedidos):
         self.__nome = nome
         self.__endereco = endereco
         self.__bairro = bairro
@@ -12,9 +12,11 @@ class Cliente:
         self.__whatsapp = whatsapp
         self.__cnpj = cnpj
         self.__status = status
-        self.__filial = filial
+        self.__filiais = filiais
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
+        self.__receitas = receitas
+        self.__pedidos = pedidos
 
     @property
     def nome(self):
@@ -105,12 +107,12 @@ class Cliente:
         self.__status = status
 
     @property
-    def filial(self):
-        return self.__filial
+    def filiais(self):
+        return self.__filiais
 
-    @filial.setter
-    def filial(self, filial):
-        self.__filial = filial
+    @filiais.setter
+    def filiais(self, filiais):
+        self.__filiais = filiais
 
     @property
     def cadastrado_em(self):
@@ -128,3 +130,38 @@ class Cliente:
     def atualizado_em(self, atualizado_em):
         self.__atualizado_em = atualizado_em
 
+    @property
+    def receitas(self):
+        return self.__receitas
+
+    @receitas.setter
+    def receitas(self, receitas):
+        self.__receitas = receitas
+
+    @property
+    def pedidos(self):
+        return self.__pedidos
+
+    @pedidos.setter
+    def pedidos(self, pedidos):
+        self.__pedidos = pedidos
+
+    def json(self):
+        return {
+            "nome": self.__nome,
+            "endereco": self.__endereco,
+            "bairro": self.__bairro,
+            "cidade": self.__cidade,
+            "estado": self.__estado,
+            "telefone": self.__telefone,
+            "email": self.__email,
+            "responsavel": self.__responsavel,
+            "whatsapp": self.__whatsapp,
+            "cnpj": self.__cnpj,
+            "status": self.__status,
+            "filiais": self.__filiais,
+            "cadastrado_em": self.__cadastrado_em,
+            "atualizado_em": self.__atualizado_em,
+            "receitas": self.__receitas,
+            "pedidos": self.__pedidos
+        }

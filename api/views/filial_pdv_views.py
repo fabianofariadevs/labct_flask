@@ -3,7 +3,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, BooleanField
 from wtforms.validators import DataRequired, ValidationError
 from api import app, api, db
-from ..models import filial_pdv_model, receita_model
+from ..models.filial_pdv_model import Filial
+from ..models import filial_pdv_model
 from ..services import filial_pdv_service, receita_service
 from ..schemas import filial_pdv_schema, receita_schema, pedido_schemas
 from ..schemas.filial_pdv_schema import FilialSchema
@@ -24,7 +25,7 @@ class FilialForm(FlaskForm):
     cnpj = StringField('CNPJ', validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
   #  receitas = SelectField('Receitas', validators=[DataRequired()])
-    cliente = SelectField('Vincular Fábrica', validators=[DataRequired()])
+    cliente = SelectField('Cliente', validators=[DataRequired()])
     #pedidos = SelectField('Pedidos_Compras', validators=[DataRequired()])
     #pedidosprod = SelectField('Pedidos_Compras', validators=[DataRequired()])
     submit = SubmitField('Cadastrar')
@@ -75,17 +76,18 @@ def atualizar_filial(id):
 
 @app.route('/filiais', methods=['GET'])###1
 def listar_filiais():
-    if request.method == 'GET':
-        filiais = filial_pdv_service.listar_filial_pdv()
-        filiais_data = filial_pdv_schema.FilialSchema().dump(filiais, many=True)
-        #filiais_data = [filial_pdv_schema.FilialSchema().add_links(filial_data) for filial_data in filiais_data]
-        total_filiais = len(filiais)
-        total_filiais_ativos = len([filial for filial in filiais if filial.status == 1])
-        total_filiais_inativos = len([filial for filial in filiais if filial.status == 0])
+    page = request.args.get('page', 1, type=int)
+    per_page = 6
+    filiais = filial_pdv_service.listar_filial_pdv()
 
-        return render_template('filiais/filial.html', filiais=filiais_data, total_filiais=total_filiais,
-                               total_filiais_ativos=total_filiais_ativos,
-                               total_filiais_inativos=total_filiais_inativos)
+    paginated_result = paginate(Filial.query, FilialSchema(), page, per_page)
+    total_filiais = len(paginated_result['items'])
+    total_filiais_ativos = len([filial for filial in paginated_result['items'] if filial['status'] == 1])
+    total_filiais_inativos = len([filial for filial in paginated_result['items'] if filial['status'] == 0])
+
+    return render_template('filiais/filial.html', filiais=filiais, paginated_result=paginated_result, total_filiais=total_filiais,
+                           total_filiais_ativos=total_filiais_ativos,
+                           total_filiais_inativos=total_filiais_inativos)
 
 
 @app.route('/filiais/formulario', methods=['GET', 'POST'])###2
