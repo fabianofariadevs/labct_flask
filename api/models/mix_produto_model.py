@@ -13,6 +13,7 @@ class Mixproduto(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     cod_prod_mix = db.Column(db.Integer, nullable=True)
     status = db.Column(db.Integer, default=1, nullable=True)
+    situacao = db.Column(db.String(50), nullable=False)
     cadastrado_em = db.Column(db.Date, nullable=False)
     atualizado_em = db.Column(db.Date, nullable=False)
 

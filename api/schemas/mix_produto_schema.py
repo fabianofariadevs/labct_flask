@@ -7,11 +7,12 @@ class MixprodutoSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = mix_produto_model.Mixproduto
         load_instance = True
-        fields = ("id", "cod_prod_mix", "status", "cadastrado_em", "atualizado_em",
+        fields = ("id", "cod_prod_mix", "status", "situacao", "cadastrado_em", "atualizado_em",
                   "receita", "filiais", "usuarios")
 
     cod_prod_mix = fields.Integer(required=True)
     status = fields.Integer(required=True)
+    situacao = fields.String(required=False)
     cadastrado_em = fields.DateTime(required=True)
     atualizado_em = fields.DateTime(required=True)
 
