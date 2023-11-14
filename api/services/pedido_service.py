@@ -1,19 +1,35 @@
-from sqlalchemy import func
-from ..models import pedido_model, receita_model, produtoMp_model, estoque_model
+from datetime import datetime, date
+
 from api import db
+from sqlalchemy import func
+from ..models import pedido_model
+from ..services import mix_produto_service, filial_pdv_service
+
 
 #TODO ** CRUD ** ESSAS funções fornecem operações básicas de criação, leitura, atualização e remoção (CRUD) para os registros da tabela pedido no banco de dados.
 #       @author Fabiano Faria
+
 def cadastrar_pedido(pedido):
-    # TODO a função cadastrar_pedido recebe um objeto pedido como argumento e cria uma instância do modelo pedido com os valores do objeto fornecido. Em seguida, adiciona a instância ao banco de dados usando db.session.add() e faz o commit das alterações usando db.session.commit(). Por fim, retorna a instância do pedido cadastrado.
+    if isinstance(pedido, dict):
+        data_entrega = pedido.get('data_entrega')
+        if isinstance(data_entrega, str):
+            pedido['data_entrega'] = datetime.strptime(data_entrega, '%Y-%m-%d').date()
+        atualizado_em = pedido.get('atualizado_em')
+        if isinstance(atualizado_em, str):
+            pedido['atualizado_em'] = datetime.strptime(atualizado_em, '%Y-%m-%d').date()
 
-    pedido_bd = pedido_model.Pedido(qtde_pedido=pedido.qtde_pedido, data_pedido=func.now(), data_entrega=pedido.data_entrega,
-                                    status=pedido.status, obs=pedido.obs, cadastrado_em=func.now(), atualizado_em=pedido.atualizado_em, produto_id=pedido.produto_id,
-                                    fornecedor_id=pedido.fornecedor_id, filial_pdv=pedido.filial_pdv)
-
-    db.session.add(pedido_bd)
-    db.session.commit()
-    return pedido_bd
+        pedido_bd = pedido_model.Pedido(
+            qtde_pedido=pedido['qtde_pedido'],
+            data_pedido=func.now(),
+            data_entrega=pedido['data_entrega'],
+            status=pedido['status'],
+            obs=pedido['obs'],
+            cadastrado_em=func.now(),
+            atualizado_em=atualizado_em,
+        )
+        db.session.add(pedido_bd)
+        db.session.commit()
+        return pedido_bd
 
 def listar_pedidos():
     #TODO a função listar_pedidos recupera todos os registros da tabela pedido no banco de dados usando pedido_model.pedido.query.all(). Em seguida, retorna uma lista com todos os pedidos encontrados.
@@ -28,18 +44,22 @@ def listar_pedido_id(id):
 
 def atualiza_pedido(pedido_anterior, pedido_novo):
     #TODO a função atualiza_pedido recebe dois argumentos, pedido_anterior e pedido_novo, que representam respectivamente o pedido existente a ser atualizado e os novos dados do pedido. Os atributos do pedido_anterior são atualizados com os valores do pedido_novo. Em seguida, as alterações são commitadas no banco de dados usando db.session.commit().
-    pedido_anterior.qtde_pedido = pedido_novo.qtde_pedido
-    pedido_anterior.data_pedido = pedido_novo.data_pedido
-    pedido_anterior.data_entrega = pedido_novo.data_entrega
-    pedido_anterior.status = pedido_novo.status
-    pedido_anterior.obs = pedido_novo.obs
-    pedido_anterior.produto_id = pedido_novo.produto_id
-    pedido_anterior.fornecedor_id = pedido_novo.fornecedor_id
-    pedido_anterior.filial_pdv = pedido_novo.filial_pdv
-    pedido_anterior.cadastrado_em = pedido_novo.cadastrado_em
-    pedido_anterior.atualizado_em = pedido_novo.atualizado_em
+    if pedido_anterior:
+        pedido_anterior.qtde_pedido = pedido_novo.qtde_pedido
+        pedido_anterior.data_pedido = pedido_novo.data_pedido
+        pedido_anterior.data_entrega = pedido_novo.data_entrega
+        pedido_anterior.status = pedido_novo.status
+        pedido_anterior.obs = pedido_novo.obs
+        pedido_anterior.produtos = pedido_novo.produtos
+        pedido_anterior.fornecedores = pedido_novo.fornecedores
+        pedido_anterior.filiais = pedido_novo.filiais
+        pedido_anterior.cadastrado_em = pedido_novo.cadastrado_em
+        pedido_anterior.atualizado_em = func.now()
 
-    db.session.commit()
+        db.session.commit()
+    else:
+        return None
+
 
 def remove_pedido(pedido):
     #TODO a função remove_pedido recebe um argumento pedido que representa o pedido a ser removido. A função remove o pedido do banco de dados usando db.session.delete() e faz o commit das alterações usando db.session.commit().
@@ -48,41 +68,46 @@ def remove_pedido(pedido):
 
 
 #TODO service para PEDIDO DE PRODUCAO**
-def cadastrar_pedidoprod(pedidoproducao):
-    receita = receita_model.Receita.query.get(pedidoproducao.receita_id)
+def cadastrar_pedidoprod(pedidoprod):
+    if isinstance(pedidoprod, dict):
+        data_entrega = pedidoprod.get('data_entrega')
+        if isinstance(data_entrega, str):
+            pedidoprod['data_entrega'] = datetime.strptime(data_entrega, '%Y-%m-%d').date()
 
-    # Verifique se há estoque suficiente antes de criar o pedido
-    for item in receita.produtos:
-        produto = produtoMp_model.Produto.query.get(item.id)
-        estoque = estoque_model.Estoque.query.filter_by(produto_id=produto.id).first()
+        qtde_pedido = pedidoprod.get('qtde_pedido')
+        status = pedidoprod.get('status')
+        obs = pedidoprod.get('obs')
+        atualizado_em = pedidoprod.get('atualizado_em')
+        if isinstance(atualizado_em, str):
+            pedidoprod['atualizado_em'] = datetime.strptime(atualizado_em, '%Y-%m-%d').date()
+        mixprodutos = pedidoprod.get('mixprodutos')
+        filiais = pedidoprod.get('filiais')
+        pedidoprod_bd = pedido_model.PedidoProducao(data_pedido=func.now(), data_entrega=pedidoprod['data_entrega'],
+                                                    qtde_pedido=pedidoprod['qtde_pedido'], status=pedidoprod['status'], obs=pedidoprod['obs'],
+                                                    cadastrado_em=func.now(), atualizado_em=atualizado_em)
 
-        if estoque and estoque.quantidade_atual < (item.quantidade + produto.estoque_minimo):
-            raise ValueError(f"Estoque insuficiente para {produto.nome}")
+        db.session.add(pedidoprod_bd)
+        db.session.commit()
+        return pedidoprod_bd
 
+def cadastrar_pedidoprod2(pedidoprod):
     # TODO a função cadastrar_pedido recebe um objeto pedido como argumento e cria uma instância do modelo pedido com os valores do objeto fornecido. Em seguida, adiciona a instância ao banco de dados usando db.session.add() e faz o commit das alterações usando db.session.commit(). Por fim, retorna a instância do pedido cadastrado.
-    pedido_bd = pedido_model.PedidoProducao(data_pedido=func.now(), data_entrega=pedidoproducao.data_entrega, qtde_pedido=pedidoproducao.qtde_pedido,
-                                            status=pedidoproducao.status, obs=pedidoproducao.obs, receita_id=pedidoproducao.receita_id, filial_pdv=pedidoproducao.filial_pdv,
-                                            cadastrado_em=func.now(), atualizado_em=pedidoproducao.atualizado_em, quantidade=pedidoproducao.quantidade, produto_id=pedidoproducao.produto_id)
+    # Cria uma instância do modelo Pedido com os valores fornecidos no objeto 'pedido'
+    pedidoprod_bd = pedido_model.PedidoProducao(data_pedido=func.now(), data_entrega=pedidoprod.data_entrega,
+                                                qtde_pedido=pedidoprod.qtde_pedido, status=pedidoprod.status, obs=pedidoprod.obs,
+                                                cadastrado_em=func.now(), atualizado_em=pedidoprod.atualizado_em)
 
-    db.session.add(pedido_bd)
+    pedidoprod_bd.mixprodutos = pedidoprod['mixprodutos']
+    pedidoprod_bd.filiais = pedidoprod['filiais']
+
+    db.session.add(pedidoprod_bd)
     db.session.commit()
-
-    # Atualize o estoque após a criação do pedido
-    for item in receita.produtos:
-        produto = produtoMp_model.Produto.query.get(item.id)
-        estoque = estoque_model.Estoque.query.filter_by(produto_id=produto.id).first()
-
-        if estoque:
-            estoque.quantidade_atual -= item.quantidade
-            db.session.commit()
-
-    return pedido_bd
+    return pedidoprod_bd
 
 
 def listar_pedidosprod():
     #TODO a função listar_pedidos recupera todos os registros da tabela pedido no banco de dados usando pedido_model.pedido.query.all(). Em seguida, retorna uma lista com todos os pedidos encontrados.
     pedidosprod = pedido_model.PedidoProducao.query.all()
-
     return pedidosprod
 
 def listar_pedidoprod_id(id):
@@ -97,8 +122,8 @@ def atualiza_pedidoprod(pedido_anterior, pedido_novo):
     pedido_anterior.qtde_pedido = pedido_novo.qtde_pedido
     pedido_anterior.status = pedido_novo.status
     pedido_anterior.obs = pedido_novo.obs
-    pedido_anterior.receita_id = pedido_novo.receita_id
-    pedido_anterior.filial_pdv = pedido_novo.filial_pdv
+    pedido_anterior.mixprodutos = pedido_novo.mixprodutos
+    pedido_anterior.filiais = pedido_novo.filiais
     pedido_anterior.cadastrado_em = pedido_novo.cadastrado_em
     pedido_anterior.atualizado_em = pedido_novo.atualizado_em
 
@@ -109,30 +134,3 @@ def remove_pedidoprod(pedidoprod):
     db.session.delete(pedidoprod)
     db.session.commit()
 
-
-def criar_pedido_producao(data_entrega, qtde_pedido, receita_id, filial_pdv):
-    receita = receita_model.Receita.query.get(receita_id)
-
-    # Verifique se há estoque suficiente antes de criar o pedido
-    for item in receita.produtos:
-        produto = produtoMp_model.Produto.query.get(item.id)
-        estoque = estoque_model.Estoque.query.filter_by(produto_id=produto.id).first()
-
-        if estoque and estoque.quantidade_atual < (item.quantidade + produto.estoque_minimo):
-            raise ValueError(f"Estoque insuficiente para {produto.nome}")
-
-    pedido_producao = pedido_model.PedidoProducao(data_entrega=data_entrega, qtde_pedido=qtde_pedido,
-                                                  receita=receita, filial_pdv=filial_pdv)
-    db.session.add(pedido_producao)
-    db.session.commit()
-
-    # Atualize o estoque após a criação do pedido
-    for item in receita.produtos:
-        produto = produtoMp_model.Produto.query.get(item.id)
-        estoque = estoque_model.Estoque.query.filter_by(produto_id=produto.id).first()
-
-        if estoque:
-            estoque.quantidade_atual -= item.quantidade
-            db.session.commit()
-
-    return pedido_producao

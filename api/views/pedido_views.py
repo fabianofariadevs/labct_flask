@@ -1,14 +1,16 @@
+from api import db, app
+from marshmallow.exceptions import ValidationError
+from flask_wtf import FlaskForm
 from flask import request, render_template, redirect, url_for, flash
-from ..services import pedido_service
+from ..models.mix_produto_model import MixProduto
+from ..services import pedido_service, mix_produto_service, filial_pdv_service, fornecedor_service, produtoMp_service, cliente_service
 from ..models.produtoMp_model import Produto
 from ..models.pedido_model import Pedido, PedidoProducao
 from ..models.filial_pdv_model import Filial
+from ..models.cliente_model import Cliente
 from ..models.fornecedor_model import Fornecedor
-from ..models.receita_model import Receita
-from ..schemas import pedido_schemas
+from ..schemas import pedido_schemas, mix_produto_schema
 from ..models import pedido_model
-from api import db, app
-from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, DateField
 from wtforms.validators import DataRequired, ValidationError
 from sqlalchemy.orm import joinedload
@@ -18,53 +20,59 @@ from sqlalchemy.orm import joinedload
 
 class PedidoCForm(FlaskForm):
     qtde_pedido = StringField("Qtde_Pedido", validators=[DataRequired()])
-    #data_pedido = DateField("Data_Pedido", format='%Y-%m-%d',validators=[DataRequired()])
-    data_entrega = DateField('Dt_Entrega_limite', format='%Y-%m-%d', validators=[DataRequired()])
+    #data_pedido = DateField("Data_Pedido", validators=[DataRequired()])
+    data_entrega = DateField('Dt_Entrega_limite', validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
     obs = StringField('obs', validators=[DataRequired()])
-    produto_id = SelectField('Produto', validators=[DataRequired()])
-    filial_pdv = SelectField('Filial_PDV', validators=[DataRequired()])
-    fornecedor_id = SelectField('Fornecedor', validators=[DataRequired()])
+    produtos = SelectField('Produtos', coerce=int)
+    clientes = SelectField('Clientes', validators=[DataRequired()], coerce=int)
+    fornecedores = SelectField('Fornecedores', validators=[DataRequired()], coerce=int)
+
     submit = SubmitField('Cadastrar')
 
     def __init__(self, *args, **kwargs):
         super(PedidoCForm, self).__init__(*args, **kwargs)
 
-        self.filial_pdv.choices = [(filial.id, filial.nome)
-                                   for filial in Filial.query.all()]
-        self.fornecedor_id.choices = [(fornecedor.id, fornecedor.nome)
-                                      for fornecedor in Fornecedor.query.all()]
-        self.produto_id.choices = [(produto.id, produto.nome)
-                                   for produto in Produto.query.all()]
+        self.clientes.choices = [(cliente.id, cliente.nome)
+                                 for cliente in Cliente.query.all()]
+        self.fornecedores.choices = [(fornecedor.id, fornecedor.nome)
+                                     for fornecedor in Fornecedor.query.all()]
+        self.produtos.choices = [(produto.id, produto.nome)
+                                 for produto in Produto.query.all()]
         self.status.choices = self.get_status_choices()
+
+    # TODO metodo personalizado para extrair os dados do formulário em um formato serializável, como um dicionário.
+    def to_dict(self):
+        data = {
+            'qtde_pedido': self.qtde_pedido.data,
+            #'data_pedido': self.data_pedido.data.strftime('%Y-%m-%d'),
+            'data_entrega': self.data_entrega.data.strftime('%Y-%m-%d'),
+            'status': self.status.data,
+            'obs': self.obs.data,
+            'clientes': int(self.clientes.data) if self.clientes.data else None,
+            'fornecedores': int(self.fornecedores.data) if self.fornecedores.data else None,
+            'produtos': int(self.produtos.data) if self.produtos.data else None,
+
+        }
+        return data
 
     @staticmethod
     def get_status_choices():
         return [("1", 'Ativo'), ("0", 'Inativo')]
 
-    # TODO metodo personalizado para extrair os dados do formulário em um formato serializável, como um dicionário.
-    def to_dict(self):
-        return {
-            'qtde_pedido': self.qtde_pedido.data,
-            'data_entrega': self.data_entrega.data.strftime('%Y-%m-%d'),
-            'status': self.status.data,
-            'obs': self.obs.data,
-            'produto_id': self.produto_id.data,
-            'filial_pdv': self.filial_pdv.data,
-            'fornecedor_id': self.fornecedor_id.data,
-        }
 
 @app.route('/pedidos/<int:id>/atualizar', methods=['GET', 'POST', 'PUT'])
 def atualizar_pedido(id):
     pedido = pedido_service.listar_pedido_id(id)
     if not pedido:
-        return render_template("pedidos/pedidos.html", error_message="Pedido não encontrado"), 404
+        return render_template("pedidos/formpedido.html", error_message="Pedido não encontrado"), 404
 
     form = PedidoCForm(obj=pedido)
-    if form.validate_on_submit():
+    if request.method == 'POST' and form.validate_on_submit():
         pedido_atualizado = Pedido.query.get(id)
         form.populate_obj(pedido_atualizado)
         pedido_service.atualiza_pedido(pedido, pedido_atualizado)
+        flash("Pedido de Compra atualizado com sucesso!")
         return redirect(url_for("listar_pedidos"))
 
     return render_template("pedidos/formpedido.html", pedido=pedido, form=form), 400
@@ -84,25 +92,71 @@ def buscar_pedido():
 
 
 @app.route('/pedidos/<int:id>', methods=['GET', 'POST'])
-def visualizar_pedido(id):
-    # pedido = pedido_service.listar_pedido_id(id)
-    # return render_template('pedidos/detalhes.html', pedido=pedido)
+def visualizar_pedido191(id):
     if request.method == 'GET':
-        pedido = pedido_service.listar_pedido_id(id)
-        if pedido:
-            pedido_data = pedido_schemas.PedidoSchema().dump(pedido)
+        pedidos = Pedido.query.options(joinedload('produtos')).all()
+        pedidos_data = []
+        for pedido in pedidos:
+            pedido_dict = pedido_schemas.PedidoSchema().dump(pedido)
 
-            # Obter o nome do produto
+            pedido_dict['data_pedido'] = pedido.data_pedido.strftime('%d/%m/%Y')
+            pedido_dict['data_entrega'] = pedido.data_entrega.strftime('%d/%m/%Y')
+
+            # Verificar se o objeto do produto está presente e obter o nome, caso contrário, usar uma mensagem padrão
             produto = pedido.produtos
-            pedido_data['produto_id'] = produto.nome if produto else 'Produto não encontrado'
+            pedido_dict['produtos'] = produto.nome if produto else 'Produto não encontrado'
 
             # Obter o nome do fornecedor
-            fornecedor = pedido.fornecedor
-            pedido_data['fornecedor_id'] = fornecedor.nome if fornecedor else 'Fornecedor não encontrado'
+            fornecedor = pedido.fornecedores
+            pedido_dict['fornecedores'] = fornecedor.nome if fornecedor else 'Fornecedor não encontrado'
 
-            # Obter o nome da filial
-            filial = pedido.filiais
-            pedido_data['filial_pdv'] = filial.nome if filial else 'Filial não encontrada'
+            # Obter o nome da Cliente/Fabrica
+            cliente = pedido.clientes
+            pedido_dict['clientes'] = cliente.nome if cliente else 'Filial não encontrada'
+
+            pedidos_data.append(pedido_dict)
+
+        total_pedidos = len(pedidos)
+        total_pedidos_ativos = len([pedido for pedido in pedidos if pedido.status == 1])
+        total_pedidos_inativos = len([pedido for pedido in pedidos if pedido.status == 0])
+
+        return render_template("pedidos/pedidos.html", pedidos=pedidos_data, total_pedidos=total_pedidos,
+                               total_pedidos_ativos=total_pedidos_ativos,
+                               total_pedidos_inativos=total_pedidos_inativos)
+
+    elif request.method == 'POST':  # método DELETE
+        if request.form.get('_method') == 'DELETE':
+            pedido = pedido_service.listar_pedido_id(id)
+            if pedido:
+                pedido_service.remove_pedido(pedido)
+                return redirect(url_for('listar_pedidos'))
+
+@app.route('/pedidoscompra/<int:id>', methods=['GET', 'POST'])
+def visualizar_pedido(id):
+    pedidoc = pedido_service.listar_pedido_id(id)
+    if request.method == 'GET':
+        pedidos_data = []
+        if pedidoc:
+            pedido_data = pedido_schemas.PedidoSchema().dump(pedidoc)
+            # Ajusta o formato da hora
+            pedido_data['data_pedido'] = pedidoc.data_pedido.strftime('%d/%m/%Y')
+            pedido_data['data_entrega'] = pedidoc.data_entrega.strftime('%d/%m/%Y')
+
+            # Obter o nome do produto
+            produto = pedidoc.produtos
+            pedido_data['produtos'] = produto.nome if produto else 'Produto não encontrado'
+
+            # Obter o nome do fornecedor
+            fornecedor = pedidoc.fornecedores
+            pedido_data['fornecedores'] = fornecedor.nome if fornecedor else 'Fornecedor não encontrado'
+
+            # Obter o nome da Cliente/Fabrica
+            cliente = pedidoc.clientes
+            pedido_data['clientes'] = cliente.nome if cliente else 'Filial não encontrada'
+
+            pedidos_data.append(pedido_data)
+
+            pedido_service.cadastrar_pedido(pedidoc)
 
             return render_template('pedidos/detalhes.html', pedido=pedido_data)
         else:
@@ -131,15 +185,15 @@ def listar_pedidos():
 
             # Verificar se o objeto do produto está presente e obter o nome, caso contrário, usar uma mensagem padrão
             produto = pedido.produtos
-            pedido_dict['produto_id'] = produto.nome if produto else 'Produto não encontrado'
+            pedido_dict['produtos'] = produto.nome if produto else 'Produto não encontrado'
 
             # Obter o nome do fornecedor
-            fornecedor = pedido.fornecedor
-            pedido_dict['fornecedor_id'] = fornecedor.nome if fornecedor else 'Fornecedor não encontrado'
+            fornecedor = pedido.fornecedores
+            pedido_dict['fornecedores'] = fornecedor.nome if fornecedor else 'Fornecedor não encontrado'
 
-            # Obter o nome da filial
-            filial = pedido.filiais
-            pedido_dict['filial_pdv'] = filial.nome if filial else 'Filial não encontrada'
+            # Obter o nome do cliente/fabrica
+            cliente = pedido.clientes
+            pedido_dict['clientes'] = cliente.nome if cliente else 'Cliente não encontrada'
 
             pedidos_data.append(pedido_dict)
 
@@ -154,18 +208,79 @@ def listar_pedidos():
 
 @app.route('/pedidos/formulario', methods=['GET', 'POST'])
 def fazer_pedido_compra():
-    form = PedidoCForm()
-    if request.method == 'POST' and form.validate_on_submit():
+    formpc = PedidoCForm()
+    if request.method == 'POST' and formpc.validate_on_submit():
+        form_data = formpc.to_dict()
+        produto_id = form_data['produtos']
+        produto = produtoMp_service.listar_produto_id(produto_id)
+        if produto is None:
+            flash("Produto não encontrado!")
+            return render_template('pedidos/formpedido.html', form=formpc)
+
+        fornecedor_id = form_data['fornecedores']
+        fornecedor = fornecedor_service.listar_fornecedor_id(fornecedor_id)
+        if fornecedor is None:
+            flash("Fornecedor não encontrado!")
+            return render_template('pedidos/formpedido.html', form=formpc)
+
+        cliente_id = form_data['clientes']
+        cliente = cliente_service.listar_cliente_id(cliente_id)
+        if cliente is None:
+            flash("Cliente não encontrado!")
+            return render_template('pedidos/formpedido.html', form=formpc)
         try:
-            form_data = form.to_dict()
+            pedido_bd = pedido_service.cadastrar_pedido(form_data)
+            pedido_schemas.PedidoSchema().dump(pedido_bd)
+            flash("Pedido de Compra cadastrado com sucesso!")
+            return redirect(url_for("listar_pedidos"))
+        except ValidationError as error:
+            flash("Erro ao cadastrar Pedido de Compra: {}".format(error.messages))
+    else:
+        flash("Erro ao cadastrar Pedido de Compra!")
+    return render_template('pedidos/formpedido.html', form=formpc)
+
+
+@app.route('/pedidos/formulario', methods=['GET', 'POST'])
+def fazer_pedido_compra22():
+    formpc = PedidoCForm()
+    if not formpc.validate_on_submit():
+        flash("Erro ao Cadastrar Pedido de Compra!")
+        return render_template('pedidos/formpedido.html', form=formpc)
+
+    if formpc.produtos.data is not None:
+        produto = Produto.query.get(formpc.produtos.data)
+        if produto is None:
+            flash("Produto não encontrado!")
+            return render_template('pedidos/formpedido.html', form=formpc)
+
+    if formpc.clientes.data is not None:
+        cliente = Cliente.query.get(formpc.clientes.data)
+        if cliente is None:
+            flash("Cliente não encontrado!")
+            return render_template('pedidos/formpedido.html', form=formpc)
+
+    if formpc.fornecedores.data is not None:
+        fornecedor = Fornecedor.query.get(formpc.fornecedores.data)
+        if fornecedor is None:
+            flash("Fornecedor não encontrado!")
+            return render_template('pedidos/formpedido.html', form=formpc)
+
+    if formpc.validate_on_submit():
+        try:
+            form_data = formpc.to_dict()
             pedido = pedido_schemas.PedidoSchema().load(form_data)
             pedido_bd = pedido_service.cadastrar_pedido(pedido)
             pedido_data = pedido_schemas.PedidoSchema().dump(pedido_bd)
             flash("Pedido de Compra cadastrado com sucesso!")
             return redirect(url_for("listar_pedidos"))
         except ValidationError as error:
-            flash("Erro ao cadastrar Pedido de Compra")
-    return render_template('pedidos/formpedido.html', form=form)
+            flash("Erro ao cadastrar Pedido de Compra: {}".format(error.messages))
+
+    else:
+        flash("Erro ao cadastrar Pedido de Compra!")
+        return render_template('pedidos/formpedido.html', form=formpc)
+
+
 
 
 @app.route('/pedidos/<int:id>/deletar', methods=['DELETE'])
@@ -184,37 +299,39 @@ def deletar_pedido(id):
 # TODO métodos para PEDIDOS DE PRODUCAO
 class PedidoPForm(FlaskForm):
     #data_pedido = DateField("Data_Pedido", format='%d/%m/%Y',validators=[DataRequired()])
-    data_entrega = DateField('Data_Entrega', format='%Y-%m-%d', validators=[DataRequired()])
+    data_entrega = DateField('Data_Entrega', validators=[DataRequired()])
     qtde_pedido = StringField("Qtde_Pedido", validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
     obs = StringField('Obs', validators=[DataRequired()])
-    receita_id = SelectField('Receita', validators=[DataRequired()])
-    filial_pdv = SelectField('Filial_pdv', validators=[DataRequired()])
+    filiais = SelectField('Filial_pdv', validators=[DataRequired()], coerce=int)
+    mixprodutos = SelectField('MixProduto', validators=[DataRequired()], coerce=int)
 
     submit = SubmitField('Cadastrar')
 
     def __init__(self, *args, **kwargs):
         super(PedidoPForm, self).__init__(*args, **kwargs)
-        self.receita_id.choices = [(receita.id, receita.descricao_mix)
-                                   for receita in Receita.query.all()]
-        self.filial_pdv.choices = [(filial.id, filial.nome)
-                                   for filial in Filial.query.all()]
+        self.filiais.choices = [(filial.id, filial.nome)
+                                for filial in Filial.query.all()]
+        self.mixprodutos.choices = [(mixproduto.id, mixproduto.receita.descricao_mix or mixproduto.situacao)
+                                    for mixproduto in MixProduto.query.all()]
         self.status.choices = self.get_status_choices()
+
+    def to_dict(self):
+        data = {
+            #'data_pedido': self.data_pedido.data.strftime('%Y-%m-%d'),
+            'data_entrega': self.data_entrega.data.strftime('%Y-%m-%d'),
+            'qtde_pedido': self.qtde_pedido.data,
+            'status': self.status.data,
+            'obs': self.obs.data,
+            'filiais': int(self.filiais.data) if self.filiais.data else None,
+            'mixprodutos': int(self.mixprodutos.data) if self.mixprodutos.data else None,
+        }
+        return data
 
     @staticmethod
     def get_status_choices():
         return [("1", 'Ativo'), ("0", 'Inativo')]
 
-    def to_dict(
-            self):  # metodo personalizado no seu formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
-        return {
-            'data_entrega': self.data_entrega.data.strftime('%Y-%m-%d'),
-            'qtde_pedido': self.qtde_pedido.data,
-            'status': self.status.data,
-            'obs': self.obs.data,
-            'receita_id': self.receita_id.data,
-            'filial_pdv': self.filial_pdv.data,
-        }
 
 @app.route('/pedidoprod/<int:id>/atualizar', methods=['GET', 'POST', 'PUT'])
 def atualizar_pedidoprod(id):
@@ -249,26 +366,34 @@ def buscar_pedidoprod():
     return render_template("pedidos/consultar_pedidoprod.html", resultados=resultados, nome_pedidoprod=nome_pedidoprod)
 
 
-@app.route('/pedidoprod/<int:id>', methods=['GET', 'POST'])
+@app.route('/pedidoproducao/<int:id>', methods=['GET', 'POST'])
 def visualizar_pedidoprod(id):
-    #pedido = pedido_service.listar_pedido_id(id)
-    # return render_template('pedidos/detalhes.html', pedido=pedido)
+    pedidoprod = pedido_service.listar_pedidoprod_id(id)
     if request.method == 'GET':
-        pedidoprod = pedido_service.listar_pedidoprod_id(id)
-        #pedido = pedido_service.listar_pedido_id(id)
+        pedidos_data = []
         if pedidoprod:
             pedidoprod_data = pedido_schemas.PedidoProducaoSchema().dump(pedidoprod)
             # Ajusta o formato da hora
             pedidoprod_data['data_pedido'] = pedidoprod.data_pedido.strftime('%d/%m/%Y')
             pedidoprod_data['data_entrega'] = pedidoprod.data_entrega.strftime('%d/%m/%Y')
 
+            # Obter o nome do cliente
+            cliente = pedidoprod.cliente
+            pedidoprod_data['cliente'] = cliente.nome if cliente else 'Cliente não encontrado'
+
+            # Obter o nome do mixproduto
+            mixproduto = pedidoprod.mixprodutos
+            pedidoprod_data['mixprodutos'] = mixproduto.situacao if mixproduto else 'MixProduto não encontrado'
+
             # Obter o nome do receita
             receita = pedidoprod.receitas
-            pedidoprod_data['receita_id'] = receita.descricao_mix if receita else 'Receita não encontrada'
+            pedidoprod_data['receitas'] = receita.descricao_mix if receita else 'Receita não encontrada'
 
             # Obter o nome dos filiais relacionados
             filial = pedidoprod.filiais
-            pedidoprod_data['filial_pdv'] = filial.nome if filial else 'Produto não encontrada'
+            pedidoprod_data['filiais'] = filial.nome if filial else 'Produto não encontrada'
+            pedidos_data.append(pedidoprod_data)
+            pedido_service.cadastrar_pedidoprod(pedidoprod)
 
             return render_template('pedidos/producaodetalhes.html', pedidoprod=pedidoprod_data)
         else:
@@ -283,7 +408,7 @@ def visualizar_pedidoprod(id):
                 return redirect(url_for('listar_pedidosprod'))
 
 
-@app.route('/pedidoprod', methods=['GET'])
+@app.route('/pedidosproducao', methods=['GET'])
 def listar_pedidosprod():
     if request.method == 'GET':
         # Carregar os pedidos e usar a opção joinedload para incluir os objetos relacionados (receitas) na consulta
@@ -297,11 +422,19 @@ def listar_pedidosprod():
 
             # Verificar se o objeto da Receita está presente e obter o nome, caso contrário, usar uma mensagem padrão
             receita = pedido.receitas
-            pedido_dict['receita_id'] = receita.descricao_mix if receita else 'Receita não encontrado'
+            pedido_dict['receitas'] = receita.descricao_mix if receita else 'Receita não encontrado'
 
             # Obter o nome do Filial
             filial = pedido.filiais
-            pedido_dict['filial_pdv'] = filial.nome if filial else 'Filial não encontrado'
+            pedido_dict['filiais'] = filial.nome if filial else 'Filial não encontrado'
+
+            # Obter o nome do MixProduto
+            mixproduto = pedido.mixprodutos
+            pedido_dict['mixprodutos'] = mixproduto.situacao if mixproduto else 'MixProduto não encontrado'
+
+            # Obter o dia da produção
+            producao = pedido.producoes
+            pedido_dict['producoes'] = producao.dia_producao if producao else 'Produção não encontrada'
 
             pedidos_data.append(pedido_dict)
 
@@ -316,30 +449,66 @@ def listar_pedidosprod():
                                total_pedidosprod_inativos=total_pedidosprod_inativos)
 
 
-def fazer_pedido():
-    # ... lógica para criar o pedido DE PRODUCAO QUE DEVEMOS FAZER UM MIX COM OS PRODUTOS DA RECEITA P DESCONTAR ESTOQUE ...
+@app.route('/pedidoproducao/formulario', methods=['GET', 'POST', 'PUT'])
+def fazer_pedido_producao():
+    form = PedidoPForm()
 
-    # Atualizar o estoque após o pedido
-    produto = Produto.query.get()
-    produto.atualizar_estoque_apos_pedido()
+    if request.method == 'POST' and form.validate_on_submit():
 
-    # ... redirecionar ou renderizar templates ...
+        form_data = form.to_dict()
+        mix_id = form_data['mixprodutos']
+        mixproduto = mix_produto_service.listar_mixproduto_id(mix_id)
+        if mixproduto is None:
+            flash("MixProduto não encontrado!")
+            return render_template('pedidos/formpedidoprod.html', form=form)
+
+        filial_id = form_data['filiais']
+        filial = filial_pdv_service.listar_filial_pdv_id(filial_id)
+
+        if filial is None:
+            flash("Filial não encontrada!")
+            return render_template('pedidos/formpedidoprod.html', form=form)
+
+        try:
+            pedidoprod_mix = pedido_service.cadastrar_pedidoprod(form_data)
+            pedido_schemas.PedidoProducaoSchema().dump(pedidoprod_mix)
+            flash("Pedido de Produção Mix Cadastrado com Sucesso!")
+            return redirect(url_for("listar_pedidosprod"))
+        except ValidationError as error:
+            flash("Erro ao cadastrar MixProduto: {}".format(error.messages))
+    else:
+        flash("Erro ao cadastrar MixProduto!")
+    return render_template('pedidos/formpedidoprod.html', form=form)
 
 
 @app.route('/pedidoprod/formulario', methods=['GET', 'POST', 'PUT'])
-def fazer_pedido_producao():
+def fazer_pedido_producao2():
     form = PedidoPForm()
     if request.method == 'POST' and form.validate_on_submit():
         try:
             form_data = form.to_dict()
-            pedidoprod = pedido_schemas.PedidoProducaoSchema().load(form_data)
-            pedido_bd = pedido_service.cadastrar_pedidoprod(pedidoprod)
-            pedido_data = pedido_schemas.PedidoProducaoSchema().dump(pedido_bd)
-            return redirect(url_for("listar_pedidosprod", form=form, form_data=form_data, pedidoprod=pedido_bd))
+            mix_id = form_data['mixprodutos']
+            mixproduto = mix_produto_service.listar_mixproduto_id(mix_id)
+            if mixproduto is None:
+                flash("MixProduto não encontrado!")
+                return render_template('pedidos/formpedidoprod.html', form=form)
+
+            filial_id = form_data['filiais']
+            filial = filial_pdv_service.listar_filial_pdv_id(filial_id)
+            if filial is None:
+                flash("Filial não encontrada!")
+                return render_template('pedidos/formpedidoprod.html', form=form)
+
+            else:
+                pedidoprod_mix = pedido_service.cadastrar_pedidoprod(form_data)
+                pedido_schemas.PedidoProducaoSchema().dump(pedidoprod_mix)
+                flash("MixProduto cadastrado com sucesso!")
+                return redirect(url_for("listar_mixprodutos"))
         except ValidationError as error:
-            return render_template('pedidos/formpedidoprod.html', form=form, error_message=error.messages)
+            flash("Erro ao cadastrar MixProduto: {}".format(error.messages))
     else:
-        return render_template('pedidos/formpedidoprod.html', form=form, error_message=form.errors)
+        flash("Erro ao cadastrar MixProduto!")
+    return render_template('pedidos/formpedidoprod.html', form=form)
 
 @app.route('/historicopedidosprod', methods=['GET'])
 def historicopedidosprod():
@@ -358,15 +527,15 @@ def historicopedidosprod():
 
             # Verificar se o objeto do produto está presente e obter o nome, caso contrário, usar uma mensagem padrão
             produto = pedido.produtos
-            pedido_dict['produto_id'] = produto.nome if produto else 'Produto não encontrado'
+            pedido_dict['produtos'] = produto.nome if produto else 'Produto não encontrado'
 
             # Obter o nome do fornecedor
-            fornecedor = pedido.fornecedor
-            pedido_dict['fornecedor_id'] = fornecedor.nome if fornecedor else 'Fornecedor não encontrado'
+            fornecedor = pedido.fornecedores
+            pedido_dict['fornecedores'] = fornecedor.nome if fornecedor else 'Fornecedor não encontrado'
 
-            # Obter o nome da filial
-            filial = pedido.filiais
-            pedido_dict['filial_pdv'] = filial.nome if filial else 'Filial não encontrada'
+            # Obter o nome da Fabrica/Cliente
+            cliente = pedido.clientes
+            pedido_dict['clientes'] = cliente.nome if cliente else 'Filial não encontrada'
 
             pedidos_data.append(pedido_dict)
 

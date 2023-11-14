@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Relatório de Estoque</title>
+</head>
+<body>
+    <h1>Relatório de Estoque</h1>
+    <table border="1">
+        <tr>
+            <th>Produto</th>
+            <th>Quantidade em Estoque</th>
+        </tr>
+        {% for item in estoque %}
+            <tr>
+                <td>{{ item.produto }}</td>
+                <td>{{ item.quantidade }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

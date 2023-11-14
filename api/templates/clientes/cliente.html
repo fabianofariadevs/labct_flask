@@ -55,14 +55,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                                {% for cliente in paginated_result["items"] %}
+                                {% for cliente in clientes %}
                             <tr>
                                 <td>{{cliente.id}}</td>
                                 <td>{{cliente.nome}}</td>
                                 <td>{{cliente.endereco}}</td>
                                 <td>{{cliente.bairro}}</td>
                                 <td>{{cliente.cidade}}</td>
-                                <td class="text-center">{{ total_clientes }}</td>
+                                <td class="text-center">
+                                    <i class="fa-solid fa-circle text-success"></i>
+                                    <span class="badge rounded text-bg-success" style="color:black">{{ total_filiais_ativas }}ativo</span>
+                                    <i class="fa-solid fa-circle text-danger"></i>
+                                    <span class="badge rounded text-bg-danger" style="color:black">{{ total_filiais_inativas }}inativo </span>
+                                </td>
                                 <td class="text-center">
                                     {% if cliente.status == 1 %}
                                     <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
@@ -82,12 +87,7 @@
                     </table>
 
                 {% endif %}
-                {% if paginated_result.prev %}
-                <a href="{{ url_for('listar_clientes', page=paginated_result.prev) }}">Anterior</a>
-              {% endif %}
-              {% if paginated_result.next %}
-                <a href="{{ url_for('listar_clientes', page=paginated_result.next) }}">Próximo</a>
-              {% endif %}
+
         </div>
     </div>
 </div>

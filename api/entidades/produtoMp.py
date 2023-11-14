@@ -1,7 +1,7 @@
 
 class Produto:
     def __init__(self, nome, descricao, quantidade, compra_unid, peso_pcte, valor, custo_ultima_compra, whatsapp, qrcode, status,
-                 estoque_minimo, obs, cadastrado_em, atualizado_em, fornecedor, estoques_produto, mixproduto, pedidos, receitas, reposicoes):
+                 estoque_minimo, obs, cadastrado_em, atualizado_em, fornecedor, estoques_produto, pedidos_compra, reposicoes, inventario, mixprodutos):
 
         self.__nome = nome
         self.__descricao = descricao
@@ -19,10 +19,11 @@ class Produto:
         self.__atualizado_em = atualizado_em
         self.__fornecedor = fornecedor
         self.__estoques_produto = estoques_produto
-        self.__mixproduto = mixproduto
-        self.__pedidos = pedidos
-        self.__receitas = receitas
+        self.__pedidos_compra = pedidos_compra
         self.__reposicoes = reposicoes
+        self.__inventario = inventario
+        self.__mixprodutos = mixprodutos
+
 
     @property
     def nome(self):
@@ -153,28 +154,12 @@ class Produto:
         self.__estoques_produto = estoques_produto
 
     @property
-    def mixproduto(self):
-        return self.__mixproduto
+    def pedidos_compra(self):
+        return self.__pedidos_compra
 
-    @mixproduto.setter
-    def mixproduto(self, mixproduto):
-        self.__mixproduto = mixproduto
-
-    @property
-    def pedidos(self):
-        return self.__pedidos
-
-    @pedidos.setter
-    def pedidos(self, pedidos):
-        self.__pedidos = pedidos
-
-    @property
-    def receitas(self):
-        return self.__receitas
-
-    @receitas.setter
-    def receitas(self, receitas):
-        self.__receitas = receitas
+    @pedidos_compra.setter
+    def pedidos_compra(self, pedidos_compra):
+        self.__pedidos_compra = pedidos_compra
 
     @property
     def reposicoes(self):
@@ -183,5 +168,125 @@ class Produto:
     @reposicoes.setter
     def reposicoes(self, reposicoes):
         self.__reposicoes = reposicoes
+
+    @property
+    def inventario(self):
+        return self.__inventario
+
+    @inventario.setter
+    def inventario(self, inventario):
+        self.__inventario = inventario
+
+    @property
+    def mixprodutos(self):
+        return self.__mixprodutos
+
+    @mixprodutos.setter
+    def mixprodutos(self, mixprodutos):
+        self.__mixprodutos = mixprodutos
+
+
+class Inventario:
+    def __init__(self, produto, cliente, descricao, nome, quantidade, detalhes, obs, data, cadastrado_em, atualizado_em, filial):
+
+        self.__produto = produto
+        self.__cliente = cliente
+        self.__descricao = descricao
+        self.__nome = nome
+        self.__quantidade = quantidade
+        self.__detalhes = detalhes
+        self.__obs = obs
+        self.__data = data
+        self.__cadastrado_em = cadastrado_em
+        self.__atualizado_em = atualizado_em
+        self.__filial = filial
+
+    @property
+    def produto(self):
+        return self.__produto
+
+    @produto.setter
+    def produto(self, produto):
+        self.__produto = produto
+
+    @property
+    def cliente(self):
+        return self.__cliente
+
+    @cliente.setter
+    def cliente(self, cliente):
+        self.__cliente = cliente
+
+    @property
+    def descricao(self):
+        return self.__descricao
+
+    @descricao.setter
+    def descricao(self, descricao):
+        self.__descricao = descricao
+
+    @property
+    def nome(self):
+        return self.__nome
+
+    @nome.setter
+    def nome(self, nome):
+        self.__nome = nome
+
+    @property
+    def quantidade(self):
+        return self.__quantidade
+
+    @quantidade.setter
+    def quantidade(self, quantidade):
+        self.__quantidade = quantidade
+
+    @property
+    def detalhes(self):
+        return self.__detalhes
+
+    @detalhes.setter
+    def detalhes(self, detalhes):
+        self.__detalhes = detalhes
+
+    @property
+    def obs(self):
+        return self.__obs
+
+    @obs.setter
+    def obs(self, obs):
+        self.__obs = obs
+
+    @property
+    def data(self):
+        return self.__data
+
+    @data.setter
+    def data(self, data):
+        self.__data = data
+
+    @property
+    def cadastrado_em(self):
+        return self.__cadastrado_em
+
+    @cadastrado_em.setter
+    def cadastrado_em(self, cadastrado_em):
+        self.__cadastrado_em = cadastrado_em
+
+    @property
+    def atualizado_em(self):
+        return self.__atualizado_em
+
+    @atualizado_em.setter
+    def atualizado_em(self, atualizado_em):
+        self.__atualizado_em = atualizado_em
+
+    @property
+    def filial(self):
+        return self.__filial
+
+    @filial.setter
+    def filial(self, filial):
+        self.__filial = filial
 
 

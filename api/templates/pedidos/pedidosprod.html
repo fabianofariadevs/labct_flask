@@ -48,13 +48,14 @@
                     <table class="table table-striped" style="width:100%">
                         <thead>
                             <tr>
-                                <th class="text-center">Id</th>
+                                <th>Id</th>
                                 <th>Data_pedido</th>
-                                <th>Receita</th>
+                                <th>MixProduto</th>
                                 <th>Qtde_pedido</th>
                                 <th>Data_entrega</th>
+                                <th class="text-center">Situação</th>
                                 <th>Filial</th>
-                                <th>Status</th>
+                                <th class="text-center">Status</th>
                                 <th class="text-center">Acões</th>
                             </tr>
                         </thead>
@@ -63,10 +64,27 @@
                             <tr>
                                 <td>{{pedido.id}}</td>
                                 <td>{{pedido.data_pedido}}</td>
-                                <td>{{pedido.receita_id}}</td>
+                                <td>{{pedido.mixprodutos}}</td>
                                 <td>{{pedido.qtde_pedido}}</td>
                                 <td>{{pedido.data_entrega}}</td>
-                                <td>{{pedido.filial_pdv}}</td>
+                                <td class="text-center">
+                                {% if pedido.mixprodutos.situacao == 0 %}
+                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Em Aberto">Aberto</i>
+                                {% endif %}
+                                {% if pedido.mixprodutos.situacao == 1 %}
+                                <i class="fa-solid fa-circle text-warning" rel="tooltip" title="Em Produção">Produção</i>
+                                {% endif %}
+                                {% if pedido.mixprodutos.situacao == 2 %}
+                                <i class="fa-solid fa-circle text-secondary" rel="tooltip" title="Finalizado">Finalizado</i>
+                                {% endif %}
+                                {% if pedido.mixprodutos.situacao == 3 %}
+                                <i class="fa-solid fa-circle text-info" rel="tooltip" title="Em Distribuição">Em Distribuição</i>
+                                {% else %}
+                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                {% endif %}
+
+                            </td>
+                                <td>{{pedido.filiais}}</td>
                                 <td class="text-center">
                                     {% if pedido.status == 1 %}
                                     <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>

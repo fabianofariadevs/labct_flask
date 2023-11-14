@@ -1,6 +1,6 @@
 from flask import render_template, url_for, request, redirect, flash
 from sqlalchemy.orm import joinedload
-from ..models.produtoMp_model import Inventario, Produto
+from marshmallow.exceptions import ValidationError
 from api import app, db
 from ..services import fornecedor_service
 from ..schemas import produtoMp_schema, fornecedor_schemas
@@ -21,42 +21,18 @@ class FornecedorForm(FlaskForm):
     responsavel = StringField('Responsavel', validators=[DataRequired()])
     whatsapp = StringField('Whatsapp', validators=[DataRequired()])
     cnpj = StringField('Cnpj', validators=[DataRequired()])
-    #status = db.Column(db.Boolean, default=1, nullable=True)
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
-    #status = BooleanField('Status')
-    #produtos = StringField('Produto Ofertado', validators=[DataRequired()])
-    #produtos = SelectMultipleField('Produtos', coerce=int, validators=[DataRequired()], widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.CheckboxInput())
-    #cliente_id = SelectField('Cliente/Fabrica')
 
     submit = SubmitField('Cadastrar')
 
     def __init__(self, *args, **kwargs):
         super(FornecedorForm, self).__init__(*args, **kwargs)
-        #self.produtos.choices = [(produto.id, produto.nome) for produto in Produto.query.all()]
-      #  self.receitas.choices = [(receita.id, receita.nome) for receita in Receita.query.all()]
         self.status.choices = self.get_status_choices()
 
     @staticmethod
     def get_status_choices():
         return [("1", 'Ativo'), ("0", 'Inativo')]
 
-    def to_dict(self):  # metodo personalizado no seu formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
-        return {
-            'nome': self.nome.data,
-            'descricao': self.descricao.data,
-            'endereco': self.endereco.data,
-            'bairro': self.bairro.data,
-            'cidade': self.cidade.data,
-            'estado': self.estado.data,
-            'telefone': self.telefone.data,
-            'email': self.email.data,
-            'responsavel': self.responsavel.data,
-            'whatsapp': self.whatsapp.data,
-            'cnpj': self.cnpj.data,
-            'status': self.status.data,
-         #   'produtos': self.produtos.data,
-            #'cliente_id': self.cliente_id.data,
-        }
 
 @app.route('/fornecedores', methods=['GET'])
 def listar_fornecedores():
@@ -121,12 +97,15 @@ def atualizar_fornecedor(id):
 
     form = FornecedorForm(obj=fornecedor)
     if form.validate_on_submit():
-        fornecedor_atualizado = Fornecedor.query.get(id)
-        form.populate_obj(fornecedor_atualizado)
-        fornecedor_service.atualiza_fornecedor(fornecedor, fornecedor_atualizado)
-        return redirect(url_for("listar_fornecedores"))
-
-    return render_template("fornecedores/formfornecedor.html", fornecedor=fornecedor, form=form), 400
+        try:
+            fornecedor_atualizado = Fornecedor.query.get(id)
+            form.populate_obj(fornecedor_atualizado)
+            fornecedor_service.atualiza_fornecedor(fornecedor, fornecedor_atualizado)
+            flash("Fornecedor atualizado com sucesso!")
+            return redirect(url_for("listar_fornecedores"))
+        except ValidationError as error:
+            flash("Erro ao atualizar Fornecedor")
+    return render_template("fornecedores/formfornecedor.html", fornecedor=fornecedor, form=form, error_message="Fornr Atualizado com Sucesso!"), 400
 
 
 @app.route('/fornecedores/formulario', methods=['GET', 'POST', 'PUT'])

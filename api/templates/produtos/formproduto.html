@@ -15,7 +15,7 @@
 </nav>
 <div class="card border-0 shadow-sm">
     <div class="card-header">
-    <h3 class="card-title">{% if produto %}Atualizar Produto {% else %} Cadastrando Novo Produto{% endif %}</h3>
+    <h3 class="card-title">{% if produto %}Atualizar Produto {% else %} Cadastrar Novo Produto{% endif %}</h3>
     </div>
     <div class="card-body">
         <form method="POST" action="#">
@@ -50,8 +50,8 @@
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
-                        {{ form.fornecedor_id.label(class="form-label") }}:
-                        {{ form.fornecedor_id(class="form-select") }}
+                        {{ form.fornecedor.label(class="form-label") }}:
+                        {{ form.fornecedor(class="form-select") }}
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -98,6 +98,18 @@
                      <div class="mb-3">
                          {{ form.status.label(class="form-label") }}:
                          {{ form.status(class="form-select") }}
+                     </div>
+                </div>
+                <div class="col-md-3">
+                     <div class="mb-3">
+                         {{ form.estoque_minimo.label(class="form-label") }}:
+                         {{ form.estoque_minimo(class="form-control") }}
+                     </div>
+                </div>
+                <div class="col-md-3">
+                     <div class="mb-3">
+                         {{ form.obs.label(class="form-label") }}:
+                         {{ form.obs(class="form-control") }}
                      </div>
                 </div>
             </div>

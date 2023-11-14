@@ -28,9 +28,10 @@
                             <th>Cidade</th>
                             <th>Estado</th>
                             <th>Cliente/Fábrica</th>
-                            <th>Receitas</th>
-                            <th>Pedido_Compra</th>
-                            <th>Pedido_Produção</th>
+                            <th>Pedido_Prod.</th>
+                            <th>MixProd.</th>
+                            <th>Produção</th>
+                            <th>Estoque</th>
                             <th>Responsavel</th>
                             <th>Whatsapp</th>
                             <th>Cnpj</th>
@@ -47,10 +48,11 @@
                             <td>{{filial.bairro}}</td>
                             <td>{{filial.cidade}}</td>
                             <td>{{filial.estado}}</td>
-                            <td>{{filial.clientes}}</td>
-                            <td>{{filial.receitas}}</td>
-                            <td>{{filial.pedidos}}</td>
+                            <td>{{filial.cliente.nome}}</td>
                             <td>{{filial.pedidosprod}}</td>
+                            <td>{{filial.mixprodutos}}</td>
+                            <td>{{filial.producoes}}</td>
+                            <td>{{filial.estoques}}</td>
                             <td>{{filial.responsavel}}</td>
                             <td>{{filial.whatsapp}}</td>
                             <td>{{filial.cnpj}}</td>
@@ -62,7 +64,7 @@
                   <div class="row">
                       <div class="card-header border-0 d-flex justify-content-between align-items-center">
                           <div>
-                               <i class="fw-bold text-secondary"> Detalhes Filial : </i>(id: {{filial.id}})
+                               <i class="fw-bold text-secondary"> DETALHES Filial : </i>(id: {{filial.id}})
                                <i class="breadcrumb-item active fw-bold text-dark"> {{filial.nome}}</i>
                           </div>
                           <div>
@@ -70,8 +72,9 @@
                             <a href="{{ url_for('listar_pedidos') }}" class="btn btn-secondary" title="Consultar pedidos de compra realizados">Pedidos_Compra</a>
                             <a href="{{ url_for('listar_pedidosprod') }}" class="btn btn-secondary" title="Consultar pedidos de produção realizados">Pedidos_Produção</a>
                           </div>
-                              <form id="delete-form" action="{{ url_for('visualizar_filial', id=filial.id, _method='POST') }}" method="post">
+                              <form id="delete-form" method="DELETE" action="{{ url_for('deletar_filial', id=filial.id, _method='DELETE') }}" method="DELETE">
                               <input type="hidden" name="_method" value="DELETE">
+                                  {{csrf_token}}
                               <button class="btn btn-danger" type="submit" title="Excluir Filial"  onclick="return confirm('Deseja excluir a Filial {{filial.nome}} ?')">Excluir Filial</button>
                           </form>
                       </div>
@@ -79,172 +82,23 @@
                   </div>
               </table>
         </div>
-       <!--inicio DA div detalhes abaixo tabela detalhes receitas-->
-        <div class="row card-header bg-secondary">
-             <!--INICIO ULTIMOS RECEITAS CADASTRADAS-->
-             <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
-                <div class="card border-0 shadow-sm  h-100">
-                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
-                        <h6 class="fw-bold text-secondary">
-                            Ultimas Receitas Cadastrados
-                        </h6>
-
-                        <a href="#" class="fs-5" rel="tooltip" title="Ir para relação de Receita">
-                            <i class="fa-solid fa-circle-plus"></i>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        {% if receita %}
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-
-                                        <th>Descrição</th>
-                                        <th class="text-center">Filial</th>
-                                        <th class="text-center">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for receita in receitas %}
-                                    <tr>
-
-                                        <td>
-                                            <span>
-                                                {% if receita.status == 1 %}
-                                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
-                                                {% else %}
-                                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
-                                                {% endif %}
-                                            </span>
-                                            {{receitas.nome}}
-                                        </td>
-                                        <td class="text-center">
-                                            {{receitas.descricao_mix}} {{receitas.filiais}}
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="#" rel="tooltip" title="Editar">
-                                                <i class="fa-solid fa-pen m-1"></i>
-                                            </a>
-                                            <a href="#" rel="tooltip" title="Deletar">
-                                                <i class="fa-solid fa-trash m-1"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    {%endfor%}
-                                </tbody>
-                            </table>
-                        </div>
-                        {% else %}
-                        <div class="alert alert-warning" role="alert">
-                            Nenhum Receita cadastrado para exibir!
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-             <!--INICIO ULTIMOS PEDIDOS DE PRODUÇÃO RECEITA-->
-             <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
-                <div class="card border-0 shadow-sm  h-100">
-                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
-                        <h6 class="fw-bold text-secondary">
-                            Ultimos Pedidos de Produção da Receita
-                        </h6>
-
-                        <a href="#" class="fs-5" rel="tooltip" title="Ir para pedidos de Produção">
-                            <i class="fa-solid fa-circle-plus"></i>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        {% if pedido %}
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-
-                                        <th>Nome</th>
-                                        <th class="text-center">Filiais</th>
-                                        <th class="text-center">Ação</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for cliente in clientes.clientes %}
-                                    <tr>
-
-                                        <td>
-                                            <span>
-                                                {% if cliente.status == 1 %}
-                                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
-                                                {% else %}
-                                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
-                                                {% endif %}
-                                            </span>
-                                            {{cliente.nome}}
-                                        </td>
-                                        <td class="text-center">
-                                            {{pedido.filiais}}
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="#" rel="tooltip" title="Editar">
-                                                <i class="fa-solid fa-pen m-1"></i>
-                                            </a>
-                                            <a href="#" rel="tooltip" title="Deletar">
-                                                <i class="fa-solid fa-trash m-1"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    {%endfor%}
-                                </tbody>
-                            </table>
-                        </div>
-                        {% else %}
-                        <div class="alert alert-warning" role="alert">
-                            Nenhum Pedido de Produção cadastrado para exibir!
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            <!--FIM ULTIMOS PEDIDOS DE PRODUÇÃO RECEITA-->
-
-            <!--INICIO OBSERVAÇÃO-->
-            <div class="col-sm-6 col-md-6 col-xl-4 mb-4">
-                <div class="card border-0 shadow-sm  h-100">
-                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
-                        <h6 class="fw-bold text-secondary">
-                            OBSERVAÇÃO...
-                        </h6>
-                        <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Produto">
-                             <i class="fa-solid fa-circle-plus"></i>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        {% if cliente %}
-                        <ul class="list-group list-group-flush">
-                            #for
-                            <li class="list-group-item">
-                                <p>
-                                    <i class="fa-solid fa-user me-2"></i>
-                                    <span class="fw-bold">#</span>
-                                </p>
-                                <small class="text-muted"># em # às #</small>
-                            </li>
-                            #end
-                        </ul>
-                        {% else %}
-                        <div class="alert alert-warning" role="alert">
-                            Nenhum Observação para exibir!
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            <!--FIM PRODUTOS RECEITA-->
 
 
 
-        </div>
+
     </div>
 </div>
 {% endblock conteudo %}
+
+<form method="post" action="{{ url_for('adicionar_produtos', id=receita.id) }}">
+        {{ form.csrf_token }}
+
+        {# Campos para seleção de produtos e quantidades #}
+        {{ form.produtos.label }}
+        {{ form.produtos }}
+
+        {{ form.quantidades.label }}
+        {{ form.quantidades }}
+
+        <button type="submit" class="btn btn-primary">Adicionar Produtos</button>
+    </form>

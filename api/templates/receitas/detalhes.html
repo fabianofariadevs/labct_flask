@@ -1,6 +1,9 @@
 {% extends 'basedetalhes.html' %}
 {% block conteudo %}
 
+<!--* * #TODO Arquivo p views Detalhes_Receita_HTML, lista uma Receita e apresenta as todos os detalhes da Receita
+#     @author Fabiano Faria -->
+
 <div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-top:12px;">
     <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
         <div class="card-header justify-content-between">
@@ -18,55 +21,101 @@
     </div>
     <div class="card-body">
         <div class="table-responsive" style="width:100%">
-              <table class="table table-striped" style="width:100%">
-                  <thead>
-                        <tr>
-                            <th>id</th>
-                            <th>Descriçao_mix</th>
-                            <th>Modo_preparo</th>
-                            <th>Departamento</th>
-                            <th class="text-center">Rend_kg</th>
-                            <th class="text-center">Rend_unid</th>
-                            <th>Validade</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-center">Pedidos_Prod</th>
-                            <th class="text-center">Produtos</th>
-                            <th>Filiais</th>
-                            <th class="text-center">Cadastrado_em</th>
-                            <th class="text-center">Atualizado_em</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{receita.id}}</td>
-                            <td>{{receita.descricao_mix}}</td>
-                            <td>{{receita.modo_preparo}}</td>
-                            <td>{{receita.departamento}}</td>
-                            <td class="text-center">{{receita.rend_kg}}</td>
-                            <td class="text-center">{{receita.rend_unid}}</td>
-                            <td>{{receita.validade}}</td>
-                            <td class="text-center">{{receita.status}}</td>
-                            <td class="text-center">{{receita.pedidosprod}}</td>
-                            <td class="text-center">{{receita.produtos}}</td>
-                            <td>{{receita.filiais}}</td>
-                            <td class="text-center">{{receita.cadastrado_em}}</td>
-                            <td class="text-center">{{receita.atualizado_em}}</td>
-                    </tbody>
-                  <div class="row">
-                      <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                          <div>
-                            <i class="fw-bold text-secondary"> Detalhes Receitas : </i>(id: {{receita.id}})
-                            <i class="breadcrumb-item active fw-bold text-dark"> {{receita.descricao_mix}}</i>
-                          </div>
-                          <form id="delete-form" action="{{ url_for('visualizar_receita', id=receita.id, _method='POST') }}" method="post">
-                              <input type="hidden" name="_method" value="DELETE">
-                              <button class="btn btn-danger" type="submit" title="Excluir Receita"  onclick="return confirm('Deseja excluir a Receita {{receita.descricao_mix}} ?')">Excluir Receita</button>
-                          </form>
-                      </div>
-                      <hr>
-                  </div>
-              </table>
-        </div>
+            <table class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Descriçao_mix</th>
+                        <th>Modo_preparo</th>
+                        <th>Departamento</th>
+                        <th class="text-center">Rend_kg</th>
+                        <th class="text-center">Rend_unid</th>
+                        <th>Validade</th>
+                        <th>Usuario</th>
+                        <th>Clientes/Fábrica</th>
+                        <th>MixProdutos</th>
+                        <th>pedidosprod</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Cadastrado_em</th>
+                        <th class="text-center">Atualizado_em</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{receita.id}}</td>
+                        <td>{{receita.descricao_mix}}</td>
+                        <td>{{receita.modo_preparo}}</td>
+                        <td>{{receita.departamento}}</td>
+                        <td class="text-center">{{receita.rend_kg}}</td>
+                        <td class="text-center">{{receita.rend_unid}}</td>
+                        <td>{{receita.validade}}</td>
+                        <td>{{receita.usuario}}</td>
+                        <td>{{receita.cliente.nome}}</td>
+                        <td>{{receita.mixprodutos}}</td>
+                        <td>{{receita.pedidosprod}}</td>
+                        <td class="text-center">{{receita.status}}</td>
+                        <td class="text-center">{{receita.cadastrado_em}}</td>
+                        <td class="text-center">{{receita.atualizado_em}}</td>
+                    </tr>
+                </tbody>
+            <div class="row">
+                <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fw-bold text-secondary"> Detalhes Receitas : </i> id: {{receita.id}} .
+                            <a href="#" data-toggle="modal" data-target="#consultaModal">
+                                <i class="fa-solid fa-circle text-success"> </i>
+                                Pendências
+                                <span class="text-dark text-bg-success"> </span>
+                            </a>
+                        <i class="breadcrumb-item active fw-bold text-dark"> {{receita.descricao_mix}}</i>
+                    </div>
+                          <!-- Botão para abrir o modal de adicionar produtos e quantidades -->
+                    <div class="form-group">
+                        <button type="button"  class="btn btn-outline-success" id="btn-adicionarProdutoModal" data-toggle="modal" data-target="#adicionarProdutoModal">
+                            <i class="fa fa-save"></i>
+                            Cadastrar/Remover Produtos Receita
+                        </button>
+                    </div>
+                    <form id="delete-form" action="{{ url_for('visualizar_receita', id=receita.id, _method='POST') }}">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button class="btn btn-danger" type="submit" title="Excluir Receita"  onclick="return confirm('Deseja excluir a Receita {{receita.descricao_mix}} ?')">Excluir Receita</button>
+                    </form>
+                      <!-- Modal para adicionar produtos e quantidades -->
+                    <div class="modal fade" id="adicionarProdutoModal" tabindex="-1" role="dialog" aria-labelledby="adicionarProdutoModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="adicionarProdutoModalLabel">Adicionar Produtos e Quantidades</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <!-- Formulário para adicionar produtos e quantidades -->
+                                <div class="modal-body">
+                                    <form id="form-adicionar-produto" method="POST">
+
+                                        <div class="form-group">
+
+                                        </div>
+                                        <div class="form-group">
+
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                    <button type="button" class="btn btn-primary" id="adicionar-produto">Adicionar produto</button>
+                                    <button type="button" class="btn btn-danger" id="remover-produto">Remover</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </table>
+    </div>
         <!--inicio DA div detalhes abaixo tabela detalhes receitas-->
             <div class="row card-header bg-secondary">
                  <!--INICIO ULTIMOS RECEITAS CADASTRADAS-->
@@ -89,7 +138,7 @@
                                         <tr>
 
                                             <th>Descrição</th>
-                                            <th class="text-center">Filial</th>
+                                            <th class="text-center">Fábrica</th>
                                             <th class="text-center">Status</th>
                                         </tr>
                                     </thead>
@@ -108,7 +157,7 @@
                                                 {{receita.Descriçao_mix}}
                                             </td>
                                             <td class="text-center">
-                                                {{receita.filiais}}
+                                                {{receita.cliente.nome}}
                                             </td>
                                             <td class="text-center">
                                                 <a href="#" rel="tooltip" title="Editar">
@@ -145,30 +194,30 @@
                             </a>
                         </div>
                         <div class="card-body">
-                            {% if pedido %}
+                            {% if receita.pedidosprod %}
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
 
-                                            <th>Nome</th>
+                                            <th>qtde_pedido</th>
                                             <th class="text-center">Filiais</th>
                                             <th class="text-center">Ação</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for cliente in clientes.clientes %}
+                                        {% for pedido in receita.pedidosprod %}
                                         <tr>
 
                                             <td>
                                                 <span>
-                                                    {% if cliente.status == 1 %}
+                                                    {% if pedido.status == 1 %}
                                                     <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
                                                     {% else %}
                                                     <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
                                                     {% endif %}
                                                 </span>
-                                                {{cliente.nome}}
+                                                {{pedido.qtde_pedido}}
                                             </td>
                                             <td class="text-center">
                                                 {{pedido.filiais}}
@@ -201,23 +250,33 @@
                     <div class="card border-0 shadow-sm  h-100">
                         <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
                             <h6 class="fw-bold text-secondary">
-                                Produtos da Receita
+                                Mix_Produtos da Receita
                             </h6>
                             <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Produto">
                                  <i class="fa-solid fa-circle-plus"></i>
                             </a>
                         </div>
                         <div class="card-body">
-                            {% if produtos %}
-                            <ul>
-                                {% for produto, quantidade in produtos_quantidades.items() %}
-                                    <li>{{ produto.nome }} - Quantidade: {{ quantidades }}</li>
-                                {% endfor %}
-                            </ul>
+                            {% if mix_produtos %}
+                           <h3>Mix de Produtos</h3>
+                                <ul>
+                                    {% for mix_produto in receita.mix_produtos %}
+                                        <li>{{ mix_produto.produto }} - {{ mix_produto.quantidade }} unidades</li>
+                                    {% endfor %}
+                                </ul>
+
+                                <h3>Adicionar Produto ao Mix</h3>
+                                <form method="POST">
+                                    {{ form.hidden_tag() }}
+                                    {{ form.produto.label }} {{ form.produto() }}
+                                    {{ form.quantidade.label }} {{ form.quantidade() }}
+                                    {{ form.submit() }}
+                                </form>
+
 
                             {% else %}
                             <div class="alert alert-warning" role="alert">
-                                Nenhum Produto para exibir!
+                                Nenhum Mix_Produto para exibir!
                             </div>
                             {% endif %}
                         </div>
@@ -231,4 +290,73 @@
     </div>
 </div>
 {% endblock conteudo %}
+
+<!-- Modal -->
+<!-- Compare este snippet de \templates\basedetalhes.html: -->
+{% block modal_contentreceita %}
+{% for receita in receitas %}
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge rounded text-bg-secondary">TOTAL de Receitas: {{total_receitas}}</span>
+                        <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_receitas_ativos}} ativo</span>
+                        <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_receitas_inativos}} inativo </span>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('listar_receitas') }}" class="btn btn-outline-dark" title="Voltar para lista de Receitas">Voltar para lista de Receitas</a>
+                        <a href="{{ url_for('atualizar_receita', id=receita.id, _method='PUT') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Receita">Atualizar Receita</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" style="width:100%">
+                        <table class="table table-striped" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>id</th>
+                                    <th>Descriçao_mix</th>
+                                    <th>Modo_preparo</th>
+                                    <th>Departamento</th>
+                                    <th class="text-center">Rend_kg</th>
+                                    <th class="text-center">Rend_unid</th>
+                                    <th>Validade</th>
+                                    <th>Usuario</th>
+                                    <th>Clientes/Fábrica</th
+                                    <th>MixProdutos</th>
+                                    <th>pedidosprod</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Cadastrado_em</th>
+                                    <th class="text-center">Atualizado_em</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{receita.id}}</td>
+                                    <td>{{receita.descricao_mix}}</td>
+                                    <td>{{receita.modo_preparo}}</td>
+                                    <td>{{receita.departamento}}</td>
+                                    <td class="text-center">{{receita.rend_kg}}</td>
+                                    <td class="text-center">{{receita.rend_unid}}</td>
+                                    <td>{{receita.validade}}</td>
+                                    <td>{{receita.usuario}}</td>
+                                    <td>{{receita.cliente.nome}}</td>
+                                    <td>{{receita.mixprodutos}}</td>
+                                    <td>{{receita.pedidosprod}}</td>
+                                    <td class="text-center">{{receita.status}}</td>
+                                    <td class="text-center">{{receita.cadastrado_em}}</td>
+                                    <td class="text-center">{{receita.atualizado_em}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock modal_contentreceita %}
 

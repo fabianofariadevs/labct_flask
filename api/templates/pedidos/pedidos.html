@@ -53,7 +53,7 @@
                                 <th class="text-center">Qtde_pedido</th>
                                 <th class="text-center">Fornecedor</th>
                                 <th class="text-center">Data_pedido</th>
-                                <th class="text-center">Filial_pdv</th>
+                                <th class="text-center">Cliente/Fábrica</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Acões</th>
                             </tr>
@@ -62,11 +62,11 @@
                         {% for pedido in pedidos %}
                             <tr>
                                 <td class="text-center">{{pedido.id}}</td>
-                                <td class="text-center">{{pedido.produto_id}}</td>
+                                <td class="text-center">{{pedido.produtos}}</td>
                                 <td class="text-center">{{pedido.qtde_pedido}}</td>
-                                <td class="text-center">{{pedido.fornecedor_id}}</td>
+                                <td class="text-center">{{pedido.fornecedores}}</td>
                                 <td class="text-center">{{pedido.data_pedido}}</td>
-                                <td class="text-center">{{pedido.filial_pdv}}</td>
+                                <td class="text-center">{{pedido.clientes}}</td>
                                 <td class="text-center">
                                     {% if pedido.status == 1 %}
                                     <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>

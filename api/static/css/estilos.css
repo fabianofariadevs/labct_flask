@@ -1,0 +1,18 @@
+/* adicionar no arquivo base.html */
+<link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+.error-message {
+    text-align: center;
+    padding:20px;
+    font-weight: bold;
+}
+
+.error {
+    background-color: red;
+    color: white;
+}
+
+.success {
+    background-color: green;
+    color: white;
+}
+

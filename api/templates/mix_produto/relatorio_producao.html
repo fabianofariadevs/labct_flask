@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Relatório de Produção de Receitas</title>
+</head>
+<body>
+    <h1>Relatório de Produção de Receitas</h1>
+    <table border="1">
+        <tr>
+            <th>Receita</th>
+            <th>Mix de Produtos</th>
+        </tr>
+        {% for receita in receitas %}
+            <tr>
+                <td>{{ receita.nome }}</td>
+                <td>
+                    <ul>
+                        {% for mix_produto in receita.mix_produtos %}
+                            <li>{{ mix_produto.produto }} - {{ mix_produto.quantidade }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

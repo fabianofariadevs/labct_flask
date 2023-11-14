@@ -41,6 +41,10 @@
                             <th>Cnpj</th>
                             <th>Status</th>
                             <th>Filial_pdv</th>
+                            <th>Receitas</th>
+                            <th>Pedido_compra</th>
+                            <th>Pedidosprod</th>
+                            <th>Estoques</th>
                             <th>Cadastrado_em</th>
                             <th>Atualizado_em</th>
                         </tr>
@@ -59,7 +63,11 @@
                             <td>{{clientev.whatsapp}}</td>
                             <td>{{clientev.cnpj}}</td>
                             <td class="text-center">{{clientev.status}}</td>
-                            <td>{{clientev.filial_id}}</td>
+                            <td>{{clientev.filiais.nome}}</td>
+                            <td>{{clientev.receitas}}</td>
+                            <td>{{clientev.pedido_compra}}</td>
+                            <td>{{clientev.pedidosprod}}</td>
+                            <td>{{clientev.estoques}}</td>
                             <td>{{clientev.cadastrado_em}}</td>
                             <td>{{clientev.cadastrado_em}}</td>
                         </tr>
@@ -67,13 +75,14 @@
                     <div class="row">
                         <div class="card-header border-0 d-flex justify-content-between align-items-center">
                             <div>
-                                <i class="fw-bold text-secondary">Detalhes do Cliente :</i> ('id': {{clientev.id}})
-                                <i class="breadcrumb-item active fw-bold text-dark">{{clientev.nome}}   ___</i>Consultar Detalhes___
+                                <i class="fw-bold text-secondary">Detalhes do Cliente :</i> id:  {{clientev.id}}
                                     <a href="#" data-toggle="modal" data-target="#consultaModal">
                                     <i class="fa-solid fa-circle text-success"></i>
                                     Pendências
                                     <span class="text-dark text-bg-success"></span>
                                     </a>
+                                <i class="breadcrumb-item active fw-bold text-dark">{{clientev.nome}}   ___</i>
+
                             </div>
                             <div>
                                 <form id="delete-form" action="{{ url_for('visualizar_cliente', id=clientev.id, _method='POST') }}" method="post">
@@ -90,11 +99,11 @@
             <!--inicio DA div detalhes abaixo tabela detalhes cliente-->
             <div class="row card-header bg-secondary">
                  <!--INICIO ULTIMOS PEDIDOS DE COMPRAS FILIAIS/FABRICA-->
-                 <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
+                 <div class="col-sm-12 col-md-6 col-xl-3 mb-4">
                     <div class="card border-0 shadow-sm  h-100">
                         <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
                             <h6 class="fw-bold text-secondary">
-                                Pedidos de Compras Filiais_PDV
+                                Pedidos de Compras Cadastrados
                             </h6>
 
                             <a href="{{ url_for('listar_pedidos') }}" class="fs-5" rel="tooltip" title="Cadastrar Pedidos">
@@ -102,19 +111,20 @@
                             </a>
                         </div>
                         <div class="card-body">
-                            {% if pedidos %}
+                            {% if clientev.pedido_compra %}
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th>Produtos</th>
                                             <th>Data</th>
-                                            <th class="text-center">Filial</th>
+                                            <th>Qtde</th>
+                                            <th class="text-center">Fabrica</th>
                                             <th class="text-center">Ação</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for pedido in pedidos %}
+                                        {% for pedido in clientev.pedido_compra %}
                                         <tr>
                                             <td>
                                                 <span>
@@ -124,13 +134,16 @@
                                                     <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
                                                     {% endif %}
                                                 </span>
-                                                {{pedido.produto_id}}
+                                                {{pedido.produtos}}
                                             </td>
                                              <td class="text-center">
                                                 {{pedido.data_pedido}}
                                             </td>
                                              <td class="text-center">
-                                                {{pedido.filial_pdv}}
+                                                {{pedido.qtde_pedido}}
+                                            </td>
+                                             <td class="text-center">
+                                                {{pedido.clientes.nome}}
                                             </td>
                                             <td class="text-center">
                                                 <a href="#" rel="tooltip" title="Editar">
@@ -154,7 +167,7 @@
                     </div>
                 </div>
                  <!--INICIO ULTIMOS PEDIDOS DE PRODUÇÃO FILIAIS/FABRICA-->
-                 <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
+                 <div class="col-sm-12 col-md-6 col-xl-3 mb-4">
                     <div class="card border-0 shadow-sm  h-100">
                         <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
                             <h6 class="fw-bold text-secondary">
@@ -166,19 +179,19 @@
                             </a>
                         </div>
                         <div class="card-body">
-                            {% if pedidoprod %}
+                            {% if clientev.pedidosprod %}
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
                                         <th class="text-center">Receitas</th>
                                         <th class="text-center">Data</th>
-                                        <th class="text-center">Filiais</th>
+                                        <th class="text-center">Filial</th>
                                         <th class="text-center">Ação</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {% for pedido in pedidosprod %}
+                                    {% for pedido in clientev.pedidosprod %}
                                         <tr>
                                             <td>
                                                 <span>
@@ -188,13 +201,13 @@
                                                     <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
                                                     {% endif %}
                                                 </span>
-                                                {{pedido.receita_id}}
+                                                {{pedido.receitas}}
                                             </td>
                                             <td class="text-center">
                                                 {{pedido.data_pedido}}
                                             </td>
                                             <td class="text-center">
-                                                {{pedido.filial_pdv}}
+                                                {{pedido.filial.nome}}
                                             </td>
                                             <td class="text-center">
                                                 <a href="#" rel="tooltip" title="Editar">
@@ -220,7 +233,7 @@
                 <!--FIM ULTIMOS PEDIDOS DE PRODUÇÃO-->
 
                 <!--INICIO RELAÇÃO FILIAIS CLIENTES-->
-                <div class="col-sm-6 col-md-6 col-xl-4 mb-4">
+                <div class="col-sm-6 col-md-6 col-xl-3 mb-4">
                     <div class="card border-0 shadow-sm  h-100">
                         <div class="card-header bg-white border-0 mt-2">
                             <h6 class="fw-bold text-secondary">
@@ -228,19 +241,19 @@
                             </h6>
                         </div>
                         <div class="card-body">
-                        {% if clientev %}
+                        {% if clientev.filiais %}
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Status</th>
+                                        <th>St</th>
                                         <th>Filiais</th>
                                         <th class="text-center">Bairro</th>
                                         <th class="text-center">Ação</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for filial in filiais %}
+                                    {% for filial in clientev.filiais %}
                                     <tr>
                                         <td>
                                             <span>
@@ -250,7 +263,6 @@
                                                 <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
                                                 {% endif %}
                                             </span>
-
                                         </td>
                                         <td class="text-center">
                                             {{filial.nome}}
@@ -273,7 +285,7 @@
                         </div>
                         {% else %}
                         <div class="alert alert-warning" role="alert">
-                            Nenhum Pedido de Produção cadastrado para exibir!
+                            Nenhuma Filial vinculada a {{clientev.nome}}!
                         </div>
                         {% endif %}
                     </div>
@@ -281,30 +293,95 @@
              </div>
             <!--FIM  Filiais PDV-->
 
+                 <!--INICIO RELAÇÃO USUARIOS CLIENTES-->
+                <div class="col-sm-6 col-md-6 col-xl-3 mb-4">
+                    <div class="card border-0 shadow-sm  h-100">
+                        <div class="card-header bg-white border-0 mt-2">
+                            <h6 class="fw-bold text-secondary">
+                                Usuários Relacionadas
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                        {% if clientev.usuarios %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>St</th>
+                                        <th>Usuário</th>
+                                        <th class="text-center">Função</th>
+                                        <th class="text-center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for usuario in clientev.usuarios %}
+                                    <tr>
+                                        <td>
+                                            <span>
+                                                {% if usuario.status == 1 %}
+                                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                {% else %}
+                                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            {{usuario.nome}}
+                                        </td>
+                                         <td class="text-center">
+                                            {{usuario.funcao.nome}}
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="#" rel="tooltip" title="Visualizar">
+                                                <i class="fa-solid fa-plus m-1"></i>
+                                            </a>
+                                            <a href="#" rel="tooltip" title="Deletar">
+                                                <i class="fa-solid fa-trash m-1"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            Nenhuma Usuário vinculada a {{clientev.nome}}!
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+             </div>
+            <!--FIM Usuario/Cliente-->
+
 
 
         </div>
     </div>
 </div>
-<!-- Modal -->
-{% endblock conteudo %}
-<!-- -->
-<!-- Compare este snippet de \templates\clientes\detalhes.html: -->
-{% block modal_content %}
 
-{% for cliente in clientes %}
+{% endblock conteudo %}
+<!-- Modal -->
+<!-- Compare este snippet de \templates\basedetalhes.html: -->
+{% block modal_content %}
+{% if clientev %}
+
      <div class="modal-body">
             <!-- Conteúdo do modal de consulta -->
-            <p>Aqui você pode adicionar informações adicionais sobre o cliente.</p>
-            <p>Id: {{cliente.id}}</p>
-            <p>Nome: {{cliente.nome}}</p>
-            <p>Endereço: {{cliente.endereco}}</p>
-            <p>Bairro: {{cliente.bairro}}</p>
-            <p>Cidade: {{cliente.cidade}}</p>
+            <p> informações adicionais sobre o cliente.</p>
+            <p>Id: {{clientev.id}}</p>
+            <p>Nome: {{clientev.nome}}</p>
+            <p>Endereço: {{clientev.endereco}}</p>
+            <p>Bairro: {{clientev.bairro}}</p>
+            <p>Cidade: {{clientev.cidade}}</p>
+            <p>Status: {{clientev.status}}</p>
+            <p>Filial: {{clientev.filiais}}</p>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
         </div>
 
-{% endfor %}
+
+{% endif %}
+
 {% endblock modal_content %}

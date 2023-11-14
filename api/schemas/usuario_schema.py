@@ -7,7 +7,9 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = usuario_model.Usuario
         load_instance = True
-        fields = ("id", "nome", "email", "senha", "is_admin", "status", "cadastrado_em", "atualizado_em", "api_key", "empresa", "cargo")
+        include_relationships = True
+        fields = ("id", "nome", "email", "senha", "is_admin", "status", "cadastrado_em", "atualizado_em", "api_key",
+                  "cliente", "funcao", "producoes")
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     nome = fields.String(required=True)
@@ -18,7 +20,9 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
     api_key = fields.String(required=False)
-    empresa = fields.String(required=False)
-    cargo = fields.String(required=False)
-    clientes = fields.List(fields.Nested(cliente_schema.ClienteSchema(), only=('id', 'nome')))
-    funcao = fields.String(required=False)
+
+    cliente = ma.Nested(cliente_schema.ClienteSchema, exclude=("usuarios",), load_only=True)
+    funcao = ma.Nested("FuncaoSchema", many=False, exclude=("usuarios",), load_only=True)
+    producoes = ma.Nested("ProducaoSchema", many=False, exclude=("usuario",), load_only=True)
+
+

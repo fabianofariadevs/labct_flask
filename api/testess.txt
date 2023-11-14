@@ -1,0 +1,619 @@
+from api import db, ma
+from sqlalchemy import func
+from datetime import datetime
+#DIA_08_11_2023
+#no caso a entidade mixproduto, que recebera os produtos e quantidades das receitas dos clientes e sera responsavel para armazenar as quantidades dos produtos e relacionar com estoque e inventario para controles, quando as filiais do cliente/fabrica solicitar um pedido de producao sera selecionado o mixproduto.
+
+#TODO ** Classe Cliente dbModel, responsavel por definir e criar o Banco de dados com as migrations flask db.
+#       @author Fabiano Faria
+
+class Cliente(db.Model):
+    __tablename__ = "cliente"
+    __table_args__ = {"extend_existing": True}  # indica que a tabela deve ser estendida se ela já existir no banco de dados.
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    nome = db.Column(db.String(50), nullable=False)
+    endereco = db.Column(db.String(150), nullable=False)
+    bairro = db.Column(db.String(20), nullable=False)
+    cidade = db.Column(db.String(20), nullable=False)
+    estado = db.Column(db.String(20), nullable=False)
+    telefone = db.Column(db.String(30), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
+    responsavel = db.Column(db.String(50), nullable=False)
+    whatsapp = db.Column(db.String(50), nullable=False)
+    cnpj = db.Column(db.String(17), nullable=True)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    #TODO a coluna filial_id como uma chave estrangeira referenciando a coluna id da tabela "filial".
+    #filial_id = db.Column(db.Integer, db.ForeignKey("filial.id"), nullable=True)
+    #TODO a propriedade filial, que é uma referência à instância de Filial associada a cada Cliente. O argumento backref define uma propriedade adicional no modelo Filial para acessar os clientes associados a uma filial.
+    filiais = db.relationship(Filial, back_populates="cliente", overlaps="cliente", foreign_keys=[Filial.cliente_id])
+
+    #TODO Relacionamento com a tabela Receita 1/N
+    receitas = db.relationship("Receita", back_populates="clientes")
+
+    #TODO Relacionamento com a tabela PedidoCompra N/1
+    pedido_compra = db.relationship("Pedido", back_populates="clientes")
+
+    #TODO Relacionamento com a tabela PedidoProducao com filiais N/1
+    pedidosprod = db.relationship("PedidoProducao", back_populates="cliente")
+    # relacionamento com Estoque
+    #estoques_cliente = db.relationship("Estoque", back_populates="cliente", foreign_keys=[Estoque.cliente_id])
+    usuarios = db.relationship("Usuario", back_populates="cliente", foreign_keys="Usuario.empresa")
+    estoques = db.relationship("Estoque", back_populates="cliente", foreign_keys=[Estoque.cliente_id])
+
+    #TODO metodo personalizado no formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'endereco': self.endereco,
+            'bairro': self.bairro,
+            'cidade': self.cidade,
+            'estado': self.estado,
+            'telefone': self.telefone,
+            'email': self.email,
+            'responsavel': self.responsavel,
+            'whatsapp': self.whatsapp,
+            'cnpj': self.cnpj,
+            'status': self.status,
+            'cadastrado_em': self.cadastrado_em.strftime("%d/%m/%Y %H:%M:%S"),
+            'atualizado_em': self.atualizado_em.strftime("%d/%m/%Y %H:%M:%S")
+        }
+
+    def cliente_query(self):
+        return Cliente.query.filter_by(id=self.id).first()
+
+
+estoque_filial = db.Table("estoque_filial", db.Column("estoque_id", db.Integer, db.ForeignKey("estoque.id"), primary_key=True),
+                          db.Column("filial_id", db.Integer, db.ForeignKey("filial.id"), primary_key=True))
+
+class Filial(db.Model):
+    __tablename__ = "filial"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    nome = db.Column(db.String(50), nullable=False)
+    endereco = db.Column(db.String(150), nullable=False)
+    bairro = db.Column(db.String(20), nullable=False)
+    cidade = db.Column(db.String(20), nullable=False)
+    estado = db.Column(db.String(20), nullable=False)
+    responsavel = db.Column(db.String(50), nullable=False)
+    whatsapp = db.Column(db.String(50), nullable=False)
+    cnpj = db.Column(db.String(18), nullable=False)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    # TODO Relacionamento com a tabela Estoque N/N
+    estoques = db.relationship("Estoque", secondary="estoque_filial", back_populates="filiais")
+
+    # TODO Relacionamento com a tabela Mixproduto N/N
+    #mixproduto = db.Column(db.Integer, db.ForeignKey("mixproduto.id"), nullable=False)
+    mixprodutos = db.relationship("MixProduto", secondary="mixproduto_filial", back_populates="filiais")
+
+    # TODO Relacionamento com a tabela Filial N/1
+    cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
+    cliente = db.relationship("Cliente", back_populates="filiais", overlaps="filiais", foreign_keys=[cliente_id])
+
+    #pedidosprod_id = db.Column(db.Integer, db.ForeignKey("pedidoproducao.id"), nullable=False)
+    pedidosprod = db.relationship("PedidoProducao", back_populates="filiais")
+
+    producoes = db.relationship("Producao", back_populates="filial", uselist=False, cascade="all, delete-orphan", lazy="joined")
+
+    #TODO metodo personalizado no formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'endereco': self.endereco,
+            'bairro': self.bairro,
+            'cidade': self.cidade,
+            'estado': self.estado,
+            'responsavel': self.responsavel,
+            'whatsapp': self.whatsapp,
+            'cnpj': self.cnpj,
+            'status': self.status,
+            'cadastrado_em': self.cadastrado_em.strftime("%d/%m/%Y %H:%M:%S"),
+            'atualizado_em': self.atualizado_em.strftime("%d/%m/%Y %H:%M:%S")
+        }
+
+    def filial_query(self):
+        return Filial.query.get(self.id)
+
+class Receita(db.Model):
+    __tablename__ = "receita"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    descricao_mix = db.Column(db.Text, nullable=False)
+    modo_preparo = db.Column(db.Text, nullable=False)
+    departamento = db.Column(db.String(50), nullable=False)
+    rend_kg = db.Column(db.Float, nullable=False)
+    rend_unid = db.Column(db.Float, nullable=False)
+    validade = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    # TODO relacionando Receita c/ usuario 1/1
+    usuario = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=True)
+
+    # TODO relacionando RECEITA c/ cliente N/1
+    cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
+    clientes = db.relationship("Cliente", back_populates="receitas", foreign_keys=[cliente_id])
+
+    # TODO relacionando RECEITA c/ produtos N/N = receita_produto (tabela associativa)
+    produtos_receita = db.relationship("Produto", secondary="receita_produto", back_populates="receitas")
+
+    # Relacionamento 1/N com a tabela PedidoProducao
+    pedidosprod = db.relationship("PedidoProducao", back_populates="receitas")
+
+    # Relacionamento um para muitos com a tabela MixProduto
+    mixprodutos = db.relationship("MixProduto", back_populates="receita", uselist=False, cascade="all, delete-orphan", lazy="joined")
+
+    #TODO metodo personalizado no formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'descricao_mix': self.descricao_mix,
+            'modo_preparo': self.modo_preparo,
+            'departamento': self.departamento,
+            'rend_kg': self.rend_kg,
+            'rend_unid': self.rend_unid,
+            'validade': self.validade,
+            'status': self.status,
+            'cadastrado_em': self.cadastrado_em.strftime("%d/%m/%Y %H:%M:%S"),
+            'atualizado_em': self.atualizado_em.strftime("%d/%m/%Y %H:%M:%S")
+        }
+class MixProdutoFilial(db.Model):
+    __tablename__ = "mixproduto_filial"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    mixproduto_id = db.Column(db.Integer, db.ForeignKey('mixproduto.id'), nullable=False)
+    filial_id = db.Column(db.Integer, db.ForeignKey('filial.id'), nullable=False)
+
+    def mixprodutofilial_query(self):
+        return MixProdutoFilial.query.get(self.id)
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+        return self
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        return self
+
+
+class MixProduto(db.Model):
+    __tablename__ = "mixproduto"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    cod_prod_mix = db.Column(db.Integer, nullable=True)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    situacao = db.Column(db.String(50), nullable=False)
+    cadastrado_em = db.Column(db.Date, nullable=False)
+    atualizado_em = db.Column(db.Date, nullable=False)
+
+    # TODO relacionamento com tabela receita 1/1
+    receita_id = db.Column(db.Integer, db.ForeignKey('receita.id', ondelete="CASCADE"), nullable=False)
+    receita = db.relationship("Receita", back_populates="mixprodutos")
+
+    # TODO relacionamento com tabela filial N/N
+    filial_id = db.Column(db.Integer, db.ForeignKey('filial.id', ondelete="CASCADE"), nullable=False)
+    filiais = db.relationship("Filial", secondary="mixproduto_filial", back_populates="mixprodutos")
+
+    # TODO relacionamento com tabela pedido_producao 1/N
+    pedidosprod_id = db.Column(db.Integer, db.ForeignKey("pedidoproducao.id"), nullable=False)
+    pedidosprod = db.relationship("PedidoProducao", back_populates="mixproduto", foreign_keys=[pedidosprod_id], lazy="joined")
+
+    producao_id = db.Column(db.Integer, db.ForeignKey("producao.id"), nullable=True)
+    producoes = db.relationship("Producao", back_populates="mixprodutos", uselist=True, single_parent=True, cascade="all, delete-orphan", foreign_keys="[Producao.mixproduto_id]")
+
+    def mixproduto_query(self):
+        return MixProduto.query.get(self.id)
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+        return self
+
+    def update(self, data):
+        for key, item in data.items():
+            setattr(self, key, item)
+        db.session.commit()
+        return self
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        return self
+
+    @staticmethod
+    def get_all():
+        return MixProduto.query.all()
+
+    @staticmethod
+    def get_by_id(id):
+        return MixProduto.query.get(id)
+
+    def __repr__(self):
+        return f"<MixProduto {self.cod_prod_mix, self.cadastrado_em, self.filiais, self.situacao, self.receita}>"
+
+class Producao(db.Model):
+    __tablename__ = "producao"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    data_producao = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    qtde_produzida = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(50), nullable=False)
+    obs = db.Column(db.Text(), nullable=True)
+    qr_code = db.Column(db.String(50), nullable=True)
+    cadastrado_em = db.Column(db.DateTime, default=db.func.now, nullable=False)
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    # TODO relacionamento com tabela MixProduto 1/1
+    mixproduto_id = db.Column(db.Integer, db.ForeignKey("mixproduto.id"), nullable=False)
+    mixprodutos = db.relationship("MixProduto", back_populates="producoes", foreign_keys=[mixproduto_id])
+
+    # TODO relacionamento com tabela Filial 1/1
+    filial_id = db.Column(db.Integer, db.ForeignKey("filial.id"), nullable=False)
+    filial = db.relationship("Filial", back_populates="producoes")
+
+    # TODO relacionamento com tabela Usuario 1/1
+    usuario = db.relationship("Usuario", back_populates="producoes")
+
+    # TODO relacionamento com tabela PedidoProducao 1/1
+    pedidosprod = db.relationship("PedidoProducao", back_populates="producoes", foreign_keys=[PedidoProducao.producao_id])
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'data_producao': self.data_producao.strftime("%d/%m/%Y %H:%M:%S"),
+            'qtde_produzida': self.qtde_produzida,
+            'status': self.status,
+            'obs': self.obs,
+            'qr_code': self.qr_code,
+            'cadastrado_em': self.cadastrado_em.strftime("%d/%m/%Y %H:%M:%S"),
+            'atualizado_em': self.atualizado_em.strftime("%d/%m/%Y %H:%M:%S")
+        }
+class Produto(db.Model):
+    __tablename__ = "produto"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    nome = db.Column(db.String(100), nullable=False)
+    descricao = db.Column(db.String(250), nullable=False)
+    quantidade = db.Column(db.Integer, nullable=True, default=0)
+    compra_unid = db.Column(db.Integer, nullable=False)
+    peso_pcte = db.Column(db.Numeric(5, 3), nullable=False)
+    valor = db.Column(db.Numeric, nullable=False)
+    custo_ultima_compra = db.Column(db.Float, nullable=False)
+    whatsapp = db.Column(db.String(50), nullable=False)
+    qrcode = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    estoque_minimo = db.Column(db.Integer, nullable=True, default=0)
+    obs = db.Column(db.Text(), nullable=True)
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    # Relacionamento com a tabela "Fornecedor"
+    #TODO Chave estrangeira referenciando o fornecedor
+    fornecedor_id = db.Column(db.Integer, db.ForeignKey('fornecedor.id'), nullable=False)
+    fornecedor = db.relationship(Fornecedor, back_populates="produtos", foreign_keys=[fornecedor_id])
+
+    estoque_id = db.Column(db.Integer, db.ForeignKey('estoque.id'), nullable=True)
+    estoques_produto = db.relationship("Estoque", back_populates="produto", foreign_keys=[estoque_id])
+
+    # TODO Relacionamento com a Produto c tabela "pedidosCompra 1/N"
+    pedido_id = db.Column(db.Integer, db.ForeignKey('pedido.id'), nullable=True)
+    #pedidos_compra = db.relationship(Pedido, back_populates="produtos")
+    pedidos_compra = db.relationship("Pedido", back_populates="produtos")
+
+    # Relacionamento com a tabela Receita N/N
+    receitas = db.relationship("Receita", secondary="receita_produto", back_populates="produtos_receita", lazy="dynamic")
+    # Relacionamento com ReposicaoEstoque
+    reposicoes = relationship("ReposicaoEstoque", back_populates="produtos")
+
+    inventario_id = db.Column(db.Integer, db.ForeignKey('inventario.id'), nullable=True)
+    inventario = db.relationship("Inventario", back_populates="produto", foreign_keys=[inventario_id])
+
+    # TODO metodo personalizado no formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'descricao': self.descricao,
+            'quantidade': self.quantidade,
+            'compra_unid': self.compra_unid,
+            'peso_pcte': self.peso_pcte,
+            'valor': self.valor,
+            'custo_ultima_compra': self.custo_ultima_compra,
+            'whatsapp': self.whatsapp,
+            'qrcode': self.qrcode,
+            'status': self.status,
+            'estoque_minimo': self.estoque_minimo,
+            'obs': self.obs,
+            'cadastrado_em': self.cadastrado_em.strftime("%d/%m/%Y %H:%M:%S"),
+            'atualizado_em': self.atualizado_em.strftime("%d/%m/%Y %H:%M:%S")
+        }
+
+class Fornecedor(db.Model):
+    __tablename__ = "fornecedor"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    nome = db.Column(db.String(50), nullable=False)
+    descricao = db.Column(db.String(200), nullable=False)
+    endereco = db.Column(db.String(150), nullable=False)
+    bairro = db.Column(db.String(20), nullable=False)
+    cidade = db.Column(db.String(20), nullable=False)
+    estado = db.Column(db.String(20), nullable=False)
+    telefone = db.Column(db.String(15), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
+    responsavel = db.Column(db.String(50), nullable=False)
+    whatsapp = db.Column(db.String(50), nullable=False)
+    cnpj = db.Column(db.String(18), nullable=False)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    #TODO relacionando FORNECEDOR com  PRODUTO 1/N
+    produtos = db.relationship('Produto', back_populates='fornecedor', foreign_keys='Produto.fornecedor_id')
+
+    pedido_compra = db.relationship('Pedido', back_populates='fornecedores', primaryjoin='Fornecedor.id==Pedido.fornecedor_id')
+
+    #TODO relacionando FORNECEDOR com  ESTOQUE 1/N
+    estoques = db.relationship('Estoque', back_populates='fornecedor', foreign_keys='Estoque.fornecedor_id')
+
+    #TODO metodo personalizado no formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'descricao': self.descricao,
+            'endereco': self.endereco,
+            'bairro': self.bairro,
+            'cidade': self.cidade,
+            'estado': self.estado,
+            'telefone': self.telefone,
+            'email': self.email,
+            'responsavel': self.responsavel,
+            'whatsapp': self.whatsapp,
+            'cnpj': self.cnpj,
+            'status': self.status,
+            'cadastrado_em': self.cadastrado_em.strftime("%d/%m/%Y %H:%M:%S"),
+            'atualizado_em': self.atualizado_em.strftime("%d/%m/%Y %H:%M:%S")
+        }
+class Pedido(db.Model):
+    __tablename__ = "pedido"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    qtde_pedido = db.Column(db.Integer, nullable=True, default=0)
+    data_pedido = db.Column(db.DateTime, nullable=False, default=func.now)
+    data_entrega = db.Column(db.Date, nullable=False)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    obs = db.Column(db.Text(), nullable=False)
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    #TODO relacionamento de N/1 com Produto / Pedido
+    #produto_id = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False)
+    produtos = db.relationship("Produto", back_populates="pedidos_compra")
+
+    cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=True)
+    clientes = db.relationship("Cliente", back_populates="pedido_compra")
+
+    fornecedor_id = db.Column(db.Integer, db.ForeignKey("fornecedor.id"), nullable=True)
+    fornecedores = db.relationship("Fornecedor", back_populates="pedido_compra")
+
+    #TODO metodo personalizado no formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'qtde_pedido': self.qtde_pedido,
+            'data_pedido': self.data_pedido,
+            'data_entrega': self.data_entrega,
+            'status': self.status,
+            'obs': self.obs,
+            'cadastrado_em': self.cadastrado_em.strftime("%d/%m/%Y %H:%M:%S"),
+            'atualizado_em': self.atualizado_em.strftime("%d/%m/%Y %H:%M:%S")
+        }
+
+    def pedido_query(self):
+        return Pedido.query.get(self.id)
+
+    def __repr__(self):
+        return f"<Pedido {self.qtde_pedido, self.data_pedido, self.data_entrega, self.status, self.obs, self.cadastrado_em, self.atualizado_em}>"
+
+    def __str__(self):
+        return f"{self.qtde_pedido, self.data_pedido, self.data_entrega, self.status, self.obs, self.cadastrado_em, self.atualizado_em}"
+
+    def __init__(self, qtde_pedido, data_pedido, data_entrega, status, obs, cadastrado_em, atualizado_em):
+        self.qtde_pedido = qtde_pedido
+        self.data_pedido = data_pedido
+        self.data_entrega = data_entrega
+        self.status = status
+        self.obs = obs
+        self.cadastrado_em = cadastrado_em
+        self.atualizado_em = atualizado_em
+
+    def to_json(self):
+        return {"qtde_pedido": self.qtde_pedido, "data_pedido": self.data_pedido, "data_entrega": self.data_entrega,
+                "status": self.status, "obs": self.obs, "cadastrado_em": self.cadastrado_em, "atualizado_em": self.atualizado_em}
+
+    def from_json(self, json):
+        self.qtde_pedido = json.get("qtde_pedido")
+        self.data_pedido = json.get("data_pedido")
+        self.data_entrega = json.get("data_entrega")
+        self.status = json.get("status")
+        self.obs = json.get("obs")
+        self.cadastrado_em = json.get("cadastrado_em")
+        self.atualizado_em = json.get("atualizado_em")
+        return self
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+        return self
+
+    def update(self, data):
+        for key, item in data.items():
+            setattr(self, key, item)
+        db.session.commit()
+        return self
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        return self
+
+    @staticmethod
+    def get_all():
+        return Pedido.query.all()
+
+    @staticmethod
+    def get_by_id(id):
+        return Pedido.query.get(id)
+
+
+# TODO ** Classe PedidoProdução dbModel, responsavel por definir e criar o Banco de dados com as migrations flask db.
+class PedidoProducao(db.Model):
+    __tablename__ = "pedidoproducao"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    data_pedido = db.Column(db.DateTime, nullable=False, default=func.now)
+    data_entrega = db.Column(db.Date, nullable=False)
+    qtde_pedido = db.Column(db.Integer, nullable=True, default=0)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    obs = db.Column(db.Text(), nullable=True)
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    #TODO relacionamento de N/1 com Receita / pedidos PRODUÇÃO
+    receita_id = db.Column(db.Integer, db.ForeignKey('receita.id'), nullable=True)
+    receitas = db.relationship("Receita", back_populates="pedidosprod", foreign_keys=[receita_id])
+
+    # TODO relacionamento com tabela Filial 1/1
+    filial_pdv = db.Column(db.Integer, db.ForeignKey("filial.id"), nullable=True)
+    filiais = db.relationship("Filial", back_populates="pedidosprod", foreign_keys=[filial_pdv])
+
+    # TODO relacionamento com tabela Cliente 1/1
+    cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=True)
+    cliente = db.relationship("Cliente", back_populates="pedidosprod", foreign_keys=[cliente_id])
+
+    # TODO relacionamento com tabela MixProduto 1/1
+    #mixproduto_id = db.Column(db.Integer, db.ForeignKey("mixproduto.id"), nullable=False)
+    mixproduto = db.relationship("MixProduto", back_populates="pedidosprod")
+
+    # TODO relacionamento com tabela Producao 1/N
+    producao_id = db.Column(db.Integer, db.ForeignKey("producao.id"), nullable=True)
+    producoes = db.relationship("Producao", back_populates="pedidosprod", foreign_keys=[producao_id])
+
+    #TODO metodo personalizado no seu formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'data_pedido': self.data_pedido,
+            'data_entrega': self.data_entrega,
+            'qtde_pedido': self.qtde_pedido,
+            'status': self.status,
+            'obs': self.obs,
+            'cadastrado_em': self.cadastrado_em.strftime("%d/%m/%Y %H:%M:%S"),
+            'atualizado_em': self.atualizado_em.strftime("%d/%m/%Y %H:%M:%S")
+        }
+class Estoque(db.Model):
+    __tablename__ = "estoque"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    nome = db.Column(db.String(80), nullable=True)
+    validade = db.Column(db.Date(), nullable=False)
+    valor_ultima_compra = db.Column(db.Float, nullable=False)
+    quantidade_minima = db.Column(db.Integer, nullable=True, default=0)
+    obs = db.Column(db.Text(), nullable=True)
+    quantidade_atual = db.Column(db.Integer, nullable=True, default=0)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
+    atualizado_em = db.Column(db.DateTime, default=func.now(), onupdate=func.now())
+
+    #TODO relacionamento de 1/N com Produto / Cliente
+    #produto_id = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False)
+    produto = db.relationship(Produto, back_populates="estoques_produto")
+
+    fornecedor_id = db.Column(db.Integer, db.ForeignKey("fornecedor.id"), nullable=True)
+    fornecedor = db.relationship("Fornecedor", back_populates="estoques", foreign_keys=[fornecedor_id])
+
+    cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=True)
+    cliente = db.relationship("Cliente", back_populates="estoques", foreign_keys=cliente_id)   # TODO (lazy="dynamic") só usamos com relacionamentos N/1
+
+    #TODO relacionamento com a tabela Filial N/N
+    filiais = db.relationship("Filial", secondary="estoque_filial", back_populates="estoques")
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'validade': self.validade,
+            'valor_ultima_compra': self.valor_ultima_compra,
+            'quantidade_minima': self.quantidade_minima,
+            'obs': self.obs,
+            'quantidade_atual': self.quantidade_atual,
+            'status': self.status,
+            'cadastrado_em': self.cadastrado_em.strftime("%d/%m/%Y %H:%M:%S"),
+            'atualizado_em': self.atualizado_em.strftime("%d/%m/%Y %H:%M:%S")
+        }
+class ReposicaoEstoque(db.Model):
+    __tablename__ = "reposicao_estoque"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    produto_id = db.Column(db.Integer, db.ForeignKey("produto.id"), nullable=False)
+    produtos = db.relationship("Produto", back_populates="reposicoes")
+    data_solicitacao = db.Column(db.DateTime, nullable=False, default=func.now)
+
+class Inventario(db.Model):
+    __tablename__ = 'inventario'
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True)
+    descricao = db.Column(db.String(120))
+    nome = db.Column(db.String(80))
+    quantidade = db.Column(db.Integer, nullable=True, default=0)
+    detalhes = db.Column(db.String(80))
+    obs = db.Column(db.String(120))
+    data = db.Column(db.Date, default=func.now())
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    produto = db.relationship("Produto", back_populates="inventario", uselist=False, cascade="all, delete-orphan", lazy="joined")
+
+    cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=True)
+    cliente = db.relationship("Cliente", backref=db.backref("inventario", lazy="dynamic"))
+
+    filial_pdv = db.Column(db.Integer, db.ForeignKey("filial.id"), nullable=True)
+    filial = db.relationship("Filial", backref=db.backref("inventario", lazy="dynamic"))
+
+

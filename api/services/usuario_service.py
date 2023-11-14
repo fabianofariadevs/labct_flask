@@ -7,8 +7,12 @@ from api import db
 
 def cadastrar_usuario(usuario):
     usuario_bd = usuario_model.Usuario(nome=usuario.nome, email=usuario.email, senha=usuario.senha,
-                                       empresa=usuario.empresa, cargo=usuario.cargo, is_admin=usuario.is_admin,
-                                       status=usuario.status, cadastrado_em=func.now(), atualizado_em=usuario.atualizado_em, api_key=usuario.api_key)
+                                       is_admin=usuario.is_admin, status=usuario.status, cadastrado_em=func.now(),
+                                       atualizado_em=usuario.atualizado_em, api_key=usuario.api_key,
+                                       )
+    usuario_bd.cliente = usuario.cliente
+    usuario_bd.funcao = usuario.funcao
+
     usuario_bd.encriptar_senha()
     db.session.add(usuario_bd)
     db.session.commit()

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+		    <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+
+        </div>
+        <div>
+            <a href="{{ url_for('exibir_formreceita') }}" class="btn btn-outline-dark" title="Voltar para lista de Receitas">Voltar para lista de Receitas</a>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <form method="POST" action="#">
+            {% if receita %}
+            <input type="hidden" name="_method" value="PUT">
+            {% else %}
+            <input type="hidden" name="_method" value="POST">
+            {% endif %}
+            {{ form.hidden_tag() }}
+            {% for error in form.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+
+             <h1>Adicionar Produtos à Receita</h1>
+            <p>Receita: {{ receita.descricao_mix }}</p>
+
+                <form method="POST" action="{{ url_for('adicionar_produto') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.produto.label }} {{ form.produto(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.quantidade.label }} {{ form.quantidade(class="form-control") }}
+                    </div>
+                    {{ form.submit() }}
+                    <button type="submit" class="btn btn-primary">Adicionar Produto</button>
+                </form>
+
+            <br>
+            <br>
+
+              <h3>Produtos Adicionados à Receita</h3>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for mix_produto in receita.mix_produtos %}
+                    <tr>
+                      <td>{{ mix_produto.produto.nome }}</td>
+                      <td>{{ mix_produto.quantidade }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+
+
+
+
+            {% if receita %}
+            <input type="submit" class="btn btn-success" name="Atualizar" value="Atualizar Receita">
+            {% else %}
+            <input type="submit" class="btn btn-primary" name="cadastrar" value="Cadastrar">
+            {% endif %}
+            <a href="{{ url_for('exibir_formreceita') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
+        </form>
+
+
+    </div>
+</div>
+{% endblock conteudo %}
+

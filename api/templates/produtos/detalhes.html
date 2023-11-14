@@ -35,10 +35,12 @@
                             <th>Qrcode</th>
                             <th class="text-center">Status</th>
                             <th>Fornecedor</th>
-                            <th>Estoque</th>
-                            <th>Mixproduto</th>
+                            <th>Estoque_min</th>
+                            <th>Atual</th>
+                            <th>Obs.:</th>
                             <th>Ped.Compra</th>
                             <th>Receitas</th>
+                            <th>Reposição</th>
                             <th>Cadastrado_em</th>
                             <th>Atualizado_em</th>
 
@@ -57,11 +59,13 @@
                             <td>{{produto.whatsapp}}</td>
                             <td>{{produto.qrcode}}</td>
                             <td class="text-center">{{produto.status}}</td>
-                            <td>{{produto.fornecedor}}</td>
+                            <td>{{produto.fornecedor.nome}}</td>
+                            <td>{{produto.estoque_minimo}}</td>
                             <td>{{produto.estoques_produto}}</td>
-                            <td>{{produto.mixproduto}}</td>
-                            <td>{{produto.pedidos}}</td>
-                            <td>{{produto.receitas_produtos}}</td>
+                            <td>{{produto.obs}}</td>
+                            <td>{{produto.pedidos_compra}}</td>
+                            <td>{{produto.receitas}}</td>
+                            <td>{{produto.reposicoes}}</td>
                             <td>{{produto.cadastrado_em}}</td>
                             <td>{{produto.atualizado_em}}</td>
                         </tr>

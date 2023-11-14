@@ -45,7 +45,9 @@
                             <td>{{usuario.email}}</td>
                             <td>{{usuario.senha}}</td>
                             <td>{{usuario.empresa}}</td>
-                            <td>{{usuario.is_admin}}</td>
+                            <td>{{usuario.is_admin}}
+                            {% if usuario.is_admin == 1%} Sim
+                            {% endif %} </td>
                             <td>{{usuario.cargo}}</td>
                             <td>{{usuario.status}}</td>
                             <td>{{usuario.api_key}}</td>

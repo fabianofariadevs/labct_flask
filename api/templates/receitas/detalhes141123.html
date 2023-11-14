@@ -1,0 +1,317 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+		    <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+            <span class="badge rounded text-bg-secondary">TOTAL de Receitas: {{total_receitas}}</span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_receitas_ativos}} ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_receitas_inativos}} inativo </span>
+        </div>
+        <div>
+            <a href="{{ url_for('listar_receitas') }}" class="btn btn-outline-dark" title="Voltar para lista de Receitas">Voltar para lista de Receitas</a>
+            <a href="{{ url_for('atualizar_receita', id=receita.id, _method='PUT') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Cliente">Atualizar Receita</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive" style="width:100%">
+              <table class="table table-striped" style="width:100%">
+                  <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>Descriçao_mix</th>
+                            <th>Modo_preparo</th>
+                            <th>Departamento</th>
+                            <th class="text-center">Rend_kg</th>
+                            <th class="text-center">Rend_unid</th>
+                            <th>Validade</th>
+                            <th>Usuario</th>
+                            <th>Clientes/Fábrica</th>
+                            <th>MixProdutos</th>
+                            <th>pedidosprod</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Cadastrado_em</th>
+                            <th class="text-center">Atualizado_em</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{receita.id}}</td>
+                            <td>{{receita.descricao_mix}}</td>
+                            <td>{{receita.modo_preparo}}</td>
+                            <td>{{receita.departamento}}</td>
+                            <td class="text-center">{{receita.rend_kg}}</td>
+                            <td class="text-center">{{receita.rend_unid}}</td>
+                            <td>{{receita.validade}}</td>
+                            <td>{{receita.usuario}}</td>
+                            <td>{{receita.cliente.nome}}</td>
+                            <td>{{receita.mixprodutos}}</td>
+                            <td>{{receita.pedidosprod}}</td>
+                            <td class="text-center">{{receita.status}}</td>
+                            <td class="text-center">{{receita.cadastrado_em}}</td>
+                            <td class="text-center">{{receita.atualizado_em}}</td>
+                        </tr>
+                    </tbody>
+                  <div class="row">
+                      <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                          <div>
+                            <i class="fw-bold text-secondary"> Detalhes Receitas : </i>(id: {{receita.id}})
+                            <i class="breadcrumb-item active fw-bold text-dark"> {{receita.descricao_mix}}</i>
+                          </div>
+                          <form id="delete-form" action="{{ url_for('visualizar_receita', id=receita.id, _method='POST') }}" method="post">
+                              <input type="hidden" name="_method" value="DELETE">
+                                <a href="#" class="btn btn-success" role="button">Add_Mix</a>
+                              <button class="btn btn-danger" type="submit" title="Excluir Receita"  onclick="return confirm('Deseja excluir a Receita {{receita.descricao_mix}} ?')">Excluir Receita</button>
+                          </form>
+                      </div>
+                      <hr>
+                  </div>
+              </table>
+        </div>
+        <!--inicio DA div detalhes abaixo tabela detalhes receitas-->
+            <div class="row card-header bg-secondary">
+                 <!--INICIO ULTIMOS RECEITAS CADASTRADAS-->
+                 <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
+                    <div class="card border-0 shadow-sm  h-100">
+                        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
+                            <h6 class="fw-bold text-secondary">
+                                Ultimas Receitas Cadastrados
+                            </h6>
+
+                            <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Receita">
+                                <i class="fa-solid fa-circle-plus"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            {% if receita %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Descrição</th>
+                                            <th class="text-center">Fábrica</th>
+                                            <th class="text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for receita in receitas %}
+                                        <tr>
+
+                                            <td>
+                                                <span>
+                                                    {% if receita.status == 1 %}
+                                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                    {% else %}
+                                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                    {% endif %}
+                                                </span>
+                                                {{receita.Descriçao_mix}}
+                                            </td>
+                                            <td class="text-center">
+                                                {{receita.cliente.nome}}
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="#" rel="tooltip" title="Editar">
+                                                    <i class="fa-solid fa-pen m-1"></i>
+                                                </a>
+                                                <a href="#" rel="tooltip" title="Deletar">
+                                                    <i class="fa-solid fa-trash m-1"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {%endfor%}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-warning" role="alert">
+                                Nenhum Receita cadastrado para exibir!
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                 <!--INICIO ULTIMOS PEDIDOS DE PRODUÇÃO RECEITA-->
+                 <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
+                    <div class="card border-0 shadow-sm  h-100">
+                        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
+                            <h6 class="fw-bold text-secondary">
+                                Ultimos Pedidos de Produção da Receita
+                            </h6>
+
+                            <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Pedidos">
+                                <i class="fa-solid fa-circle-plus"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            {% if receita.pedidosprod %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+
+                                            <th>qtde_pedido</th>
+                                            <th class="text-center">Filiais</th>
+                                            <th class="text-center">Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for pedido in receita.pedidosprod %}
+                                        <tr>
+
+                                            <td>
+                                                <span>
+                                                    {% if pedido.status == 1 %}
+                                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                    {% else %}
+                                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                    {% endif %}
+                                                </span>
+                                                {{pedido.qtde_pedido}}
+                                            </td>
+                                            <td class="text-center">
+                                                {{pedido.filiais}}
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="#" rel="tooltip" title="Editar">
+                                                    <i class="fa-solid fa-pen m-1"></i>
+                                                </a>
+                                                <a href="#" rel="tooltip" title="Deletar">
+                                                    <i class="fa-solid fa-trash m-1"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {%endfor%}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-warning" role="alert">
+                                Nenhum Pedido de Produção cadastrado para exibir!
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!--FIM ULTIMOS PEDIDOS DE PRODUÇÃO RECEITA-->
+
+                <!--INICIO PRODUTOS RECEITA-->
+                <div class="col-sm-6 col-md-6 col-xl-4 mb-4">
+                    <div class="card border-0 shadow-sm  h-100">
+                        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
+                            <h6 class="fw-bold text-secondary">
+                                Mix_Produtos da Receita
+                            </h6>
+                            <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Produto">
+                                 <i class="fa-solid fa-circle-plus"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            {% if mix_produtos %}
+                           <h3>Mix de Produtos</h3>
+                                <ul>
+                                    {% for mix_produto in receita.mix_produtos %}
+                                        <li>{{ mix_produto.produto }} - {{ mix_produto.quantidade }} unidades</li>
+                                    {% endfor %}
+                                </ul>
+
+                                <h3>Adicionar Produto ao Mix</h3>
+                                <form method="POST">
+                                    {{ form.hidden_tag() }}
+                                    {{ form.produto.label }} {{ form.produto() }}
+                                    {{ form.quantidade.label }} {{ form.quantidade() }}
+                                    {{ form.submit() }}
+                                </form>
+
+
+                            {% else %}
+                            <div class="alert alert-warning" role="alert">
+                                Nenhum Mix_Produto para exibir!
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!--FIM PRODUTOS RECEITA-->
+
+
+
+            </div>
+    </div>
+</div>
+{% endblock conteudo %}
+
+<!-- Modal -->
+<!-- Compare este snippet de \templates\basedetalhes.html: -->
+{% block modal_contentreceita %}
+{% for receita in receitas %}
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge rounded text-bg-secondary">TOTAL de Receitas: {{total_receitas}}</span>
+                        <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success ">{{total_receitas_ativos}} ativo</span>
+                        <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger">{{total_receitas_inativos}} inativo </span>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('listar_receitas') }}" class="btn btn-outline-dark" title="Voltar para lista de Receitas">Voltar para lista de Receitas</a>
+                        <a href="{{ url_for('atualizar_receita', id=receita.id, _method='PUT') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Receita">Atualizar Receita</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" style="width:100%">
+                        <table class="table table-striped" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>id</th>
+                                    <th>Descriçao_mix</th>
+                                    <th>Modo_preparo</th>
+                                    <th>Departamento</th>
+                                    <th class="text-center">Rend_kg</th>
+                                    <th class="text-center">Rend_unid</th>
+                                    <th>Validade</th>
+                                    <th>Usuario</th>
+                                    <th>Clientes/Fábrica</th
+                                    <th>MixProdutos</th>
+                                    <th>pedidosprod</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Cadastrado_em</th>
+                                    <th class="text-center">Atualizado_em</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{receita.id}}</td>
+                                    <td>{{receita.descricao_mix}}</td>
+                                    <td>{{receita.modo_preparo}}</td>
+                                    <td>{{receita.departamento}}</td>
+                                    <td class="text-center">{{receita.rend_kg}}</td>
+                                    <td class="text-center">{{receita.rend_unid}}</td>
+                                    <td>{{receita.validade}}</td>
+                                    <td>{{receita.usuario}}</td>
+                                    <td>{{receita.cliente.nome}}</td>
+                                    <td>{{receita.mixprodutos}}</td>
+                                    <td>{{receita.pedidosprod}}</td>
+                                    <td class="text-center">{{receita.status}}</td>
+                                    <td class="text-center">{{receita.cadastrado_em}}</td>
+                                    <td class="text-center">{{receita.atualizado_em}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock modal_contentreceita %}
+

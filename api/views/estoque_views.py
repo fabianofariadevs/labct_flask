@@ -1,4 +1,5 @@
 from api import app
+from marshmallow.exceptions import ValidationError
 from sqlalchemy.orm import joinedload
 from ..models.pedido_model import Pedido, PedidoProducao
 from ..schemas import estoque_schema, pedido_schemas
@@ -59,15 +60,15 @@ def historicopedidos():
 
             # Verificar se o objeto do produto está presente e obter o nome, caso contrário, usar uma mensagem padrão
             produto = pedido.produtos
-            pedido_dict['produto_id'] = produto.nome if produto else 'Produto não encontrado'
+            pedido_dict['produtos'] = produto.nome if produto else 'Produto não encontrado'
 
             # Obter o nome do fornecedor
-            fornecedor = pedido.fornecedor
-            pedido_dict['fornecedor_id'] = fornecedor.nome if fornecedor else 'Fornecedor não encontrado'
+            fornecedor = pedido.fornecedores
+            pedido_dict['fornecedores'] = fornecedor.nome if fornecedor else 'Fornecedor não encontrado'
 
             # Obter o nome da filial
-            filial = pedido.filiais
-            pedido_dict['filial_pdv'] = filial.nome if filial else 'Filial não encontrada'
+            cliente = pedido.clientes
+            pedido_dict['clientes'] = cliente.nome if cliente else 'Cliente não encontrado'
 
             pedidos_data.append(pedido_dict)
 

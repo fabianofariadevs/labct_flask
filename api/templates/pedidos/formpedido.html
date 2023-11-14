@@ -9,7 +9,7 @@
          </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            Pedido de Compras
+            Pedido de Compras - Formulário de Cadastro
         </li>
     </ol>
 </nav>
@@ -25,12 +25,11 @@
             <input type="hidden" name="_method" value="POST">
             {% endif %}
             {{ form.hidden_tag() }}
-            {% for error in form.data_entrega.errors %}
+            {% for error in form.produtos.errors %}
             <p>{{ error }}</p>
             {% endfor %}
             <p>
             <div class="row">
-
                 <div class="col-md-2">
                     <div class="mb-3">
                         {{ form.data_entrega.label(class="form-label") }}:
@@ -39,8 +38,9 @@
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
-                        {{ form.produto_id.label(class="form-label") }}:
-                        {{ form.produto_id(class="form-select") }}
+                        {{ form.produtos.label(class="form-label") }}:
+                        {{ form.produtos(class="form-select") }}
+
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -51,8 +51,8 @@
                 </div>
                 <div class="col-md-3">
                     <div class="mb-3">
-                        {{ form.fornecedor_id.label(class="form-label") }}:
-                        {{ form.fornecedor_id(class="form-select") }}
+                        {{ form.fornecedores.label(class="form-label") }}:
+                        {{ form.fornecedores(class="form-select") }}
                     </div>
                 </div>
             </div>
@@ -71,8 +71,8 @@
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
-                        {{ form.filial_pdv.label(class="form-label") }}:
-                        {{ form.filial_pdv(class="form-select") }}
+                        {{ form.clientes.label(class="form-label") }}:
+                        {{ form.clientes(class="form-select") }}
                     </div>
                 </div>
             </div>

@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block conteudo %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" style="font-size: 11px">
+            <a href="#">
+            Admin
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            CADASTRAR NOVA Receita
+        </li>
+    </ol>
+</nav>
+<div class="card border-0 shadow-sm">
+    <div class="card-header">
+        <h3 class="card-title">{% if receita %}Atualizar Receita{% else %}Cadastrar Nova Receita{% endif %}</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% if receita %}
+            <input type="hidden" name="_method" value="PUT">
+            {% else %}
+            <input type="hidden" name="_method" value="POST">
+            {% endif %}
+            {{ form.hidden_tag() }}
+            {% for error in form.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.descricao_mix.label(class="form-label") }}:
+                        {{ form.descricao_mix(class="form-control") }}
+                         {% for error in form.descricao_mix.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.modo_preparo.label(class="form-label") }}:
+                        {{ form.modo_preparo(class="form-control") }}
+                         {% for error in form.modo_preparo.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.departamento.label(class="form-label") }}:
+                        {{ form.departamento(class="form-control") }}
+                         {% for error in form.departamento.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.rend_kg.label(class="form-label") }}:
+                        {{ form.rend_kg(class="form-control") }}
+                         {% for error in form.rend_kg.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.rend_unid.label(class="form-label") }}:
+                        {{ form.rend_unid(class="form-control") }}
+                         {% for error in form.rend_unid.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.validade.label(class="form-label") }}:
+                        {{ form.validade(class="form-select") }}
+                         {% for error in form.validade.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                     <div class="mb-3">
+                         {{ form.status.label(class="form-label") }}:
+                         {{ form.status(class="form-select") }}
+                         {% for error in form.status.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                     </div>
+                </div>
+                <div class="col-md-3">
+                     <div class="mb-3">
+                            {{ form.clientes.label(class="form-label") }}:
+                            {{ form.clientes(class="form-select") }}
+                            {% for error in form.clientes.errors %}
+                            <p class="text-danger">{{ error }}</p>
+                            {% endfor %}
+                     </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <h5 class="text-bold">Produtos Relacionados a Receita</h5>
+
+                    <!-- Campos para produtos e quantidades -->
+            <div id="mix_produtos">
+                {% for mix_produto in form.mix_produtos %}
+                    {{ mix_produto.produto.label }} {{ mix_produto.produto() }}
+                    {{ mix_produto.quantidade.label }} {{ mix_produto.quantidade() }}
+                {% endfor %}
+            </div>
+
+            <hr>
+            {{ form.submit(class="btn btn-outline-dark") }}
+            <hr>
+            <a href="{{ url_for('listar_produtos') }}">Listar Produtos</a>
+            <hr>
+
+
+            <input type="submit" value="Cadastrar Receita">
+
+        </form>
+
+            <hr>
+
+            <div class="form-group">
+                {% if receita %}
+                <input type="submit" class="btn btn-success" name="Atualizar" value="Atualizar Receita">
+                {% else %}
+                <input type="submit" class="btn btn-primary" name="cadastrar" value="Cadastrar">
+                {% endif %}
+                <a href="{{ url_for('listar_receitas') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
+            </div>
+
+    </div>
+</div>
+
+{% endblock conteudo %}

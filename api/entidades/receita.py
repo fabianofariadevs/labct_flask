@@ -1,7 +1,7 @@
 
 class Receita:
     def __init__(self, descricao_mix, modo_preparo, departamento, rend_kg, rend_unid, validade, status, cadastrado_em, atualizado_em,
-                 filiais, clientes, ingredientes, pedidosprod, usuario):
+                 usuario, cliente, mixprodutos, pedidosprod):
 
         self.__descricao_mix = descricao_mix
         self.__modo_preparo = modo_preparo
@@ -12,11 +12,10 @@ class Receita:
         self.__status = status
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
-        self.__filiais = filiais
-        self.__clientes = clientes
-        self.__ingredientes = ingredientes
-        self.__pedidosprod = pedidosprod
         self.__usuario = usuario
+        self.__cliente = cliente
+        self.__mixprodutos = mixprodutos
+        self.__pedidosprod = pedidosprod
 
     @property
     def descricao_mix(self):
@@ -91,28 +90,28 @@ class Receita:
         self.__atualizado_em = atualizado_em
 
     @property
-    def filiais(self):
-        return self.__filiais
+    def usuario(self):
+        return self.__usuario
 
-    @filiais.setter
-    def filiais(self, filiais):
-        self.__filiais = filiais
-
-    @property
-    def clientes(self):
-        return self.__clientes
-
-    @clientes.setter
-    def clientes(self, clientes):
-        self.__clientes = clientes
+    @usuario.setter
+    def usuario(self, usuario):
+        self.__usuario = usuario
 
     @property
-    def ingredientes(self):
-        return self.__ingredientes
+    def cliente(self):
+        return self.__cliente
 
-    @ingredientes.setter
-    def ingredientes(self, ingredientes):
-        self.__ingredientes = ingredientes
+    @cliente.setter
+    def cliente(self, cliente):
+        self.__cliente = cliente
+
+    @property
+    def mixprodutos(self):
+        return self.__mixprodutos
+
+    @mixprodutos.setter
+    def mixprodutos(self, mixprodutos):
+        self.__mixprodutos = mixprodutos
 
     @property
     def pedidosprod(self):
@@ -121,14 +120,6 @@ class Receita:
     @pedidosprod.setter
     def pedidosprod(self, pedidosprod):
         self.__pedidosprod = pedidosprod
-
-    @property
-    def usuario(self):
-        return self.__usuario
-
-    @usuario.setter
-    def usuario(self, usuario):
-        self.__usuario = usuario
 
     def json(self):
         return {
@@ -141,68 +132,7 @@ class Receita:
             "status": self.__status,
             "cadastrado_em": self.__cadastrado_em,
             "atualizado_em": self.__atualizado_em,
-            "quantidades": self.__quantidades,
-            "filiais": self.__filiais,
-            "clientes": self.__clientes,
-            "ingredientes": self.ingredientes,
-            "pedidosprod": self.__pedidosprod,
-            "usuario": self.__usuario
-        }
-
-class Ingredientes:
-    def __init__(self, nome, quantidade, unidade, receita_id, receita):
-
-        self.__nome = nome
-        self.__quantidade = quantidade
-        self.__unidade = unidade
-        self.__receita_id = receita_id
-        self.__receita = receita
-
-    @property
-    def nome(self):
-        return self.__nome
-
-    @nome.setter
-    def nome(self, nome):
-        self.__nome = nome
-
-    @property
-    def quantidade(self):
-        return self.__quantidade
-
-    @quantidade.setter
-    def quantidade(self, quantidade):
-        self.__quantidade = quantidade
-
-    @property
-    def unidade(self):
-        return self.__unidade
-
-    @unidade.setter
-    def unidade(self, unidade):
-        self.__unidade = unidade
-
-    @property
-    def receita_id(self):
-        return self.__receita_id
-
-    @receita_id.setter
-    def receita_id(self, receita_id):
-        self.__receita_id = receita_id
-
-    @property
-    def receita(self):
-        return self.__receita
-
-    @receita.setter
-    def receita(self, receita):
-        self.__receita = receita
-
-    def json(self):
-        return {
-            "nome": self.__nome,
-            "quantidade": self.__quantidade,
-            "unidade": self.__unidade,
-            "receita_id": self.__receita_id,
-            "receita": self.__receita
-        }
+            "usuario": self.__usuario,
+            "cliente": self.__cliente,
+            "mixprodutos": self.__mixprodutos,
+            "pedidosprod": self.__pedidosprod}

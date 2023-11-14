@@ -1,6 +1,7 @@
 
 class Cliente:
-    def __init__(self, nome, endereco, bairro, cidade, estado, telefone, email, responsavel, whatsapp, cnpj, status,  filiais, cadastrado_em, atualizado_em, receitas, pedidos):
+    def __init__(self, nome, endereco, bairro, cidade, estado, telefone, email, responsavel, whatsapp, cnpj, status,
+                 filiais, cadastrado_em, atualizado_em, receitas, pedido_compra, pedidos_prod, usuarios, estoques):
         self.__nome = nome
         self.__endereco = endereco
         self.__bairro = bairro
@@ -16,7 +17,10 @@ class Cliente:
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
         self.__receitas = receitas
-        self.__pedidos = pedidos
+        self.__pedidos_compra = pedido_compra
+        self.__pedidos_prod = pedidos_prod
+        self.__usuarios = usuarios
+        self.__estoques = estoques
 
     @property
     def nome(self):
@@ -139,12 +143,36 @@ class Cliente:
         self.__receitas = receitas
 
     @property
-    def pedidos(self):
-        return self.__pedidos
+    def pedidosprod(self):
+        return self.__pedidosprod
 
-    @pedidos.setter
-    def pedidos(self, pedidos):
-        self.__pedidos = pedidos
+    @pedidosprod.setter
+    def pedidosprod(self, pedidosprod):
+        self.__pedidosprod = pedidosprod
+
+    @property
+    def pedido_compra(self):
+        return self.__pedido_compra
+
+    @pedido_compra.setter
+    def pedido_compra(self, pedido_compra):
+        self.__pedido_compra = pedido_compra
+
+    @property
+    def usuarios(self):
+        return self.__usuarios
+
+    @usuarios.setter
+    def usuarios(self, usuarios):
+        self.__usuarios = usuarios
+
+    @property
+    def estoques(self):
+        return self.__estoques
+
+    @estoques.setter
+    def estoques(self, estoques):
+        self.__estoques = estoques
 
     def json(self):
         return {
@@ -163,5 +191,9 @@ class Cliente:
             "cadastrado_em": self.__cadastrado_em,
             "atualizado_em": self.__atualizado_em,
             "receitas": self.__receitas,
-            "pedidos": self.__pedidos
+            "pedidosprod": self.__pedidosprod,
+            "pedido_compra": self.__pedido_compra,
+            "usuarios": self.__usuarios,
+            "estoques": self.__estoques
+
         }
