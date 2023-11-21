@@ -19,17 +19,13 @@ class Receita(db.Model):
     status = db.Column(db.Integer, default=1, nullable=True)
     cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
-
     # TODO relacionando Receita c/ usuario 1/1
     usuario = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=True)
-
     # TODO relacionando RECEITA c/ cliente N/1
     cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
     cliente = db.relationship("Cliente", back_populates="receitas", foreign_keys=[cliente_id])
-
     # TODO relacionando RECEITA c/ mixprodutos 1/1
     mixprodutos = db.relationship("MixProduto", back_populates="receita", uselist=False, cascade="all, delete-orphan", lazy="joined")
-
     # TODO Relacionamento 1/N com a tabela PedidoProducao
     pedidosprod = db.relationship("PedidoProducao", back_populates="receitas")
 

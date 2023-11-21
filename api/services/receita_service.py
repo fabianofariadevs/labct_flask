@@ -39,6 +39,7 @@ def atualizar_receita(receita, cliente_id, form_data):
             receita.validade = form_data.get('validade')
             receita.status = form_data.get('status')
             receita.atualizado_em = func.now()
+
             db.session.commit()
             return receita
         else:

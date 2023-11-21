@@ -125,15 +125,14 @@ def listar_produtos9999():
 @app.route('/produtos/<int:id>/atualizar', methods=['GET', 'POST', 'PUT'])
 def atualizar_produto(id):
     produto = produtoMp_service.listar_produto_id(id)
-    if not produto:
-        return render_template("produtos/produtos.html", error_message="Produto não encontrado"), 404
-
     form = ProdutoForm(obj=produto)
-    if form.validate_on_submit():
-        form_data = form.to_dict()
-        produto_atualizado = produtoMp_service.atualiza_produto(produto, form_data)
-        return redirect(url_for("listar_produtos"))
 
+    if request.method == 'POST' and form.validate_on_submit():
+        form_data = form.to_dict()
+        fornecedor_id = form_data['fornecedor']
+        produto_novo = produtoMp_service.atualiza_produto(form_data, produto, fornecedor_id)
+        flash("Produto atualizado com sucesso!")
+        return redirect(url_for("listar_produtos"))
     return render_template('produtos/formproduto.html', form=form, produto=produto)
 
 

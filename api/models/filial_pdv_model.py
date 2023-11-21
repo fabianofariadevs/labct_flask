@@ -25,19 +25,14 @@ class Filial(db.Model):
     status = db.Column(db.Integer, default=1, nullable=True)
     cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now())
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
-
     # TODO Relacionamento com a tabela Estoque N/N
     estoques = db.relationship("Estoque", secondary="estoque_filial", back_populates="filiais")
-
     # TODO Relacionamento com a tabela Mixproduto N/N
-    #mixproduto = db.Column(db.Integer, db.ForeignKey("mixproduto.id"), nullable=False)
-    mixprodutos = db.relationship("MixProduto", secondary="mixproduto_filial", back_populates="filiais")
-
+    #mixproduto_id = db.Column(db.Integer, db.ForeignKey("mixproduto.id"), nullable=False)
+    mixprodutos = db.relationship("MixProduto", secondary="mixproduto_filial", back_populates="filiais", primaryjoin="Filial.id==mixproduto_filial.c.filial_id", lazy="joined")
     # TODO Relacionamento com a tabela Filial 1/1
     cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
     cliente = db.relationship("Cliente", back_populates="filiais", overlaps="filiais", foreign_keys=[cliente_id])
-
     #pedidosprod_id = db.Column(db.Integer, db.ForeignKey("pedidoproducao.id"), nullable=False)
     pedidosprod = db.relationship("PedidoProducao", back_populates="filiais")
-
     producoes = db.relationship("Producao", back_populates="filial", uselist=False, cascade="all, delete-orphan", lazy="joined")

@@ -1,6 +1,8 @@
 from api import ma
 from ..models import mix_produto_model
 from marshmallow import fields, EXCLUDE
+from .produtoMp_schema import ProdutoMpSchema
+
 
 class MixProdutoSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -18,11 +20,11 @@ class MixProdutoSchema(ma.SQLAlchemyAutoSchema):
     atualizado_em = fields.DateTime(required=False)
 
     receita = ma.Nested("ReceitaSchema", many=False, exclude=("mixprodutos",), unknown=EXCLUDE)  # Certifique-se de ajustar 'ReceitaSchema' conforme necessário)
-    filiais = ma.Nested("FilialSchema", many=True, exclude=("mixprodutos",), unknown="exclude")
+    #filiais = ma.Nested("FilialSchema", many=True, exclude=("mixprodutos",), unknown="exclude")
     pedidosprod = ma.Nested("PedidoProducaoSchema", many=True, exclude=("mixprodutos",), unknown="exclude", only=('data_pedido', 'data_entrega', 'qtde_pedido', 'status', 'obs', 'cadastrado_em', 'atualizado_em', 'receitas', 'filiais', 'cliente', 'mixprodutos', 'producoes'))
-    producoes = ma.Nested("ProducaoSchema", many=False, exclude=("mixprodutos",), unknown="exclude", only=('data_producao', 'qtde_produzida', 'status', 'obs', 'qr_code', 'cadastrado_em', 'atualizado_em', 'mixprodutos', 'filial', 'usuario', 'pedidosprod'))
-    produtos = ma.Nested("ProdutoMpSchema", many=True, exclude=("mixprodutos",), unknown="exclude")
-    #produtos = fields.List(fields.Integer(), required=True)
+    producoes = ma.Nested("ProducaoSchema", many=False, only=('data_producao',), exclude=("mixprodutos",), unknown="exclude")
+    #produtos = ma.Nested("ProdutoMpSchema", many=True, exclude=("mixprodutos",), unknown="exclude")
+    produtos = fields.List(fields.Nested(ProdutoMpSchema, exclude=("mixprodutos",), unknown="exclude"))
 
 class QuantidadeMixProdutosSchema(ma.SQLAlchemyAutoSchema):
     class Meta:

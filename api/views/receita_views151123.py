@@ -1,10 +1,11 @@
+from sqlalchemy import func
+
 from api import app, db
 from flask_wtf import FlaskForm
 from wtforms import StringField, DecimalField, BooleanField, SubmitField, SelectField, FloatField, FieldList, FormField, TextAreaField, IntegerField
 from flask_wtf.csrf import CSRFProtect
 from wtforms_components import SelectField, SelectMultipleField
 from wtforms.validators import DataRequired, ValidationError, length
-from ..models.mix_produto_model import MixProduto, QuantidadeMixProdutos
 from ..schemas import receita_schema
 from flask import request, make_response, jsonify, render_template, redirect, url_for, flash
 from ..services import receita_service, cliente_service
@@ -27,8 +28,6 @@ class ReceitaForm(FlaskForm):
     validade = SelectField('Dias/Validade', choices=[("10", '10 dias'), ("20", '20 dias'), ("30", '30 dias')], validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
     cliente = SelectField('Cliente/Fábrica Relacionada', validators=[DataRequired()], coerce=int)
-   # mixproduto = SelectField('Mix Produto', validators=[DataRequired()], coerce=int)
-    #quantidade = FloatField('Quantidade', validators=[DataRequired()], default=0)
 
     submit = SubmitField('Cadastrar Receita')
 
@@ -36,7 +35,6 @@ class ReceitaForm(FlaskForm):
         super(ReceitaForm, self).__init__(*args, **kwargs)
         self.cliente.choices = [(cliente.id, cliente.nome)
                                 for cliente in Cliente.query.all()]
-
         self.status.choices = self.get_status_choices()
         self.validade.choices = self.get_validade_choices()
 
@@ -152,45 +150,34 @@ def visualizar_receita(id):
 
 class AdicionarProdutosForm(FlaskForm):
     produtos = SelectMultipleField('Produtos', coerce=int)
-    quantidades = FloatField('Quantidades', render_kw={"placeholder": "Quantidade para cada produto"})
+    quantidades = FloatField('Quantidades',render_kw={"placeholder": "Quantidade para cada produto"})
     submit = SubmitField('Adicionar Produtos')
-
-    def __init__(self, *args, **kwargs):
-        super(AdicionarProdutosForm, self).__init__(*args, **kwargs)
-        self.produtos.choices = [(produto.id, produto.nome)
-                                 for produto in Produto.query.all()]
-
-    def to_dict(self):
-        return {
-            'produtos': self.produtos.data,
-            'quantidades': self.quantidades.data
-        }
-
-@app.route('/receitas/<int:id>/adicionar_produto', methods=['GET', 'POST'])
-def adicionar_produtos_receita(id):
-    receita = receita_service.listar_receita_id(id)
-    if not receita:
-        return render_template("receitas/receitas.html", error_message="Receita não encontrada"), 404
-    # Carregar escolhas de produtos no formulário
-    form = AdicionarProdutosForm()
-    form.produtos.choices = [(produto.id, produto.nome) for produto in Produto.query.all()]
-    form.quantidades.data = form.quantidades
-    if form.validate_on_submit():
-        produtos_selecionados = Produto.query.filter(Produto.id.in_(form.produtos.data)).all()
-
-        # Adicionar produtos à receita
-        for produto in produtos_selecionados:
-            mix_produto = MixProduto(receita=receita, produto=produto)
-            db.session.add(mix_produto)
-        db.session.commit()
-        flash("Produtos adicionados com sucesso!")
-        return redirect(url_for('exibir_formreceita', id=id))
-    return render_template('receitas/adicionar_produtos.html', form=form, receita=receita)
 
 
 @app.route('/receitas/<int:id>/adicionar_produtos', methods=['GET', 'POST'])
-def adicionar_produtos(id):
+def adicionar_produtos_receita(id):
+    receita = receita_service.listar_receita_id(id)
+
+    if not receita:
+        return render_template("erro.html", error_message="Receita não encontrada"), 404
+
     form = AdicionarProdutosForm()
+
+    # Carregar escolhas de produtos no formulário
+    form.produtos.choices = [(produto.id, produto.nome) for produto in Produto.query.all()]
+
+    if form.validate_on_submit():
+        produtos_selecionados = Produto.query.filter(Produto.id.in_(form.produtos.data)).all()
+        receita.produtos.extend(produtos_selecionados)
+        db.session.commit()
+        flash('Produtos adicionados à receita com sucesso!')
+        return redirect(url_for('detalhes_receita', id=id))
+
+    return render_template('adicionar_produtos_receita.html', form=form, receita=receita)
+
+@app.route('/receitas/<int:id>/adicionar_produtos', methods=['GET', 'POST'])
+def adicionar_produtos(id):
+    form = MixProdutosForm()
     receitas = receita_service.listar_receita_id(id)
     if request.method == 'POST' and form.validate_on_submit():
         try:

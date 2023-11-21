@@ -46,6 +46,7 @@ def atualiza_cliente(cliente_anterior, cliente_novo):
     #cliente_anterior.atualizado_em = datetime.now()
     cliente_anterior.atualizado_em = func.now()
 
+    db.session.add(cliente_anterior)
     db.session.commit()
 
 def deletar_cliente(cliente):

@@ -1,9 +1,8 @@
-from datetime import datetime, date
-
 from api import db
 from sqlalchemy import func
-from ..models import pedido_model
-from ..services import mix_produto_service, filial_pdv_service
+from ..models import pedido_model, fornecedor_model, cliente_model, produtoMp_model
+from datetime import datetime, date
+
 
 
 #TODO ** CRUD ** ESSAS funções fornecem operações básicas de criação, leitura, atualização e remoção (CRUD) para os registros da tabela pedido no banco de dados.
@@ -26,6 +25,9 @@ def cadastrar_pedido(pedido):
             obs=pedido['obs'],
             cadastrado_em=func.now(),
             atualizado_em=atualizado_em,
+            clientes=pedido['clientes'],
+            fornecedores=pedido['fornecedores'],
+            produtos=pedido['produtos']
         )
         db.session.add(pedido_bd)
         db.session.commit()
@@ -50,12 +52,22 @@ def atualiza_pedido(pedido_anterior, pedido_novo):
         pedido_anterior.data_entrega = pedido_novo.data_entrega
         pedido_anterior.status = pedido_novo.status
         pedido_anterior.obs = pedido_novo.obs
-        pedido_anterior.produtos = pedido_novo.produtos
-        pedido_anterior.fornecedores = pedido_novo.fornecedores
-        pedido_anterior.filiais = pedido_novo.filiais
+
+        # Limpe e estenda a relação de 1 para muitos com Produto
+        pedido_anterior.produtos.clear()
+        produtos_novos = [produtoMp_model.Produto.query.get(produto.id) for produto in pedido_novo.produtos]
+        pedido_anterior.produtos.extend(produtos_novos)
+
+        # Atualize a relação de 1 para 1 com Fornecedor
+        pedido_anterior.fornecedores = fornecedor_model.Fornecedor.query.get(pedido_novo.fornecedores)
+
+        # Atualize a relação de 1 para 1 com Cliente
+        pedido_anterior.clientes = cliente_model.Cliente.query.get(pedido_novo.clientes)
+
         pedido_anterior.cadastrado_em = pedido_novo.cadastrado_em
         pedido_anterior.atualizado_em = func.now()
 
+        db.session.add(pedido_anterior)
         db.session.commit()
     else:
         return None

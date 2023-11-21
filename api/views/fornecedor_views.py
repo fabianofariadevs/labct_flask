@@ -33,6 +33,23 @@ class FornecedorForm(FlaskForm):
     def get_status_choices():
         return [("1", 'Ativo'), ("0", 'Inativo')]
 
+    def to_dict(self):
+        data = {
+            "nome": self.nome.data,
+            "descricao": self.descricao.data,
+            "endereco": self.endereco.data,
+            "bairro": self.bairro.data,
+            "cidade": self.cidade.data,
+            "estado": self.estado.data,
+            "telefone": self.telefone.data,
+            "email": self.email.data,
+            "responsavel": self.responsavel.data,
+            "whatsapp": self.whatsapp.data,
+            "cnpj": self.cnpj.data,
+            "status": self.status.data,
+        }
+        return data
+
 
 @app.route('/fornecedores', methods=['GET'])
 def listar_fornecedores():

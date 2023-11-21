@@ -25,10 +25,10 @@ class ProdutoMpSchema(ma.SQLAlchemyAutoSchema):
     status = fields.Integer(required=False)
     estoque_minimo = fields.Integer(required=False)
     obs = fields.String(required=False)
-    cadastrado_em = fields.DateTime(required=False)
-    atualizado_em = fields.DateTime(required=False)
+    cadastrado_em = fields.DateTime(required=False, format="%Y-%m-%dT%H:%M:%S")
+    atualizado_em = fields.DateTime(required=False, format="%Y-%m-%dT%H:%M:%S")
 
-    fornecedor = ma.Nested("FornecedorSchema", many=True, only=('id', 'nome'))
+    fornecedor = ma.Nested("FornecedorSchema", many=False, only=('id', 'nome'))
     estoques_produto = ma.Nested("EstoqueSchema", many=False, only=('id', 'nome'))
     pedidos_compra = ma.Nested("PedidoSchema", many=False, only=('id', 'nome'))
     reposicoes = ma.Nested("ReposicaoEstoqueSchema", many=False, only=('id', 'produto_id', 'data_solicitacao'))

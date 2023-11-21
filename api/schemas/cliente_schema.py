@@ -28,24 +28,13 @@ class ClienteSchema(ma.SQLAlchemyAutoSchema):
     atualizado_em = fields.DateTime(required=False)
 
     filiais = ma.Nested("FilialSchema", many=False, exclude=("cliente",), only=("id", "nome", "bairro", "status"))
-    receitas = ma.Nested("ReceitaSchema", many=False)
+    receitas = ma.Nested("ReceitaSchema", many=False, only=("id", "descricao_mix", "modo_preparo", "departamento", "rend_kg", "rend_unid", "validade", "status", "cadastrado_em", "atualizado_em"))
     pedido_compra = ma.Nested("PedidoSchema", many=False, exclude=("clientes",))
     pedidosprod = ma.Nested("PedidoProducaoSchema", many=True, exclude=("cliente",), only=("id", "data_pedido", "data_entrega", "qtde_pedido", "status", "obs", "cadastrado_em", "atualizado_em"))
     usuarios = ma.Nested("UsuarioSchema", many=True, exclude=("cliente",))
     estoques = ma.Nested("EstoqueSchema", many=True, exclude=("cliente",))
     funcoes = ma.Nested("FuncaoSchema", many=False, exclude=("usuarios",))
 
-class FuncaoSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = usuario_model.Funcao
-        load_instance = True
-        fields = ("id", "nome", "usuarios")
-        many = True
-        unknown = 'EXCLUDE'
-
-    id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
-    nome = fields.String(required=True)
-    usuarios = fields.String(required=False)
 
 
 

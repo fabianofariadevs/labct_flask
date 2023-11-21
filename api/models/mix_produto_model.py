@@ -18,27 +18,32 @@ class MixProduto(db.Model):
     cod_prod_mix = db.Column(db.Integer, nullable=True)
     status = db.Column(db.Integer, default=1, nullable=True)
     situacao = db.Column(db.String(50), nullable=False)
-    quantidade = db.Column(db.Integer, nullable=True)
     cadastrado_em = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    atualizado_em = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
-
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
     # TODO relacionamento com tabela filial N/N
-    filial_id = db.Column(db.Integer, db.ForeignKey('filial.id', ondelete="CASCADE"), nullable=False)
+    filial_id = db.Column(db.Integer, db.ForeignKey('filial.id', ondelete="CASCADE"), nullable=True)
     filiais = db.relationship("Filial", secondary="mixproduto_filial", back_populates="mixprodutos")
-
     # TODO relacionamento com tabela receita 1/1
     receita_id = db.Column(db.Integer, db.ForeignKey("receita.id"), nullable=False)
     receita = db.relationship("Receita", back_populates="mixprodutos", foreign_keys=[receita_id])
-
     # TODO relacionamento com tabela pedido_producao 1/N
     #pedidosprod_id = db.Column(db.Integer, db.ForeignKey("pedidoproducao.id"), nullable=False)
     pedidosprod = db.relationship("PedidoProducao", back_populates="mixprodutos")
-
     producao_id = db.Column(db.Integer, db.ForeignKey("producao.id"), nullable=True)
-    producoes = db.relationship("Producao", back_populates="mixprodutos", uselist=False, single_parent=True, cascade="all, delete-orphan", foreign_keys="[Producao.mixproduto_id]")
-
+    producoes = db.relationship("Producao", back_populates="mixprodutos", cascade="all, delete-orphan", uselist=False, single_parent=True, foreign_keys="[Producao.mixproduto_id]")
     # TODO relacionamento com tabela PRODUTOS N/N
-    produtos = db.relationship("Produto", secondary="mixproduto_produto", back_populates="mixprodutos", lazy="joined")
+    produtos = db.relationship("Produto", secondary="mixproduto_produto", back_populates="mixprodutos", single_parent=True, cascade="all, delete-orphan", lazy="joined")
+    #quantidades = db.relationship("QuantidadeMixProdutos", back_populates="mix_produtos", cascade="all, delete-orphan", lazy="joined")
+
+# Novo modelo para armazenar quantidades
+class QuantidadeMixProdutos(db.Model):
+    __tablename__ = 'quantidade_mix_produtos'
+    id = db.Column(db.Integer, primary_key=True)
+    quantidade = db.Column(db.Float)
+    produto_id = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False)
+    mix_id = db.Column(db.Integer, db.ForeignKey('mixproduto.id'), nullable=False)
+    #mix_produtos = db.relationship('MixProduto', back_populates='quantidades', foreign_keys=[mix_id])
+    produto = db.relationship('Produto', back_populates='quantidades')
 
 class Producao(db.Model):
     __tablename__ = "producao"

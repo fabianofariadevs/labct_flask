@@ -1,30 +1,28 @@
 from sqlalchemy.orm import joinedload
-
 from api import app, api, db
-from flask import request, make_response, jsonify, render_template, redirect, url_for
+from flask import request, make_response, jsonify, render_template, redirect, url_for, flash
 from ..models.receita_model import Receita
 from ..models.estoque_model import Estoque
 from ..models.filial_pdv_model import Filial
 from ..services import mix_produto_service
 from ..paginate import paginate
-from ..models.mix_produto_model import MixProduto, Producao
+from ..models.mix_produto_model import MixProduto
 from ..schemas.receita_schema import ReceitaSchema
 from ..schemas.estoque_schema import EstoqueSchema
 from ..schemas import mix_produto_schema
-from ..models.produtoMp_model import Produto
+from ..models.produtoMp_model import Produto, mixproduto_produto
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, BooleanField
+from wtforms import StringField, SubmitField, SelectField, BooleanField, SelectMultipleField, FloatField, FieldList, \
+    FormField
 from wtforms.validators import DataRequired, ValidationError
 
 class MixProdutosForm(FlaskForm):
-    cod_prod_mix = StringField('Código do Produto', validators=[DataRequired()])
+    cod_prod_mix = StringField('Cód. MixProd', validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
     situacao = SelectField('Situação', choices=[("0", 'em Aberto'), ("1", 'em Produção'), ("2", 'Finalizado'), ("3", 'em Distribuição')], validators=[DataRequired()])
-    cadastrado_em = StringField('Cadastrado em', validators=[DataRequired()])
-    atualizado_em = StringField('Atualizado em', validators=[DataRequired()])
     receita = SelectField('Receita', validators=[DataRequired()], coerce=int)
-    produtos = SelectField('Produto', validators=[DataRequired()], coerce=int)
-    quantidade = StringField('Quantidade', validators=[DataRequired()])
+    produtos = SelectField('Produtos', validators=[DataRequired()])
+    #quantidade = FloatField('Quantidade',  render_kw={"placeholder": "Quantidade para cada produto"})
 
     submit = SubmitField('CadastrarMixProduto')
 
@@ -50,27 +48,28 @@ class MixProdutosForm(FlaskForm):
         return {
             "cod_prod_mix": self.cod_prod_mix.data,
             "status": self.status.data,
-            "situacao": self.situacao.data,
-            "cadastrado_em": self.cadastrado_em.data,
-            "atualizado_em": self.atualizado_em.data,
-            "receita": self.receita.data,
-            "produtos": self.produtos.data,
-            "quantidade": self.quantidade.data
+            "situacao": int(self.situacao.data) if self.situacao.data else None,
+            "receita": int(self.receita.data) if self.receita.data else None,
+            "produtos": int(self.produtos.data) if self.produtos.data else None,
         }
 
 @app.route('/mixprodutos', methods=['GET'])
 def listar_mixprodutos():
     if request.method == 'GET':
-        mixprodutos = MixProduto.query.options(joinedload("receita")).options(joinedload("filiais")).options(joinedload("pedidosprod")).options(joinedload("producoes")).options(joinedload("produtos")).all()
+        mixprodutos = mix_produto_service.listar_mixprodutos()
+        return render_template('mix_produto/mixproduto.html', mixprodutos=mixprodutos)
+
+@app.route('/mixprodutos', methods=['GET'])
+def listar_mixprodutos1():
+    if request.method == 'GET':
+        #mixprodutos = MixProduto.query.options(joinedload("receita")).options(joinedload("pedidosprod")).options(joinedload("producoes")).options(joinedload("produtos")).all()
+        mixprodutos = MixProduto.query.options(joinedload("receita")).all()
         mixprodutos_data = []
         for mixproduto in mixprodutos:
             mixproduto_dict = mix_produto_schema.MixProdutoSchema().dump(mixproduto)
 
             receita = mixproduto.receita
             mixproduto_dict['receita'] = receita.descricao_mix if receita else None
-
-            filiais = mixproduto.filiais
-            mixproduto_dict['filiais'] = filiais.nome if filiais else None
 
             pedidosprod = mixproduto.pedidosprod
 
@@ -86,9 +85,7 @@ def listar_mixprodutos():
                     "cadastrado_em": pedido.cadastrado_em,
                     "atualizado_em": pedido.atualizado_em,
                     "receitas": pedido.receitas,
-                    "filiais": pedido.filiais,
                     "cliente": pedido.cliente,
-                    "mixprodutos": pedido.mixprodutos,
                     "producoes": pedido.producoes if pedido.producoes else None
                 })
 
@@ -109,7 +106,6 @@ def listar_mixprodutos():
         return render_template('mix_produto/mixproduto.html', mixprodutos=mixprodutos_data, total_mixprodutos=total_mixprodutos,
                                total_mixprodutos_ativos=total_mixprodutos_ativos,
                                total_mixprodutos_inativos=total_mixprodutos_inativos)
-
 
 @app.route('/gerar_relatorio_estoque', methods=['GET'])
 def gerar_relatorio_estoque():
@@ -162,16 +158,92 @@ def adicionar_mixprodutos99(receita_id):
     produtos = Produto.query.all()
     return render_template('adicionar_produtos.html', receita=receita, produtos=produtos)
 
-@app.route('/adicionar_mixproduto/<int:receita_id>', methods=['GET', 'POST'])
-def adicionar_mixproduto(receita_id):
-    receita = Receita.query.get(receita_id)
-    form = MixProdutosForm(request.form)
-    if request.method == 'POST' and form.validate():
-        mix_produto = MixProduto(**form.to_dict())
-        db.session.add(mix_produto)
-        db.session.commit()
-        return render_template('mix_produto/ver_mix_produto.html', receita=receita, mix_produtos=mix_produto)
-    return render_template('adicionar_mixproduto.html', form=form, receita=receita)
+@app.route('/mixprodutos/formulario', methods=['GET', 'POST'])
+def adicionar_mixproduto():
+    form = MixProdutosForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            form_data = form.to_dict()
+            receita = form_data['receita']
+            produtos_com_quantidades = form_data.get('produtos', [])
+            mixproduto_bd = mix_produto_service.cadastrar_mixproduto(form_data)
+            for produto_data in produtos_com_quantidades:
+                produto_id = produto_data['produtos']
+                quantidade = produto_data['quantidade']
+                produto = Produto.query.get(produto_id)
+                mixproduto_bd.produtos.append(produto)
+                mixproduto_produto.quantidade = quantidade
+
+            mix_produto_service.salvar_mixproduto(mixproduto_bd)
+            flash("MixProduto cadastrado com sucesso!")
+            return redirect(url_for("listar_mixprodutos"))
+        except ValidationError as error:
+            flash("Erro ao cadastrar MixProduto")
+    return render_template('mix_produto/formmixproduto.html', form=form, mixproduto={})
+
+
+@app.route('/mixprodutos/<int:id>/', methods=['GET', 'POST'])
+def visualizar_mixproduto(id):
+    mixproduto = mix_produto_service.listar_mixproduto_id(id)
+    if not mixproduto:
+        return render_template("mix_produto/mixproduto.html", error_message="MixProduto não encontrado"), 404
+
+    if request.method == 'GET':
+        mixproduto_data = mix_produto_schema.MixProdutoSchema().dump(mixproduto)
+
+        receita = mixproduto.receita
+        mixproduto_data['receita'] = receita.descricao_mix if receita else None
+
+        pedidosprod = mixproduto.pedidosprod
+
+        # Ajuste para lidar com a lista de pedidosprod
+        pedidosprod_data = []
+        for pedido in pedidosprod:
+            pedidosprod_data.append({
+                "data_pedido": pedido.data_pedido if pedido.data_pedido else None,
+                "data_entrega": pedido.data_entrega if pedido.data_entrega else None,
+                "qtde_pedido": pedido.qtde_pedido if pedido.qtde_pedido else None,
+                "status": pedido.status,
+                "obs": pedido.obs,
+                "cadastrado_em": pedido.cadastrado_em,
+                "atualizado_em": pedido.atualizado_em,
+                "receitas": pedido.receitas,
+                "cliente": pedido.cliente,
+                "producoes": pedido.producoes if pedido.producoes else None
+            })
+
+        mixproduto_data['pedidosprod'] = pedidosprod_data
+
+        producoes = mixproduto.producoes
+        mixproduto_data['producoes'] = producoes.data_producao if producoes else None
+
+        produtos = mixproduto.produtos
+        mixproduto_data['produtos'] = produtos.nome if produtos else None
+
+        return render_template('mix_produto/detalhes.html', mixproduto=mixproduto_data)
+
+    elif request.method == 'POST':
+        if request.form.get('_method') == 'DELETE':
+            mixproduto = mix_produto_service.listar_mixproduto_id(id)
+            if mixproduto:
+                mix_produto_service.remove_mixproduto(mixproduto)
+                return redirect(url_for('listar_mixprodutos'))
+
+
+@app.route('/mixprodutos/<int:id>/atualizar', methods=['GET', 'POST', 'PUT'])
+def atualizar_mixproduto(id):
+    mixproduto = mix_produto_service.listar_mixproduto_id(id)
+    if not mixproduto:
+        return render_template("mix_produto/mixproduto.html", error_message="MixProduto não encontrado"), 404
+
+    form = MixProdutosForm(obj=mixproduto)
+    if form.validate_on_submit():
+        mixproduto_atualizado = MixProduto.query.get(id)
+        form.populate_obj(mixproduto_atualizado)
+        mix_produto_service.atualizar_mixproduto(mixproduto, mixproduto_atualizado)
+        return redirect(url_for("listar_mixprodutos"))
+
+    return render_template("mix_produto/formmixproduto.html", mixproduto=mixproduto, form=form), 400
 
 
 @app.route("/mixprodutos", methods=["GET"])
@@ -184,11 +256,4 @@ def listar_mixprodutos22():
 def localizar_mixproduto(id: int):
     mixproduto = mix_produto_service.listar_mixproduto_id(id)
     return jsonify(mix_produto_schema.MixProdutoSchema().dump(mixproduto))
-
-@app.route("/mixprodutos/<int:id>", methods=["PUT"])
-def atualizar_mixproduto(id: int):
-    schema = mix_produto_schema.MixProdutoSchema()
-    mixproduto = schema.load(request.json)
-    mix_produto_service.atualizar_mixproduto(mixproduto, id)
-    return jsonify(schema.dump(mixproduto))
 

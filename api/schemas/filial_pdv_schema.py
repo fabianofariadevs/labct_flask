@@ -28,7 +28,7 @@ class FilialSchema(ma.SQLAlchemyAutoSchema):
     atualizado_em = fields.DateTime(required=False)
 
     estoques = ma.Nested("EstoqueSchema", many=True, exclude=("filiais",))
-    mixprodutos = ma.Nested("MixProdutoSchema", many=True, exclude=("filiais",))
+    mixprodutos = ma.Nested("MixProdutoSchema", many=True, exclude=("filial",), only="")
     pedidosprod = ma.Nested("PedidoProducaoSchema", many=True, exclude=("filiais",))
     cliente = ma.Nested("ClienteSchema", many=False, only=('id', 'nome'))
     producoes = ma.Nested("ProducaoSchema", many=False, exclude=("filial",))

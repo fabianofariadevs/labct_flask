@@ -70,17 +70,20 @@
                         <i class="breadcrumb-item active fw-bold text-dark"> {{receita.descricao_mix}}</i>
                     </div>
                           <!-- Botão para abrir o modal de adicionar produtos e quantidades -->
-                    <div class="form-group">
                         <button type="button"  class="btn btn-outline-success" id="btn-adicionarProdutoModal" data-toggle="modal" data-target="#adicionarProdutoModal">
                             <i class="fa fa-save"></i>
                             Cadastrar/Remover Produtos Receita
                         </button>
-                    </div>
+
+                     <form action="{{ url_for('adicionar_produtos_receita', id=receita.id, _method='POST') }}">
+                        <input type="hidden" name="_method" value="POST">
+                        <button class="btn btn-success" type="submit" title="Add_Mix Receita"  onclick="return confirm('Deseja Add_Mix á Receita {{receita.descricao_mix}} ?')">Add_Mix Receita</button>
+                    </form>
                     <form id="delete-form" action="{{ url_for('visualizar_receita', id=receita.id, _method='POST') }}">
                         <input type="hidden" name="_method" value="DELETE">
                         <button class="btn btn-danger" type="submit" title="Excluir Receita"  onclick="return confirm('Deseja excluir a Receita {{receita.descricao_mix}} ?')">Excluir Receita</button>
                     </form>
-                      <!-- Modal para adicionar produtos e quantidades -->
+                      <!-- Modal para adicionar produtos e quantidades  == data-target ???-->
                     <div class="modal fade" id="adicionarProdutoModal" tabindex="-1" role="dialog" aria-labelledby="adicionarProdutoModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -92,15 +95,24 @@
                                 </div>
                                 <!-- Formulário para adicionar produtos e quantidades -->
                                 <div class="modal-body">
-                                    <form id="form-adicionar-produto" method="POST">
+<h2>Adicionar Produtos à Receita</h2>
+{% if receita %}
+  <form method="POST" action="{{ url_for('adicionar_produtos_receita', id=receita.id) }}">
 
-                                        <div class="form-group">
+    <div class="form-group">
 
-                                        </div>
-                                        <div class="form-group">
+    </div>
+       <div class="form-group">
 
-                                        </div>
-                                    </form>
+    </div>
+    <div class="form-group">
+
+    </div>
+  </form>
+{% else %}
+    <p>Nenhuma receita cadastrada para exibir!</p>
+{% endif %}
+
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>

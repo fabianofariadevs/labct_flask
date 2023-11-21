@@ -1,0 +1,170 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<!--* * #TODO Arquivo p views Detalhes_Receita_HTML, lista uma Receita e apresenta as todos os detalhes da Receita
+#     @author Fabiano Faria -->
+
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+		    <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="50" width="115"/>
+            </a>
+            <span class="badge rounded text-bg-secondary">TOTAL : </span>
+            <i class="fa-solid fa-circle text-success"></i><span class="badge rounded text-bg-success "> ativo</span>
+            <i class="fa-solid fa-circle text-danger"></i><span class="badge rounded text-bg-danger"> inativo </span>
+        </div>
+        <div>
+            <a href="{{ url_for('listar_mixprodutos') }}" class="btn btn-outline-dark" title="Voltar para lista de Mix Produtos">Voltar para lista de Mix Produtos</a>
+            <a href="{{ url_for('atualizar_mixproduto', id=mixproduto.id, _method='PUT') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Mix Produtos">Atualizar Mix Produtos</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive" style="width:100%">
+            <table class="table table-striped">
+                  <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>cod_prod_mix</th>
+                            <th>status</th>
+                            <th>situacao</th>
+                            <th>receita</th>
+                            <th>filiais</th>
+                            <th>Produção</th>
+                            <th>Cadastrado_em</th>
+                            <th>Atualizado_em</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for mixprodutos in mixprodutos %}
+                        <tr>
+                            <td>{{mixprodutos.id}}</td>
+                            <td>{{mixprodutos.cod_prod_mix}}</td>
+                             <td class="text-center">
+                                    {% if mixprodutos.status == 1 %}
+                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                    {% else %}
+                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                    {% endif %}
+                                </td>
+                            <td class="text-center">
+                                {% if mixprodutos.situacao == 0 %}
+                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Em Aberto">Aberto</i>
+                                {% endif %}
+                                {% if mixprodutos.situacao == 1 %}
+                                <i class="fa-solid fa-circle text-warning" rel="tooltip" title="Em Produção">Produção</i>
+                                {% endif %}
+                                {% if mixprodutos.situacao == 2 %}
+                                <i class="fa-solid fa-circle text-secondary" rel="tooltip" title="Finalizado">Finalizado</i>
+                                {% endif %}
+                                {% if mixprodutos.situacao == 3 %}
+                                <i class="fa-solid fa-circle text-info" rel="tooltip" title="Em Distribuição">Em Distribuição</i>
+                                {% else %}
+                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                {% endif %}
+
+                            </td>
+                            <td>{{mixprodutos.receita}}</td>
+                            <td>{{mixprodutos.filiais}}</td>
+                            <td>{{mixprodutos.producoes}}</td>
+                            <td>{{mixprodutos.cadastrado_em}}</td>
+                            <td>{{mixprodutos.cadastrado_em}}</td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                    <div class="row">
+                        <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fw-bold text-secondary">Detalhes do MixProduto :</i> ('id': {{mixprodutos.id}})
+                                <i class="breadcrumb-item active fw-bold text-dark">{{mixprodutos.receita}}   ___</i>Consultar Detalhes___
+                                    <a href="#" data-toggle="modal" data-target="#consultaModal">
+                                    <i class="fa-solid fa-circle text-success"></i>
+
+                                    <span class="text-dark text-bg-success"></span>
+                                    </a>
+                            </div>
+                            <div>
+                                <form id="delete-form" action="#" method="post">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                        <a href="#" class="btn btn-outline-primary" title="Atualizar Mix">Atualizar</a>
+                                    <button class="btn btn-danger" type="submit" title="Excluir Mix e suas ligações"  onclick="return confirm('Deseja excluir o Mix {{mixprodutos.receita}}?')">Excluir Mix</button>
+                                </form>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+              </table>
+       </div>
+            <!--inicio DA div detalhes abaixo tabela detalhes cliente-->
+            <div class="row card-header bg-secondary">
+                 <!--INICIO ULTIMOS PEDIDOS DE COMPRAS FILIAIS/FABRICA-->
+                 <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
+                    <div class="card border-0 shadow-sm  h-100">
+                        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
+                            <h6 class="fw-bold text-secondary">
+                                Pedidos de Produção Filiais_PDV
+                            </h6>
+
+                            <a href="{{ url_for('listar_pedidosprod') }}" class="fs-5" rel="tooltip" title="Cadastrar Pedidos de Produção">
+                                <i class="fa-solid fa-circle-plus"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            {% if mixprodutos.pedidosprod %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th class="text-center">Filial</th>
+                                            <th class="text-center">Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for pedido in mixprodutos.pedidosprod %}
+                                        <tr>
+                                            <td>
+                                                <span>
+                                                    {% if pedido.status == 1 %}
+                                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                    {% else %}
+                                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                    {% endif %}
+                                                </span>
+                                                {{pedido.data_pedido}}
+                                            </td>
+                                             <td class="text-center">
+                                                {{pedido.filiais}}
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="#" rel="tooltip" title="Editar">
+                                                    <i class="fa-solid fa-pen m-1"></i>
+                                                </a>
+                                                <a href="#" rel="tooltip" title="Deletar">
+                                                    <i class="fa-solid fa-trash m-1"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {%endfor%}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-warning" role="alert">
+                                Nenhum Pedido de Produção Cadastrado para exibir!
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}

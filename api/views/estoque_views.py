@@ -51,7 +51,7 @@ def historicopedidos():
 
     if request.method == 'GET':
         # Carregar os pedidos e usar a opção joinedload para incluir os objetos relacionados (produtos) na consulta
-        pedidos = Pedido.query.options(joinedload('produtos')).all()
+        pedidos = Pedido.query.options(joinedload('produtos')).options(joinedload('fornecedores')).options(joinedload('clientes')).all()
         for pedido in pedidos:
             pedido_dict = pedido_schemas.PedidoSchema().dump(pedido)
 
@@ -66,7 +66,7 @@ def historicopedidos():
             fornecedor = pedido.fornecedores
             pedido_dict['fornecedores'] = fornecedor.nome if fornecedor else 'Fornecedor não encontrado'
 
-            # Obter o nome da filial
+            # Obter o nome do Cliente
             cliente = pedido.clientes
             pedido_dict['clientes'] = cliente.nome if cliente else 'Cliente não encontrado'
 
@@ -76,7 +76,7 @@ def historicopedidos():
         total_pedidos_ativos = len([pedido for pedido in pedidos if pedido.status == 1])
         total_pedidos_inativos = len([pedido for pedido in pedidos if pedido.status == 0])
 
-        pedidosprod = PedidoProducao.query.options(joinedload('receitas')).all()
+        pedidosprod = PedidoProducao.query.options(joinedload('receitas')).options(joinedload('filiais')).all()
         for pedido in pedidosprod:
             pedido_dict = pedido_schemas.PedidoProducaoSchema().dump(pedido)
 
@@ -85,11 +85,11 @@ def historicopedidos():
 
             # Verificar se o objeto da Receita está presente e obter o nome, caso contrário, usar uma mensagem padrão
             receita = pedido.receitas
-            pedido_dict['receita_id'] = receita.descricao_mix if receita else 'Receita não encontrado'
+            pedido_dict['receitas'] = receita.descricao_mix if receita else 'Receita não encontrado'
 
             # Obter o nome do Filial
             filial = pedido.filiais
-            pedido_dict['filial_pdv'] = filial.nome if filial else 'Filial não encontrado'
+            pedido_dict['filiais'] = filial.nome if filial else 'Filial não encontrado'
 
             pedidosprod_data.append(pedido_dict)
 

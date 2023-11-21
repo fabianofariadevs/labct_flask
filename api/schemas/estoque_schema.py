@@ -11,7 +11,7 @@ class EstoqueSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         include_relationships = True # Inclui automaticamente os relacionamentos
         fields = ("id", "nome", "validade", "valor_ultima_compra", "quantidade_minima", "obs", "quantidade_atual", "status", "cadastro_em", "atualizado_em",
-                  "produto", "cliente", "filiais")
+                  "produto", "fornecedor", "cliente", "filiais")
 
     nome = fields.String(required=False)
     validade = fields.Date(required=True)

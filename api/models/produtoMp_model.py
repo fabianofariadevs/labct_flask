@@ -7,7 +7,6 @@ from sqlalchemy.orm import relationship
 mixproduto_produto = db.Table('mixproduto_produto',
                               db.Column('produto_id', db.Integer, db.ForeignKey('produto.id'), primary_key=True),
                               db.Column('mixproduto_id', db.Integer, db.ForeignKey('mixproduto.id'), primary_key=True),
-                              db.Column('qtde_produto', db.Integer, nullable=False, default=0)
                               )
 
 class Produto(db.Model):
@@ -45,7 +44,7 @@ class Produto(db.Model):
     pedidos_compra = db.relationship("Pedido", back_populates="produtos")
 
     # TODO Relacionamento com a tabela mixproduto N/N
-    mixprodutos = db.relationship("MixProduto", secondary="mixproduto_produto", back_populates="produtos")
+    mixprodutos = db.relationship("MixProduto", secondary="mixproduto_produto", back_populates="produtos", single_parent=True, cascade="all, delete-orphan", lazy="joined")
 
     # Relacionamento com a tabela Receita N/N
     #receitas = db.relationship("Receita", secondary="receita_produto", back_populates="produtos_receita", lazy="dynamic")
@@ -55,6 +54,7 @@ class Produto(db.Model):
     inventario_id = db.Column(db.Integer, db.ForeignKey('inventario.id'), nullable=True)
     inventario = db.relationship("Inventario", back_populates="produto", foreign_keys=[inventario_id])
 
+    quantidades = db.relationship("QuantidadeMixProdutos", back_populates="produto", cascade="all, delete-orphan", lazy="joined")
 
 class Inventario(db.Model):
     __tablename__ = 'inventario'

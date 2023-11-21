@@ -71,12 +71,24 @@ def atualizar_pedido(id):
     if request.method == 'POST' and form.validate_on_submit():
         pedido_atualizado = Pedido.query.get(id)
         form.populate_obj(pedido_atualizado)
+        #obter id produto selecionado
+        produto_id = form.produtos.data
+        #atualiza o produto associado ao pedido
+        pedido_atualizado.produtos = Produto.query.get(produto_id)
+        #obter id cliente selecionado
+        cliente_id = form.clientes.data
+        #atualiza o cliente associado ao pedido
+        pedido_atualizado.clientes = Cliente.query.get(cliente_id)
+        #obter id fornecedor selecionado
+        fornecedor_id = form.fornecedores.data
+        #atualiza o fornecedor associado ao pedido
+        pedido_atualizado.fornecedores = Fornecedor.query.get(fornecedor_id)
+
         pedido_service.atualiza_pedido(pedido, pedido_atualizado)
-        flash("Pedido de Compra atualizado com sucesso!")
+        flash("Pedido atualizado com sucesso!")
         return redirect(url_for("listar_pedidos"))
 
     return render_template("pedidos/formpedido.html", pedido=pedido, form=form), 400
-
 
 @app.route('/pedidos/buscar', methods=['GET'])
 def buscar_pedido():

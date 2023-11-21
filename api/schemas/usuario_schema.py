@@ -22,7 +22,22 @@ class UsuarioSchema(ma.SQLAlchemyAutoSchema):
     api_key = fields.String(required=False)
 
     cliente = ma.Nested(cliente_schema.ClienteSchema, exclude=("usuarios",), load_only=True)
-    funcao = ma.Nested("FuncaoSchema", many=False, exclude=("usuarios",), load_only=True)
+    funcao = ma.Nested("FuncaoSchema", many=False, exclude=("usuarios",), load_only=True, only=("id", "nome"))
     producoes = ma.Nested("ProducaoSchema", many=False, exclude=("usuario",), load_only=True)
 
+class FuncaoSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = usuario_model.Funcao
+        load_instance = True
+        fields = ("id", "nome", "cadastrado_em", "atualizado_em",
+                  "usuarios", "cliente")
+        many = True
+        unknown = 'EXCLUDE'
+
+    id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
+    nome = fields.String(required=True)
+    cadastrado_em = fields.DateTime(required=False)
+    atualizado_em = fields.DateTime(required=False)
+    cliente = ma.Nested(cliente_schema.ClienteSchema, exclude=("usuarios",), load_only=True)
+    usuarios = ma.Nested(UsuarioSchema, exclude=("cliente",), load_only=True)
 

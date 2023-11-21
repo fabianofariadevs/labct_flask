@@ -39,28 +39,38 @@ def listar_produto_id(id):
     produto = produtoMp_model.Produto.query.filter_by(id=id).first()
     return produto
 
-def atualiza_produto(produto, produto_novo, form_data):
+def atualiza_produto(produto, fornecedor_id, form_data):
     if produto:
-        fornecedor_id = form_data['fornecedor']
-        fornecedor = fornecedor_model.Fornecedor.query.get(fornecedor_id)
-        produto_novo.fornecedor = fornecedor
-        produto.nome = produto_novo.nome
-        produto.descricao = produto_novo.descricao
-        produto.quantidade = produto_novo.quantidade
-        produto.compra_unid = produto_novo.compra_unid
-        produto.peso_pcte = produto_novo.peso_pcte
-        produto.valor = produto_novo.valor
-        produto.custo_ultima_compra = produto_novo.custo_ultima_compra
-        produto.whatsapp = produto_novo.whatsapp
-        produto.qrcode = produto_novo.qrcode
-        produto.status = produto_novo.status
-        produto.estoque_minimo = produto_novo.estoque_minimo
-        produto.obs = produto_novo.obs
-        produto.atualizado_em = func.now()
+        fornecedor = fornecedor_service.listar_fornecedor_id(fornecedor_id)
+        if fornecedor:
+            campos_obrigatorios = ['nome', 'descricao', 'quantidade', 'compra_unid', 'peso_pcte', 'valor', 'custo_ultima_compra', 'whatsapp', 'qrcode', 'status', 'estoque_minimo', 'obs']
+            for campo in campos_obrigatorios:
+                if campo not in form_data:
+                    raise ValueError(f"Campo obrigatório {campo} não informado")
 
-        db.session.commit()
-        db.session.refresh(produto)
-        return produto
+            produto.fornecedor = fornecedor
+            produto.nome = form_data['nome']
+            produto.descricao = form_data['descricao']
+            produto.quantidade = form_data['quantidade']
+            produto.compra_unid = form_data['compra_unid']
+            produto.peso_pcte = form_data['peso_pcte']
+            produto.valor = form_data['valor']
+            produto.custo_ultima_compra = form_data['custo_ultima_compra']
+            produto.whatsapp = form_data['whatsapp']
+            produto.qrcode = form_data['qrcode']
+            produto.status = form_data['status']
+            produto.estoque_minimo = form_data['estoque_minimo']
+            produto.obs = form_data['obs']
+            produto.atualizado_em = func.now()
+
+            db.session.commit()
+
+            return produto
+        else:
+            raise ValueError(f"Fornecedor não encontrado")
+    else:
+        raise ValueError(f"Produto não encontrado")
+
     
 def remove_produto(produto):
     db.session.delete(produto)

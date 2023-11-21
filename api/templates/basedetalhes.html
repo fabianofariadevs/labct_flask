@@ -23,13 +23,46 @@
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="consultaModalLabel">Observações....Abertos/Pendentes</h5>
+				<h5 class="modal-title" id="consultaModalLabel">Observações....Pendências Filiais?</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
 					<span aria-hidden="true">OK</span>
 				</button>
 			</div>
 			<div class="modal-body">
 				{% block modal_content %}{% endblock %}
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Modal para estoque Cliente -->
+<div class="modal fade" id="consultaclienteestoqueModal" tabindex="-1" role="dialog" aria-labelledby="consultaclienteestoqueModalLabel">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="consultaclienteestoqueModalLabel">Relação Estoque</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">OK</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				{% block modal_contentclienteestoque %}{% endblock %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal para Receita Cliente -->
+<div class="modal fade" id="consultaclientereceitaModal" tabindex="-1" role="dialog" aria-labelledby="consultaclientereceitaModalLabel">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="consultaclientereceitaModalLabel">Receitas Cadastradas</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">OK</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				{% block modal_contentclientereceita %}{% endblock %}
 			</div>
 		</div>
 	</div>

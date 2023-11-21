@@ -197,3 +197,27 @@ class Cliente:
             "estoques": self.__estoques
 
         }
+
+    def query(self):
+        return {
+            "nome": self.__nome,
+            "endereco": self.__endereco,
+            "bairro": self.__bairro,
+            "cidade": self.__cidade,
+            "estado": self.__estado,
+            "telefone": self.__telefone,
+            "email": self.__email,
+            "responsavel": self.__responsavel,
+            "whatsapp": self.__whatsapp,
+            "cnpj": self.__cnpj,
+            "status": self.__status,
+            "filiais": self.__filiais,
+            "cadastrado_em": self.__cadastrado_em,
+            "atualizado_em": self.__atualizado_em,
+            "receitas": self.__receitas,
+            "pedidosprod": self.__pedidosprod,
+            "pedido_compra": self.__pedido_compra,
+            "usuarios": self.__usuarios,
+            "estoques": self.__estoques
+
+        }
