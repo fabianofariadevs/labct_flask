@@ -33,8 +33,6 @@
                         <th>Validade</th>
                         <th>Usuario</th>
                         <th>Clientes/Fábrica</th>
-                        <th>MixProdutos</th>
-                        <th>pedidosprod</th>
                         <th class="text-center">Status</th>
                         <th class="text-center">Cadastrado_em</th>
                         <th class="text-center">Atualizado_em</th>
@@ -51,9 +49,13 @@
                         <td>{{receita.validade}}</td>
                         <td>{{receita.usuario}}</td>
                         <td>{{receita.cliente.nome}}</td>
-                        <td>{{receita.mixprodutos}}</td>
-                        <td>{{receita.pedidosprod}}</td>
-                        <td class="text-center">{{receita.status}}</td>
+                        <td class="text-center">
+                            {% if receita.status == 1 %}
+                            <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i> Ativo
+                            {% else %}
+                            <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i> Inativo
+                            {% endif %}
+                        </td>
                         <td class="text-center">{{receita.cadastrado_em}}</td>
                         <td class="text-center">{{receita.atualizado_em}}</td>
                     </tr>
@@ -61,7 +63,7 @@
             <div class="row">
                 <div class="card-header border-0 d-flex justify-content-between align-items-center">
                     <div>
-                        <i class="fw-bold text-secondary"> Detalhes Receitas : </i> id: {{receita.id}} .
+                        <i class="fw-bold text-secondary"> Detalhes Receitas : </i> id: {{receita.id}}.
                             <a href="#" data-toggle="modal" data-target="#consultaModal">
                                 <i class="fa-solid fa-circle text-success"> </i>
                                 Pendências
@@ -75,44 +77,38 @@
                             Cadastrar/Remover Produtos Receita
                         </button>
 
+
+
                      <form action="{{ url_for('adicionar_produtos_receita', id=receita.id, _method='POST') }}">
                         <input type="hidden" name="_method" value="POST">
-                        <button class="btn btn-success" type="submit" title="Add_Mix Receita"  onclick="return confirm('Deseja Add_Mix á Receita {{receita.descricao_mix}} ?')">Add_Mix Receita</button>
-                    </form>
-                    <form id="delete-form" action="{{ url_for('visualizar_receita', id=receita.id, _method='POST') }}">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <button class="btn btn-danger" type="submit" title="Excluir Receita"  onclick="return confirm('Deseja excluir a Receita {{receita.descricao_mix}} ?')">Excluir Receita</button>
-                    </form>
-                      <!-- Modal para adicionar produtos e quantidades  == data-target ???-->
+                        <button class="btn btn-outline-success" type="submit" title="Add_Mix Receita"  onclick="return confirm('Deseja Add_Mix á Receita {{receita.descricao_mix}} ?')">Add_Mix Receita</button>
+                     </form>
+
+                     <a href="{{ url_for('deletar_receita', id=receita.id, _method='DELETE') }}" onclick="return confirm('Deseja EXCLUIR á Receita {{receita.descricao_mix}} ?')" class="btn btn-outline-danger" title="Excluir Receita">Excluir Receita</a>
+
+
+
+                    <!-- Modal para adicionar produtos e quantidades -->
                     <div class="modal fade" id="adicionarProdutoModal" tabindex="-1" role="dialog" aria-labelledby="adicionarProdutoModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="adicionarProdutoModalLabel">Adicionar Produtos e Quantidades</h5>
+                                    <h5 class="modal-title" id="adicionarProdutoModalLabel">Adicionar Produto e Quantidade</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <!-- Formulário para adicionar produtos e quantidades -->
                                 <div class="modal-body">
-<h2>Adicionar Produtos à Receita</h2>
-{% if receita %}
-  <form method="POST" action="{{ url_for('adicionar_produtos_receita', id=receita.id) }}">
+                                    <form id="form-adicionar-produto" method="POST">
+                                        <input type="hidden">
 
-    <div class="form-group">
+                                        <div class="form-group">
 
-    </div>
-       <div class="form-group">
+                                        </div>
+                                        <div class="form-group">
 
-    </div>
-    <div class="form-group">
-
-    </div>
-  </form>
-{% else %}
-    <p>Nenhuma receita cadastrada para exibir!</p>
-{% endif %}
-
+                                        </div>
+                                    </form>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -122,6 +118,14 @@
                             </div>
                         </div>
                     </div>
+
+
+
+
+
+
+<!-- Adicione este código no final do seu arquivo HTML, antes do fechamento da tag </body> -->
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 
                 </div>
 
@@ -137,39 +141,36 @@
                             <h6 class="fw-bold text-secondary">
                                 Ultimas Receitas Cadastrados
                             </h6>
-
                             <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Receita">
                                 <i class="fa-solid fa-circle-plus"></i>
                             </a>
                         </div>
                         <div class="card-body">
-                            {% if receita %}
+                            {% if receita_data %}
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-
                                             <th>Descrição</th>
                                             <th class="text-center">Fábrica</th>
                                             <th class="text-center">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for receita in receitas %}
+                                        {% for receita in receita_data %}
                                         <tr>
-
                                             <td>
                                                 <span>
                                                     {% if receita.status == 1 %}
-                                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i> Ativo
                                                     {% else %}
-                                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i> Inativo
                                                     {% endif %}
                                                 </span>
-                                                {{receita.Descriçao_mix}}
+                                                {{receita.descriçao_mix}}
                                             </td>
                                             <td class="text-center">
-                                                {{receita.cliente.nome}}
+                                                {{receita.cliente}}
                                             </td>
                                             <td class="text-center">
                                                 <a href="#" rel="tooltip" title="Editar">
@@ -232,7 +233,7 @@
                                                 {{pedido.qtde_pedido}}
                                             </td>
                                             <td class="text-center">
-                                                {{pedido.filiais}}
+                                                {{pedido.data_entrega}}
                                             </td>
                                             <td class="text-center">
                                                 <a href="#" rel="tooltip" title="Editar">
@@ -257,7 +258,7 @@
                 </div>
                 <!--FIM ULTIMOS PEDIDOS DE PRODUÇÃO RECEITA-->
 
-                <!--INICIO PRODUTOS RECEITA-->
+                <!--INICIO MIXPRODUTOS DA RECEITA-->
                 <div class="col-sm-6 col-md-6 col-xl-4 mb-4">
                     <div class="card border-0 shadow-sm  h-100">
                         <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
@@ -269,19 +270,19 @@
                             </a>
                         </div>
                         <div class="card-body">
-                            {% if mix_produtos %}
+                            {% if receita_data.mixprodutos %}
                            <h3>Mix de Produtos</h3>
                                 <ul>
-                                    {% for mix_produto in receita.mix_produtos %}
-                                        <li>{{ mix_produto.produto }} - {{ mix_produto.quantidade }} unidades</li>
+                                    {% for mix_produto in receita_data.mixprodutos %}
+                                        <li>{{ mix_produto.produtos }} - {{ mix_produto.quantidades }} unidades</li>
                                     {% endfor %}
                                 </ul>
 
                                 <h3>Adicionar Produto ao Mix</h3>
                                 <form method="POST">
                                     {{ form.hidden_tag() }}
-                                    {{ form.produto.label }} {{ form.produto() }}
-                                    {{ form.quantidade.label }} {{ form.quantidade() }}
+                                    {{ form.produtos.label }} {{ form.produtos() }}
+                                    {{ form.quantidades.label }} {{ form.quantidades() }}
                                     {{ form.submit() }}
                                 </form>
 
@@ -335,7 +336,7 @@
                                     <th class="text-center">Rend_unid</th>
                                     <th>Validade</th>
                                     <th>Usuario</th>
-                                    <th>Clientes/Fábrica</th
+                                    <th>Clientes/Fábrica</th>
                                     <th>MixProdutos</th>
                                     <th>pedidosprod</th>
                                     <th class="text-center">Status</th>

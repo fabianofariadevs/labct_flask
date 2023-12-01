@@ -7,6 +7,11 @@ from datetime import datetime
 
 estoque_filial = db.Table("estoque_filial", db.Column("estoque_id", db.Integer, db.ForeignKey("estoque.id"), primary_key=True),
                           db.Column("filial_id", db.Integer, db.ForeignKey("filial.id"), primary_key=True))
+# TODO RELACIONAMENTO N/N PedidoProdução_Filial
+#       @Author Fabiano Faria
+pedido_producao_filial = db.Table("pedidoproducao_filial", db.Column("pedidoproducao_id", db.Integer, db.ForeignKey("pedidoproducao.id"), primary_key=True),
+                                  db.Column("filial_id", db.Integer, db.ForeignKey("filial.id"), primary_key=True))
+
 
 class Filial(db.Model):
     __tablename__ = "filial"
@@ -27,12 +32,9 @@ class Filial(db.Model):
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
     # TODO Relacionamento com a tabela Estoque N/N
     estoques = db.relationship("Estoque", secondary="estoque_filial", back_populates="filiais")
-    # TODO Relacionamento com a tabela Mixproduto N/N
-    #mixproduto_id = db.Column(db.Integer, db.ForeignKey("mixproduto.id"), nullable=False)
-    mixprodutos = db.relationship("MixProduto", secondary="mixproduto_filial", back_populates="filiais", primaryjoin="Filial.id==mixproduto_filial.c.filial_id", lazy="joined")
+    # TODO Relacionamento com a tabela PedidoProducao N/N
+    pedidosprod = db.relationship("PedidoProducao", secondary="pedidoproducao_filial", back_populates="filiais")
     # TODO Relacionamento com a tabela Filial 1/1
     cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
     cliente = db.relationship("Cliente", back_populates="filiais", overlaps="filiais", foreign_keys=[cliente_id])
-    #pedidosprod_id = db.Column(db.Integer, db.ForeignKey("pedidoproducao.id"), nullable=False)
-    pedidosprod = db.relationship("PedidoProducao", back_populates="filiais")
     producoes = db.relationship("Producao", back_populates="filial", uselist=False, cascade="all, delete-orphan", lazy="joined")

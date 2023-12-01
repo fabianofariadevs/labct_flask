@@ -97,17 +97,17 @@ class Pedido:
 
 
 class PedidoProducao:
-    def __init__(self, data_pedido, data_entrega, qtde_pedido, status, obs, cadastrado_em, atualizado_em,
-                 receitas, filiais, cliente, mixprodutos, producoes):
+    def __init__(self, data_pedido, data_entrega, qtde_pedido, situacao, status, obs, cadastrado_em, atualizado_em,
+                 filiais, cliente, mixprodutos, producoes):
 
         self.__data_pedido = data_pedido
         self.__data_entrega = data_entrega
         self.__qtde_pedido = qtde_pedido
+        self.__situacao = situacao
         self.__status = status
         self.__obs = obs
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
-        self.__receitas = receitas
         self.__filiais = filiais
         self.__cliente = cliente
         self.__mixprodutos = mixprodutos
@@ -128,6 +128,14 @@ class PedidoProducao:
     @data_entrega.setter
     def data_entrega(self, data_entrega):
         self.__data_entrega = data_entrega
+
+    @property
+    def situacao(self):
+        return self.__situacao
+
+    @situacao.setter
+    def situacao(self, situacao):
+        self.__situacao = situacao
 
     @property
     def status(self):
@@ -168,14 +176,6 @@ class PedidoProducao:
     @atualizado_em.setter
     def atualizado_em(self, atualizado_em):
         self.__atualizado_em = atualizado_em
-
-    @property
-    def receitas(self):
-        return self.__receitas
-
-    @receitas.setter
-    def receitas(self, receitas):
-        self.__receitas = receitas
 
     @property
     def filiais(self):

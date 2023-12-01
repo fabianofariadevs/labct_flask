@@ -40,11 +40,9 @@
             <table class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th>id</th>
                         <th>Cod_prod_mix</th>
                         <th>Receita</th>
                         <th class="text-center">Status</th>
-                        <th class="text-center">Situacao</th>
                         <th>Cadastrado_em</th>
                         <th>Atualizado_em</th>
                         <th class="text-center">Acões</th>
@@ -53,33 +51,16 @@
                 <tbody>
                 {% for mixproduto in mixprodutos %}
                     <tr>
-                        <td>{{mixproduto.id}}</td>
                         <td>{{mixproduto.cod_prod_mix}}</td>
                         <td>{{mixproduto.receita.descricao_mix}}</td>
                         <td class="text-center">
                             {% if mixproduto.status == 1 %}
-                            <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                            <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i> Ativo
                             {% else %}
-                            <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                            <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i> Inativo
                             {% endif %}
                         </td>
-                        <td class="text-center">
-                            {% if mixproduto.situacao == 0 %}
-                            <i class="fa-solid fa-circle text-success" rel="tooltip" title="Em Aberto">Aberto</i>
-                            {% endif %}
-                            {% if mixproduto.situacao == 1 %}
-                            <i class="fa-solid fa-circle text-warning" rel="tooltip" title="Em Produção">Produção</i>
-                            {% endif %}
-                            {% if mixproduto.situacao == 2 %}
-                            <i class="fa-solid fa-circle text-secondary" rel="tooltip" title="Finalizado">Finalizado</i>
-                            {% endif %}
-                            {% if mixproduto.situacao == 3 %}
-                            <i class="fa-solid fa-circle text-info" rel="tooltip" title="Em Distribuição">Em Distribuição</i>
-                            {% else %}
-                            <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
-                            {% endif %}
-                        </td>
-                        <td>{{mixprodutos.cadastrado_em}}</td>
+                        <td>{{mixproduto.cadastrado_em}}</td>
                         <td>{{mixproduto.atualizado_em}}</td>
                         <td class="text-center">
                             <a href="{{ url_for('visualizar_mixproduto', id=mixproduto.id, _method='GET') }}" class="btn btn-info" role="button">Detalhes</a>
@@ -129,7 +110,7 @@
                                              {{producao.data_producao}}
                                         </td>
                                         <td class="text-center">
-                                            {{producao.mixprodutos}}
+                                            {{producao.pedidosprod}}
                                         </td>
                                          <td class="text-center">
 
@@ -221,12 +202,12 @@
             </div>
             <!--FIM ULTIMOS PEDIDOS DE PRODUÇÃO-->
 
-            <!--INICIO RELAÇÃO FILIAIS CLIENTES-->
+            <!--INICIO PENDENCIAS DE MIX_RECEITAS-->
             <div class="col-sm-6 col-md-6 col-xl-4 mb-4">
                 <div class="card border-0 shadow-sm  h-100">
                     <div class="card-header bg-white border-0 mt-2">
                         <h6 class="fw-bold text-secondary">
-                            Filiais PDV Relacionadas
+                            Pendentes para Add Mix_Receitas
                         </h6>
                     </div>
                     <div class="card-body">
@@ -275,7 +256,7 @@
                     {% else %}
                     </div>
                     <div class="alert alert-warning" role="alert">
-                        Nenhuma Filial vinculada ao Mix !
+                        Nenhuma Receita Pendente de Mix_Produtos !
                     </div>
                     {% endif %}
                 </div>

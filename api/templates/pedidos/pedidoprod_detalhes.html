@@ -16,7 +16,7 @@
         </div>
         <div>
         <a href="{{ url_for('listar_pedidosprod') }}" class="btn btn-outline-dark" title="Voltar para lista de Pedidos Produção">Voltar para lista de Pedidos Produção</a>
-        <a href="{{ url_for('atualizar_pedidoprod', id=pedidoprod.id, _method='POST') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Pedido de Produção">Atualizar P.Produção</a>
+        <a href="{{ url_for('atualizar_pedidoprod', id=pedidoprodu.id, _method='POST') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Pedido de Produção">Atualizar P.Produção</a>
         </div>
     </div>
     <div class="card-body">
@@ -27,7 +27,6 @@
                             <th>id</th>
                             <th>Data_pedido</th>
                             <th>Qtde_pedido</th>
-                            <th>Receita</th>
                             <th>Situação</th>
                             <th>Filial</th>
                             <th>Data_entrega</th>
@@ -39,27 +38,26 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{pedidoprod.id}}</td>
-                            <td>{{pedidoprod.data_pedido}}</td>
-                            <td>{{pedidoprod.qtde_pedido}}</td>
-                            <td>{{pedidoprod.receitas}}</td>
-                            <td>{{pedidoprod.mixprodutos}}</td>
-                            <td>{{pedidoprod.filiais}}</td>
-                            <td>{{pedidoprod.data_entrega}}</td>
-                            <td>{{pedidoprod.obs}}</td>
-                            <td>{{pedidoprod.status}}</td>
-                            <td>{{pedidoprod.cadastrado_em}}</td>
-                            <td>{{pedidoprod.atualizado_em}}</td>
+                            <td>{{pedidoprodu.id}}</td>
+                            <td>{{pedidoprodu.data_pedido}}</td>
+                            <td>{{pedidoprodu.qtde_pedido}}</td>
+                            <td>{{pedidoprodu.situacao}}</td>
+                            <td>{{pedidoprodu.filiais}}</td>
+                            <td>{{pedidoprodu.data_entrega}}</td>
+                            <td>{{pedidoprodu.obs}}</td>
+                            <td>{{pedidoprodu.status}}</td>
+                            <td>{{pedidoprodu.cadastrado_em}}</td>
+                            <td>{{pedidoprodu.atualizado_em}}</td>
                     </tbody>
                   <div class="row">
                       <div class="card-header border-0 d-flex justify-content-between align-items-center">
                           <div>
-                            <i class="fw-bold text-secondary"> Detalhes Pedido de PRODUÇÃO : </i>('id': {{pedidoprod.id}})
-                            <i class="breadcrumb-item active fw-bold text-dark"> {{pedidoprod.receita_id}}</i>
+                            <i class="fw-bold text-secondary"> Detalhes Pedido de PRODUÇÃO : </i>('id': {{pedidoprodu.id}})
+                            <i class="breadcrumb-item active fw-bold text-dark"> {{pedidoprodu.mixprodutos}}</i>
                           </div>
-                           <form id="delete-form" action="{{ url_for('visualizar_pedidoprod', id=pedidoprod.id, _method='POST') }}" method="post">
+                           <form id="delete-form" action="{{ url_for('visualizar_pedidoprod', id=pedidoprodu.id, _method='POST') }}" method="post">
                                 <input type="hidden" name="_method" value="DELETE">
-                                <button class="btn btn-danger" type="submit" title="Excluir Pedido de Produção e suas ligações"  onclick="return confirm('Deseja excluir o Pedido de Produção {{pedidoprod.receita_id}}?')">Excluir Pedido Produção</button>
+                                <button class="btn btn-outline-danger" type="submit" title="Excluir Pedido de Produção e suas ligações"  onclick="return confirm('Deseja excluir o Pedido de Produção {{pedidoprodu.receita}}?')">Excluir Pedido Produção</button>
                             </form>
                       </div>
                       <hr>
@@ -81,22 +79,21 @@
                         </a>
                     </div>
                     <div class="card-body">
-                        {% if pedidoprod.mixprodutos %}
+                        {% if pedidoprodu.producoes %}
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
 
-                                        <th>Fábrica</th>
-                                        <th class="text-center">Filial</th>
-                                        <th class="text-center">Situação</th>
+                                        <th>Filial</th>
+                                        <th class="text-center">Produção</th>
                                         <th class="text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for pedido in pedidoprod.mixprodutos %}
+                                    {% for pedido in pedidoprodu.producoes %}
                                     <tr>
-
+                                    {{pedido.cliente}}
                                         <td>
                                             <span>
                                                 {% if pedido.status == 1 %}
@@ -105,10 +102,10 @@
                                                 <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
                                                 {% endif %}
                                             </span>
-                                            {{pedido.cliente}}
+                                            {{pedido.filial}}
                                         </td>
                                         <td class="text-center">
-                                            {{pedido.filiais}}
+                                            {{pedido.data_producao}}
                                         </td>
                                         <td class="text-center">
                                             <a href="#" rel="tooltip" title="Editar">
@@ -145,7 +142,7 @@
                         </a>
                     </div>
                     <div class="card-body">
-                        {% if pedidoproducao %}
+                        {% if pedidoprodu %}
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
@@ -157,7 +154,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for pedido in pedidoprod %}
+                                    {% for pedido in pedidoprodu %}
                                     <tr>
 
                                         <td>
@@ -208,21 +205,21 @@
                         </a>
                     </div>
                     <div class="card-body">
-                        {% if cliente %}
+                        {% if pedidoprodu.cliente %}
                         <ul class="list-group list-group-flush">
-                            #for
+                            {% for cliente in pedidoprodu.cliente %}
                             <li class="list-group-item">
                                 <p>
                                     <i class="fa-solid fa-user me-2"></i>
-                                    <span class="fw-bold">#</span>
+                                    <span class="fw-bold">{{cliente.nome}}</span>
                                 </p>
                                 <small class="text-muted"># em # às #</small>
                             </li>
-                            #end
+                            {% endfor %}
                         </ul>
                         {% else %}
                         <div class="alert alert-warning" role="alert">
-                            Nenhum Pedido para exibir!
+                            Nenhum Cliente para exibir!
                         </div>
                         {% endif %}
                     </div>

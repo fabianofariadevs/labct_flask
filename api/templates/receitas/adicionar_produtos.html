@@ -10,7 +10,7 @@
     </div>
     <div class="card-body">
 
-        <form method="POST" action="{{ url_for('adicionar_produtos', id=receita.id) }}">
+        <form method="POST" action="{{ url_for('adicionar_produtos_receita', id=receita.id) }}">
             {% if receita %}
             <input type="hidden" name="_method" value="PUT">
             {% else %}
@@ -35,11 +35,35 @@
 
 
 
-                <a href="{{ url_for('listar_produtos') }}">Listar Produtos</a>
+                <a href="{{ url_for('listar_produtos_receita', id=receita.id) }}">Listar Produtos Receita</a>
 
             <br>
+            <!-- Tabela para listar os produtos e quantidades adicionados -->
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="tabela-produtos-quantidades" style="width:50%">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Produtos</th>
+                                <th class="text-center">Quantidades</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Os produtos e quantidades adicionados serão listados aqui -->
+                            {% for produto in produtos %}
+                                <tr>
+                                    <td>{{ produto.nome }}</td>
+                                    <td>{{ produto.quantidades }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <hr>
-            <br>
+            <hr>
+
+
 
 
         </form>

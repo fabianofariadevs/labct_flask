@@ -72,7 +72,7 @@
                             <a href="{{ url_for('listar_pedidos') }}" class="btn btn-secondary" title="Consultar pedidos de compra realizados">Pedidos_Compra</a>
                             <a href="{{ url_for('listar_pedidosprod') }}" class="btn btn-secondary" title="Consultar pedidos de produção realizados">Pedidos_Produção</a>
                           </div>
-                              <form id="delete-form" method="DELETE" action="{{ url_for('deletar_filial', id=filial.id, _method='DELETE') }}" method="DELETE">
+                              <form id="delete-form" action="{{ url_for('deletar_filial', id=filial.id, _method='DELETE') }}" method="DELETE">
                               <input type="hidden" name="_method" value="DELETE">
                                   {{csrf_token}}
                               <button class="btn btn-danger" type="submit" title="Excluir Filial"  onclick="return confirm('Deseja excluir a Filial {{filial.nome}} ?')">Excluir Filial</button>
@@ -82,6 +82,193 @@
                   </div>
               </table>
         </div>
+
+        <!--inicio DA div detalhes abaixo tabela detalhes cliente-->
+            <div class="row card-header bg-secondary">
+                 <!--INICIO ULTIMOS PEDIDOS DE PRODUÇÃO FILIAIS/FABRICA-->
+                 <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
+                    <div class="card border-0 shadow-sm  h-100">
+                        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
+                            <h6 class="fw-bold text-secondary">
+                                Pedidos de Produção Cadastrados
+                            </h6>
+
+                            <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Pedidos">
+                                <i class="fa-solid fa-circle-plus"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            {% if filial.pedidosprod %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                        <th class="text-center">Data</th>
+                                        <th class="text-center">Filial</th>
+                                        <th class="text-center">Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for pedido in filial.pedidosprod %}
+                                        <tr>
+                                            <td>
+                                                <span>
+                                                    {% if pedido.status == 1 %}
+                                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                    {% else %}
+                                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                    {% endif %}
+                                                </span>
+                                                 {{pedido.data_pedido}}
+                                            </td>
+                                            <td class="text-center">
+                                                {{pedido.filiais}}
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="#" rel="tooltip" title="Editar">
+                                                    <i class="fa-solid fa-pen m-1"></i>
+                                                </a>
+                                                <a href="#" rel="tooltip" title="Deletar">
+                                                    <i class="fa-solid fa-trash m-1"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {%endfor%}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-warning" role="alert">
+                                Nenhum Pedido de Produção cadastrado para exibir!
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!--FIM ULTIMOS PEDIDOS DE PRODUÇÃO-->
+
+                <!--INICIO ULTIMAS PRODUÇÕES FABRICA-->
+                 <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
+                    <div class="card border-0 shadow-sm  h-100">
+                        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
+                            <h6 class="fw-bold text-secondary">
+                                Produção Fábrica Situação
+                            </h6>
+
+                            <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Pedidos">
+                                <i class="fa-solid fa-circle-plus"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            {% if filial.producoes %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                        <th class="text-center">Data</th>
+                                        <th class="text-center">Filial</th>
+                                        <th class="text-center">Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for pedido in filial.producoes %}
+                                        <tr>
+                                            <td>
+                                                <span>
+                                                    {% if pedido.status == 1 %}
+                                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                    {% else %}
+                                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                    {% endif %}
+                                                </span>
+                                                 {{pedido.data_producao}}
+                                            </td>
+                                            <td class="text-center">
+                                                {{pedido.filial}}
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="#" rel="tooltip" title="Editar">
+                                                    <i class="fa-solid fa-pen m-1"></i>
+                                                </a>
+                                                <a href="#" rel="tooltip" title="Deletar">
+                                                    <i class="fa-solid fa-trash m-1"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {%endfor%}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-warning" role="alert">
+                                Nenhum Pedido de Produção cadastrado para exibir!
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!--FIM ULTIMOS PEDIDOS DE PRODUÇÃO-->
+
+                 <!--INICIO RELAÇÃO USUARIOS CLIENTES-->
+                <div class="col-sm-6 col-md-6 col-xl-4 mb-4">
+                    <div class="card border-0 shadow-sm  h-100">
+                        <div class="card-header bg-white border-0 mt-2">
+                            <h6 class="fw-bold text-secondary">
+                                Usuários Relacionadas
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                        {% if filial.usuarios %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>St</th>
+                                        <th>Usuário</th>
+                                        <th class="text-center">Função</th>
+                                        <th class="text-center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for usuario in filial.usuarios %}
+                                    <tr>
+                                        <td>
+                                            <span>
+                                                {% if usuario.status == 1 %}
+                                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                {% else %}
+                                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            {{usuario.nome}}
+                                        </td>
+                                         <td class="text-center">
+                                            {{usuario.funcao}}
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="#" rel="tooltip" title="Visualizar">
+                                                <i class="fa-solid fa-plus m-1"></i>
+                                            </a>
+                                            <a href="#" rel="tooltip" title="Deletar">
+                                                <i class="fa-solid fa-trash m-1"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            Nenhuma Usuário vinculada a {{filial.nome}}!
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+             </div>
+            <!--FIM Usuario/Cliente-->
 
 
 

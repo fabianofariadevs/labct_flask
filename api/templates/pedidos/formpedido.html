@@ -15,11 +15,11 @@
 </nav>
 <div class="card border-0 shadow-sm">
     <div class="card-header">
-        <h3 class="card-title">{% if pedido %}Atualizar Pedido de Compras{% else %}Cadastrando Novo Pedido de Compras{% endif %}</h3>
+        <h3 class="card-title">{% if pedidoc %}Atualizar Pedido de Compras{% else %}Cadastrando Novo Pedido de Compras{% endif %}</h3>
     </div>
     <div class="card-body">
         <form method="POST" action="#">
-            {% if pedido %}
+            {% if pedidoc %}
             <input type="hidden" name="_method" value="PUT">
             {% else %}
             <input type="hidden" name="_method" value="POST">
@@ -76,7 +76,7 @@
                     </div>
                 </div>
             </div>
-            {% if pedido %}
+            {% if pedidoc %}
             <input type="submit" class="btn btn-success" name="Atualizar" value="Atualizar Pedido">
             {% else %}
             <input type="submit" class="btn btn-primary" name="cadastrar" value="Cadastrar">

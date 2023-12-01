@@ -1,18 +1,15 @@
-
 class MixProduto:
-    def __init__(self, cod_prod_mix, status, situacao, quantidade, cadastrado_em, atualizado_em,
-                 receita, pedidosprod, producoes, produtos):
+    def __init__(self, cod_prod_mix, status, cadastrado_em, atualizado_em,
+                 receita, pedidosprod, producoes, produtos, quantidades):
         self.__cod_prod_mix = cod_prod_mix
         self.__status = status
-        self.__situacao = situacao
-        self.__quantidade = quantidade
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
         self.__receita = receita
-       # self.__filiais = filiais
         self.__pedidosprod = pedidosprod
         self.__producoes = producoes
         self.__produtos = produtos
+        self.__quantidades = quantidades
 
     @property
     def cod_prod_mix(self):
@@ -29,22 +26,6 @@ class MixProduto:
     @status.setter
     def status(self, status):
         self.__status = status
-
-    @property
-    def situacao(self):
-        return self.__situacao
-
-    @situacao.setter
-    def situacao(self, situacao):
-        self.__situacao = situacao
-
-    @property
-    def quantidade(self):
-        return self.__quantidade
-
-    @quantidade.setter
-    def quantidade(self, quantidade):
-        self.__quantidade = quantidade
 
     @property
     def cadastrado_em(self):
@@ -94,35 +75,13 @@ class MixProduto:
     def produtos(self, produtos):
         self.__produtos = produtos
 
-class QuantidadeMixProdutos:
-    def __init__(self, quantidade, mix_produtos, produto):
-        self.__quantidade = quantidade
-        self.__mix_produtos = mix_produtos
-        self.__produto = produto
-
     @property
-    def quantidade(self):
-        return self.__quantidade
+    def quantidades(self):
+        return self.__quantidades
 
-    @quantidade.setter
-    def quantidade(self, quantidade):
-        self.__quantidade = quantidade
-
-    @property
-    def mix_produtos(self):
-        return self.__mix_produtos
-
-    @mix_produtos.setter
-    def mix_produtos(self, mix_produtos):
-        self.__mix_produtos = mix_produtos
-
-    @property
-    def produto(self):
-        return self.__produto
-
-    @produto.setter
-    def produto(self, produto):
-        self.__produto = produto
+    @quantidades.setter
+    def quantidades(self, quantidades):
+        self.__quantidades = quantidades
 
 
 class Producao:
@@ -227,3 +186,35 @@ class Producao:
     @pedidosprod.setter
     def pedidosprod(self, pedidosprod):
         self.__pedidosprod = pedidosprod
+
+class QuantidadeMixProdutos:
+    def __init__(self, produto, mix_produto, quantidade):
+        self.__produto = produto
+        self.__mix_produto = mix_produto
+        self.__quantidade = quantidade
+
+    @property
+    def produto(self):
+        return self.__produto
+
+    @produto.setter
+    def produto(self, produto):
+        self.__produto = produto
+
+    @property
+    def mix_produto(self):
+        return self.__mix_produto
+
+    @mix_produto.setter
+    def mix_produto(self, mix_produto):
+        self.__mix_produto = mix_produto
+
+    @property
+    def quantidade(self):
+        return self.__quantidade
+
+    @quantidade.setter
+    def quantidade(self, quantidade):
+        self.__quantidade = quantidade
+
+

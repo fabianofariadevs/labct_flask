@@ -1,6 +1,7 @@
 from api import db, ma
 from datetime import datetime
 from sqlalchemy import func
+from ..models.mix_produto_model import MixProduto
 
 # TODO ** Classe Receita dbModel, responsavel por definir e criar o Banco de dados com as migrations flask db.
 
@@ -25,9 +26,9 @@ class Receita(db.Model):
     cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
     cliente = db.relationship("Cliente", back_populates="receitas", foreign_keys=[cliente_id])
     # TODO relacionando RECEITA c/ mixprodutos 1/1
-    mixprodutos = db.relationship("MixProduto", back_populates="receita", uselist=False, cascade="all, delete-orphan", lazy="joined")
+    mixprodutos = db.relationship("MixProduto", back_populates="receita", uselist=False, cascade="all, delete-orphan", lazy="joined", foreign_keys=MixProduto.receita_id)
     # TODO Relacionamento 1/N com a tabela PedidoProducao
-    pedidosprod = db.relationship("PedidoProducao", back_populates="receitas")
+   # pedidosprod = db.relationship("PedidoProducao", back_populates="receitas")
 
     def update(self, **kwargs):
         for key, value in kwargs.items():

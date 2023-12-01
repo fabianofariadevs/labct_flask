@@ -1,7 +1,8 @@
 from api import app, db
 from flask import render_template, request, redirect, url_for, flash
 from ..models.filial_pdv_model import Filial
-from ..models.mix_produto_model import MixProduto, Producao
+from ..models.mix_produto_model import MixProduto
+from ..models.producao_model import Producao
 from ..models.pedido_model import PedidoProducao
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, BooleanField
@@ -29,7 +30,7 @@ class ProducaoForm(FlaskForm):
                                for filial in Filial.query.all()]
 
         self.pedidosprod.choices = [(pedidoproducao.id, pedidoproducao.receita_id)
-                                       for pedidoproducao in PedidoProducao.query.all()]
+                                    for pedidoproducao in PedidoProducao.query.all()]
 
         self.status.choices = self.get_status_choices()
 

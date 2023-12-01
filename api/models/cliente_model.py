@@ -31,7 +31,7 @@ class Cliente(db.Model):
     #TODO Relacionamento com a tabela Receita 1/N
     receitas = db.relationship("Receita", back_populates="cliente", foreign_keys="Receita.cliente_id")
     #TODO Relacionamento com a tabela PedidoCompra 1/N
-    pedido_compra = db.relationship("Pedido", back_populates="clientes")
+    pedido_compra = db.relationship("Pedido", secondary="pedido_cliente", back_populates="clientes")
     #TODO Relacionamento com a tabela PedidoProducao 1/N
     pedidosprod = db.relationship("PedidoProducao", back_populates="cliente")
     # TODO Relacionamento com a tabela Usuario 1/N

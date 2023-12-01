@@ -47,7 +47,16 @@ def atualizar_receita(receita, cliente_id, form_data):
     else:
         raise ValueError(f"Receita não encontrada")
 
-def remover_receita(id):
+def remover_receita(receita):
+    receita = receita_model.Receita.query.filter_by(id=receita.id).first()
+    try:
+        db.session.delete(receita)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise ValueError(f"Não foi possível remover a receita {receita.descricao_mix}. Erro: {e}")
+
+def remover_receita_id(id):
     receita = receita_model.Receita.query.filter_by(id=id).first()
     db.session.delete(receita)
     db.session.commit()

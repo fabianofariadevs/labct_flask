@@ -158,7 +158,7 @@ def visualizar_cliente(id):
                 'cadastrado_em': pedidoprod.cadastrado_em.strftime('%d/%m/%Y %H:%M:%S'),
                 'atualizado_em': pedidoprod.atualizado_em.strftime('%d/%m/%Y %H:%M:%S'),
                 'filiais': pedidoprod.filiais.nome if pedidoprod.filiais else 'Filial não encontrada',
-                'mixprodutos' : [mixproduto.situacao for mixproduto in pedidoprod.mixprodutos] if pedidoprod and isinstance(pedidoprod.mixprodutos, list) else [],
+                'mixprodutos': [mixproduto.situacao for mixproduto in pedidoprod.mixprodutos] if pedidoprod and isinstance(pedidoprod.mixprodutos, list) else [],
                 'receitas': [receita.descricao_mix for receita in pedidoprod.receitas]if pedidoprod and isinstance(pedidoprod.receitas, list) else [],
                 'cliente': pedidoprod.cliente.nome if pedidoprod.cliente else 'Cliente não encontrado',
                 'producoes': [producao.data_producao for producao in pedidoprod.producoes] if pedidoprod and isinstance(pedidoprod.producoes, list) else [],

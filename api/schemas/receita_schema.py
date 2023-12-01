@@ -12,7 +12,7 @@ class ReceitaSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         include_relationships = True # Inclui automaticamente os relacionamentos
         fields = ("id", "descricao_mix", "modo_preparo", "departamento", "rend_kg", "rend_unid", "validade", "status", "cadastrado_em", "atualizado_em",
-                  "usuario", "cliente", "mixprodutos", "pedidosprod")
+                  "usuario", "cliente", "mix_produtos", "pedidosprod")
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     descricao_mix = fields.String(required=True)
@@ -27,5 +27,5 @@ class ReceitaSchema(ma.SQLAlchemyAutoSchema):
 
     usuario = ma.Nested("UsuarioSchema", only=('id', 'nome'))
     cliente = ma.Nested("ClienteSchema", many=False, only=('id', 'nome'))
-    mixprodutos = ma.Nested("MixProdutoSchema", many=True, only=('id', 'cod_prod_mix', 'situacao', 'status'))
-    pedidosprod = ma.Nested("PedidoProducaoSchema", many=True, exclude=("receitas",))
+    mixprodutos = ma.Nested("MixProdutoSchema", many=False, only=('id', 'cod_prod_mix', 'status', 'receita', 'produtos', 'quantidades', 'producoes'))
+    pedidosprod = ma.Nested("PedidoProducaoSchema", many=True, exclude=("receitas",), only=("id", "data_pedido", "data_entrega", "qtde_pedido", "situacao", "status", "obs", "cadastrado_em", "atualizado_em"))

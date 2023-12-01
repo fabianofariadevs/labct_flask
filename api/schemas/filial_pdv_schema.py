@@ -12,7 +12,7 @@ class FilialSchema(ma.SQLAlchemyAutoSchema):
         model = filial_pdv_model.Filial
         load_instance = True
         fields = ("id", "nome", "endereco", "bairro", "cidade", "estado", "responsavel", "whatsapp", "cnpj", "status", "cadastrado_em", "atualizado_em",
-                  "cliente", "estoques", "mixprodutos", "pedidosprod", "producoes")
+                  "estoques", "pedidosprod", "cliente", "producoes")
 
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     nome = fields.String(required=True)
@@ -28,8 +28,7 @@ class FilialSchema(ma.SQLAlchemyAutoSchema):
     atualizado_em = fields.DateTime(required=False)
 
     estoques = ma.Nested("EstoqueSchema", many=True, exclude=("filiais",))
-    mixprodutos = ma.Nested("MixProdutoSchema", many=True, exclude=("filial",), only="")
-    pedidosprod = ma.Nested("PedidoProducaoSchema", many=True, exclude=("filiais",))
+    pedidosprod = ma.Nested("PedidoProducaoSchema", many=True, exclude=("filiais",), only=("id", "data_pedido", "data_entrega", "qtde_pedido", "status", "obs", "cadastrado_em", "atualizado_em"))
     cliente = ma.Nested("ClienteSchema", many=False, only=('id', 'nome'))
     producoes = ma.Nested("ProducaoSchema", many=False, exclude=("filial",))
 

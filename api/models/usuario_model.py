@@ -2,7 +2,7 @@ from api import db
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime
 from sqlalchemy import func
-from ..models.mix_produto_model import Producao
+from ..models.producao_model import Producao
 
 
 #TODO ** Classe Usuário dbModel, responsavel por definir e criar o Banco de dados com as migrations flask db.

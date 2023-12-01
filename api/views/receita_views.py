@@ -4,7 +4,7 @@ from wtforms import StringField, DecimalField, BooleanField, SubmitField, Select
 from flask_wtf.csrf import CSRFProtect
 from wtforms_components import SelectField, SelectMultipleField
 from wtforms.validators import DataRequired, ValidationError, length
-from ..models.mix_produto_model import MixProduto, QuantidadeMixProdutos
+from ..models.mix_produto_model import MixProduto
 from ..schemas import receita_schema
 from flask import request, make_response, jsonify, render_template, redirect, url_for, flash
 from ..services import receita_service, cliente_service
@@ -127,7 +127,7 @@ def visualizar_receita(id):
         return render_template("receitas/receitas.html", error_message="Receita não encontrada"), 404
     if request.method == 'GET':
         receita_data = receita_schema.ReceitaSchema().dump(receita)
-        return render_template("receitas/detalhes.html", receita=receita_data)
+        return render_template("receitas/detalhes.html", receita=receita, receita_data=receita_data)
     elif request.method == 'POST':
         form = ReceitaForm(obj=receita)
         if form.validate_on_submit():
@@ -166,8 +166,35 @@ class AdicionarProdutosForm(FlaskForm):
             'quantidades': self.quantidades.data
         }
 
-@app.route('/receitas/<int:id>/adicionar_produto', methods=['GET', 'POST'])
+@app.route('/receitas/<int:id>/adicionar_produto', methods=['GET', 'POST', 'PUT'])
 def adicionar_produtos_receita(id):
+    receita = Receita.query.get_or_404(id)
+    form = AdicionarProdutosForm()
+    form.produtos.choices = [(produto.id, produto.nome) for produto in Produto.query.all()]
+    #form.quantidades.data = form.quantidades
+    if request.method == 'POST' and form.validate_on_submit():
+        produtos_selecionados = Produto.query.filter(Produto.id.in_(form.produtos.data)).all()
+
+        # Adicionar produtos à receita
+        for produto_id, quantidade in zip(form.produtos.data, form.quantidades.data):
+            mix_produto = MixProduto(receita=receita, produto_id=produto_id, quantidade=quantidade)
+            db.session.add(mix_produto)
+        db.session.commit()
+
+        flash("Produtos adicionados com sucesso!")
+        return redirect(url_for('visualizar_receita', id=id))
+    return render_template('receitas/adicionar_produtos.html', form=form, receita=receita)
+
+@app.route('/receitas/<int:id>/produtosreceita', methods=['GET'])
+def listar_produtos_receita(id):
+    receita = receita_service.listar_receita_id(id)
+    if not receita:
+        return render_template("receitas/receitas.html", error_message="Receita não encontrada"), 404
+    return render_template("receitas/produtosreceita.html", receita=receita)
+
+
+@app.route('/receitas/<int:id>/adicionar_produto', methods=['GET', 'POST'])
+def adicionar_produtos_receita22(id):
     receita = receita_service.listar_receita_id(id)
     if not receita:
         return render_template("receitas/receitas.html", error_message="Receita não encontrada"), 404
@@ -187,7 +214,6 @@ def adicionar_produtos_receita(id):
         return redirect(url_for('exibir_formreceita', id=id))
     return render_template('receitas/adicionar_produtos.html', form=form, receita=receita)
 
-
 @app.route('/receitas/<int:id>/adicionar_produtos', methods=['GET', 'POST'])
 def adicionar_produtos(id):
     form = AdicionarProdutosForm()
@@ -198,6 +224,7 @@ def adicionar_produtos(id):
             produto_ids = form.produtos.data
             produtos = Produto.query.filter(Produto.id.in_(produto_ids)).all()
             receita.produtos.extend(produtos)
+            db.session.add(receita)
             db.session.commit()
             flash("Produtos adicionados com sucesso!")
             return redirect(url_for('exibir_formreceita', id=id))
@@ -229,7 +256,6 @@ def remover_produto():
         return redirect(url_for('exibir_formreceita', id=receita_id))
     except Exception as e:
         return render_template('error.html', message=str(e), status_code=500)
-
 
 
 @app.route('/receitas/<int:id>/deletar', methods=['DELETE'])

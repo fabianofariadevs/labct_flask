@@ -28,14 +28,13 @@ def cadastrar_mixproduto(form_data):
         status=form_data['status'],
         situacao=form_data['situacao'],
         produtos=produtos,
-        quantidade=form_data['quantidade'],
+        quantidades=form_data['quantidades'],
         receita=receita_service.listar_receita_id(form_data['receita']),
         cadastrado_em=func.now(),
     )
     db.session.add(mixproduto)
     db.session.commit()
     return mixproduto
-
 
 
 def cadastrar_mixproduto44(form_data):

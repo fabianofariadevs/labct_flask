@@ -56,16 +56,16 @@
                                                 <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
                                                 {% endif %}
                                             </span>
-                                            {{pedido.produto_id}}
+                                            {{pedido.produtos}}
                                         </td>
                                         <td class="text-center">
                                             {{pedido.data_pedido}}
                                         </td>
                                         <td class="text-center">
-                                            {{pedido.filial_pdv}}
+                                            {{pedido.filiais}}
                                         </td>
                                         <td class="text-center">
-                                            <a href="{{ url_for('atualizar_pedido', id=pedido.id, _method='PUT') }}" rel="tooltip" title="Editar">
+                                            <a href="#" rel="tooltip" title="Editar">
                                                 <i class="fa-solid fa-pen m-1"></i>
                                             </a>
                                             <a href="#" rel="tooltip" title="Deletar">
@@ -119,13 +119,13 @@
                                                 <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
                                                 {% endif %}
                                             </span>
-                                            {{pedido.receita_id}}
+                                            {{pedido.mixprodutos}}
                                         </td>
                                         <td class="text-center">
                                             {{pedido.data_pedido}}
                                         </td>
                                          <td class="text-center">
-                                            {{pedido.filial_pdv}}
+                                            {{pedido.filiais}}
                                         </td>
                                         <td class="text-center">
                                             <a href="{{ url_for('atualizar_pedidoprod', id=pedido.id, _method='PUT') }}" rel="tooltip" title="Editar">

@@ -29,7 +29,7 @@ class Fornecedor(db.Model):
     #TODO relacionando FORNECEDOR com  PRODUTO 1/N
     produtos = db.relationship('Produto', back_populates='fornecedor', foreign_keys='Produto.fornecedor_id')
 
-    pedido_compra = db.relationship('Pedido', back_populates='fornecedores', primaryjoin='Fornecedor.id==Pedido.fornecedor_id')
+    pedido_compra = db.relationship('Pedido', back_populates='fornecedores', secondary='pedido_fornecedor', lazy='joined')
 
     #TODO relacionando FORNECEDOR com  ESTOQUE 1/N
     estoques = db.relationship('Estoque', back_populates='fornecedor', foreign_keys='Estoque.fornecedor_id')

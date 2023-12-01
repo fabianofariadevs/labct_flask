@@ -65,7 +65,7 @@
                                             {{pedido.clientes}}
                                         </td>
                                         <td class="text-center">
-                                            <a href="{{ url_for('atualizar_pedido', id=pedido.id, _method='PUT') }}" rel="tooltip" title="Editar">
+                                            <a href="#" rel="tooltip" title="Editar">
                                                 <i class="fa-solid fa-pen m-1"></i>
                                             </a>
                                             <a href="#" rel="tooltip" title="Deletar">
@@ -102,7 +102,7 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th class="text-center">Receitas</th>
+                                        <th class="text-center">Receita/Mix</th>
                                         <th class="text-center">Data</th>
                                         <th class="text-center">Filiais</th>
                                         <th class="text-center">Ação</th>
@@ -119,7 +119,7 @@
                                                 <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
                                                 {% endif %}
                                             </span>
-                                            {{pedido.receitas}}
+                                            {{pedido.mixprodutos}}
                                         </td>
                                         <td class="text-center">
                                             {{pedido.data_pedido}}
