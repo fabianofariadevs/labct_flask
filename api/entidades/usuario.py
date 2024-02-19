@@ -1,17 +1,19 @@
 #TODO usuario e Funcao/cargo juntas
 
 class Usuario:
-    def __init__(self, nome, email, senha, empresa, is_admin, cargo, status, cadastrado_em, atualizado_em, api_key):
+    def __init__(self, nome, email, senha, is_admin, status, cadastrado_em, atualizado_em, api_key,
+                 cliente, funcao, producoes):
         self.__nome = nome
         self.__email = email
         self.__senha = senha
-        self.__empresa = empresa
         self.__is_admin = is_admin
-        self.__cargo = cargo
         self.__status = status
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
         self.__api_key = api_key
+        self.__cliente = cliente
+        self.__funcao = funcao
+        self.__producoes = producoes
 
     @property
     def nome(self):
@@ -38,28 +40,12 @@ class Usuario:
         self.__senha = senha
 
     @property
-    def empresa(self):
-        return self.__empresa
-
-    @empresa.setter
-    def empresa(self, empresa):
-        self.__empresa = empresa
-
-    @property
     def is_admin(self):
         return self.__is_admin
 
     @is_admin.setter
     def is_admin(self, is_admin):
         self.__is_admin = is_admin
-
-    @property
-    def cargo(self):
-        return self.__cargo
-
-    @cargo.setter
-    def cargo(self, cargo):
-        self.__cargo = cargo
 
     @property
     def status(self):
@@ -93,12 +79,37 @@ class Usuario:
     def api_key(self, api_key):
         self.__api_key = api_key
 
+    @property
+    def cliente(self):
+        return self.__cliente
+
+    @cliente.setter
+    def cliente(self, cliente):
+        self.__cliente = cliente
+
+    @property
+    def funcao(self):
+        return self.__funcao
+
+    @funcao.setter
+    def funcao(self, funcao):
+        self.__funcao = funcao
+
+    @property
+    def producoes(self):
+        return self.__producoes
+
+    @producoes.setter
+    def producoes(self, producoes):
+        self.__producoes = producoes
+
 
 #Entidade Funcao de Funcionarios
 class Funcao:
-    def __init__(self, nome, usuarios):
+    def __init__(self, nome, usuarios, cliente):
         self.__nome = nome
         self.__usuarios = usuarios
+        self.__cliente = cliente
 
     @property
     def nome(self):
@@ -115,3 +126,11 @@ class Funcao:
     @usuarios.setter
     def usuarios(self, usuarios):
         self.__usuarios = usuarios
+
+    @property
+    def cliente(self):
+        return self.__cliente
+
+    @cliente.setter
+    def cliente(self, cliente):
+        self.__cliente = cliente

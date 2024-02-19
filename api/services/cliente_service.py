@@ -1,5 +1,4 @@
 from sqlalchemy import func
-
 from ..models import cliente_model
 from api import db
 from datetime import datetime
@@ -14,7 +13,7 @@ def cadastrar_cliente(cliente):
                                        cidade=cliente.cidade, estado=cliente.estado, telefone=cliente.telefone,
                                        email=cliente.email, responsavel=cliente.responsavel, whatsapp=cliente.whatsapp,
                                        cnpj=cliente.cnpj, status=cliente.status, cadastrado_em=func.now(),
-                                       atualizado_em=cliente.atualizado_em, filial_id=cliente.filial_id)
+                                       atualizado_em=cliente.atualizado_em)
 
     db.session.add(cliente_bd)
     db.session.commit()
@@ -45,8 +44,9 @@ def atualiza_cliente(cliente_anterior, cliente_novo):
     cliente_anterior.status = cliente_novo.status
     cliente_anterior.cadastrado_em = cliente_novo.cadastrado_em
     #cliente_anterior.atualizado_em = datetime.now()
-    cliente_anterior.atualizado_em = cliente_novo.atualizado_em
-    cliente_anterior.filial_id = cliente_novo.filial_id
+    cliente_anterior.atualizado_em = func.now()
+
+    db.session.add(cliente_anterior)
     db.session.commit()
 
 def deletar_cliente(cliente):

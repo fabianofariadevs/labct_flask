@@ -12,9 +12,9 @@ class FornecedorSchema(ma.SQLAlchemyAutoSchema):
         model = fornecedor_model.Fornecedor
         load_instance = True
         fields = ("id", "nome", "descricao", "endereco", "bairro", "cidade", "estado", "telefone", "email",
-                  "responsavel", "whatsapp", "cnpj", "status", "cadastrado_em", "atualizado_em")
+                  "responsavel", "whatsapp", "cnpj", "status", "cadastrado_em", "atualizado_em",
+                  "produtos", "pedido_compra", "estoques")
 
-   # produto_id = fields.Integer(required=True)
     id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
     nome = fields.String(required=True)
     descricao = fields.String(required=True)
@@ -30,5 +30,5 @@ class FornecedorSchema(ma.SQLAlchemyAutoSchema):
     status = fields.Integer(required=True)
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
-    #produtos = fields.String(required=True)
-   # produtos = ma.List(ma.Nested(ProdutoMpSchema), attribute='produtos', dump_only=True)
+    produtos = ma.Nested("ProdutoMpSchema", many=True, exclude=("fornecedor",))
+    pedido_compra = ma.Nested("PedidoSchema", many=True, exclude=("fornecedores",))

@@ -91,3 +91,4 @@ wtf==0.1
 WTForms==3.0.1
 yarl==1.9.2
 zipp==3.8.0
+myapp~=0.1.dev0

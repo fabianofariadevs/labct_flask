@@ -1,0 +1,17 @@
+<h2>Detalhes da Receita - {{ receita.id }}</h2>
+<p>{{ receita.descricao_mix }}</p>
+
+<h3>Mix de Produtos</h3>
+<ul>
+    {% for mix_produto in receita.mix_produtos %}
+        <li>{{ mix_produto.produto }} - {{ mix_produto.quantidade }} unidades</li>
+    {% endfor %}
+</ul>
+
+<h3>Adicionar Produto ao Mix</h3>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.produto.label }} {{ form.produto() }}
+    {{ form.quantidade.label }} {{ form.quantidade() }}
+    {{ form.submit() }}
+</form>

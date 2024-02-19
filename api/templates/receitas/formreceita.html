@@ -97,151 +97,22 @@
                 </div>
                 <div class="col-md-3">
                      <div class="mb-3">
-                            {{ form.clientes.label(class="form-label") }}:
-                            {{ form.clientes(class="form-select") }}
-                            {% for error in form.clientes.errors %}
-                            <p class="text-danger">{{ error }}</p>
-                            {% endfor %}
+                            {{ form.cliente.label(class="form-label") }}:
+                            {{ form.cliente(class="form-select") }}
+
                      </div>
                 </div>
             </div>
-
             <hr>
-
-              <h1>Cadastro de Materiais</h1>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        {{ form.csrf_token }}
-        <label for="nome">Nome do Material:</label>
-        {{ form.nome }}
-        <br>
-        <label for="quantidade">Quantidade:</label>
-        {{ form.quantidade }}
-        <br>
-        {{ form.submitmat }}
-    </form>
-    <h2>Lista de Materiais:</h2>
-    <ul>
-        {% for material in materiais %}
-            <li>{{ material.nome }} - {{ material.quantidade }}</li>
-        {% endfor %}
-    </ul>
-            <hr>
-
-
-            <h5 class="text-bold">Produtos Relacionados a Receita</h5>
-
-            <input type="hidden" id="produtos-quantidadesInput" name="produtos-quantidades" value="{{ produtos_quantidades }}">
-
-           <!-- Tabela para listar os produtos e quantidades adicionados -->
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped" id="tabela-produtos-quantidades" style="width:50%">
-                        <thead>
-                            <tr>
-                                <th class="text-center">Produtos</th>
-                                <th class="text-center">Quantidades</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Os produtos e quantidades adicionados serão listados aqui -->
-                            {% for produto in produtos %}
-                                <tr>
-                                    <td>{{ produto.nome }}</td>
-                                    <td>{{ produto.quantidades }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <hr>
-              <!-- Botão para abrir o modal de adicionar produtos e quantidades -->
-            <div class="form-group">
-                <button type="button"  class="btn btn-outline-primary" id="btn-adicionarProdutoModal" data-toggle="modal" data-target="#adicionarProdutoModal">
-                    <i class="fa fa-save"></i>  Cadastrar/Remover Produtos Receita
-                </button>
-
-                <a href="#"  class="btn btn-outline-secondary" rel="tooltip" title="ADD">Add PRODUTO_Material</a>
-
-            </div>
-            <hr>
-
-            <div class="form-group">
-                {% if receita %}
-                <input type="submit" class="btn btn-success" name="Atualizar" value="Atualizar Receita">
+             {% if receita %}
+                <input type="submit" class="btn btn-success" value="Atualizar Receita">
                 {% else %}
-                <input type="submit" class="btn btn-primary" name="cadastrar" value="Cadastrar">
+                <input type="submit" class="btn btn-primary" value="Cadastrar">
                 {% endif %}
                 <a href="{{ url_for('listar_receitas') }}"  class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
-            </div>
-
-
-             <!-- Produtos e Quantidades -->
-              <div id="produtos-quantidades">
-                {% for fieldset in form.produtos_quantidades %}
-                <div class="produto-quantidade">
-                  {{ fieldset.produtos.label(class="form-label") }}
-                  {{ fieldset.produtos(class="form-control") }}
-                  {{ fieldset.quantidades.label(class="form-label") }}
-                  {{ fieldset.quantidades(class="form-control") }}
-                  <button type="button" class="remover-produto-quantidade">Remover</button>
-                </div>
-                {% endfor %}
-              </div>
-
-              <!-- Botão para adicionar mais produtos e quantidades -->
-              <button type="button" id="add-produto-quantidade">Adicionar Produto e Quantidade</button>
-
-              <!-- Outros campos do formulário -->
-
-              <input type="submit" value="Salvar Receita">
-            </form>
-
-
+        </form>
+        <hr>
     </div>
 </div>
-
-
-  <!-- Modal para adicionar produtos e quantidades -->
-    <div class="modal fade" id="adicionarProdutoModal" tabindex="-1" role="dialog" aria-labelledby="adicionarProdutoModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="adicionarProdutoModalLabel">Adicionar Produtos e Quantidades</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!-- form para adicionar produtos e quantidades -->
-
-                     <h1>Cadastro de Materiais</h1>
-    <form id="form-adicionar-produto" method="POST">
-        {{ form.hidden_tag() }}
-        {{ form.csrf_token }}
-        <label for="nome">Nome do Material:</label>
-        {{ form.nome }}
-        <br>
-        <label for="quantidade">Quantidade:</label>
-        {{ form.quantidade }}
-        <br>
-        {{ form.submit }}
-    </form>
-    <h2>Lista de Materiais:</h2>
-    <ul>
-        {% for material in materiais %}
-            <li>{{ material.nome }} - {{ material.quantidade }}</li>
-        {% endfor %}
-    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-primary" id="adicionar-produto">Adicionar produto</button>
-                    <button type="button" class="btn btn-danger" id="remover-produto">Remover</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
 {% endblock conteudo %}

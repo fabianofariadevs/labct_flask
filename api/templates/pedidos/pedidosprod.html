@@ -49,29 +49,45 @@
                         <thead>
                             <tr>
                                 <th class="text-center">Id</th>
-                                <th>Data_pedido</th>
-                                <th>Receita</th>
-                                <th>Qtde_pedido</th>
-                                <th>Data_entrega</th>
-                                <th>Filial</th>
-                                <th>Status</th>
+                                <th class="text-center">Data_pedido</th>
+                                <th class="text-center">MixProduto</th>
+                                <th class="text-center">Qtde_pedido</th>
+                                <th class="text-center">Data_entrega</th>
+                                <th class="text-center">Situação</th>
+
+                                <th class="text-center">Status</th>
                                 <th class="text-center">Acões</th>
                             </tr>
                         </thead>
                         <tbody>
-                        {% for pedido in pedidosprod %}
+                        {% for pedido in pedidosproducao %}
                             <tr>
-                                <td>{{pedido.id}}</td>
-                                <td>{{pedido.data_pedido}}</td>
-                                <td>{{pedido.receita_id}}</td>
-                                <td>{{pedido.qtde_pedido}}</td>
-                                <td>{{pedido.data_entrega}}</td>
-                                <td>{{pedido.filial_pdv}}</td>
+                                <td class="text-center">{{pedido.id}}</td>
+                                <td class="text-center">{{pedido.data_pedido}}</td>
+                                <td>{{pedido.mixprodutos}}</td>
+                                <td class="text-center">{{pedido.qtde_pedido}}</td>
+                                <td class="text-center">{{pedido.data_entrega}}</td>
+                                <td class="text-center">
+                                {% if pedido.mixprodutos.situacao == 0 %}
+                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Em Aberto"></i> Aberto
+                                {% endif %}
+                                {% if pedido.mixprodutos.situacao == 1 %}
+                                <i class="fa-solid fa-circle text-warning" rel="tooltip" title="Em Produção"></i> Produção
+                                {% endif %}
+                                {% if pedido.mixprodutos.situacao == 2 %}
+                                <i class="fa-solid fa-circle text-secondary" rel="tooltip" title="Finalizado"></i> Finalizado
+                                {% endif %}
+                                {% if pedido.mixprodutos.situacao == 3 %}
+                                <i class="fa-solid fa-circle text-info" rel="tooltip" title="Em Distribuição"></i> Distribuição
+                                {% else %}
+                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i> Inativo
+                                {% endif %}
+                                </td>
                                 <td class="text-center">
                                     {% if pedido.status == 1 %}
-                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                    <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i> Ativo
                                     {% else %}
-                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                    <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i> Inativo
                                     {% endif %}
                                 </td>
                                 <td class="text-center">

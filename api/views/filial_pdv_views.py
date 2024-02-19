@@ -1,15 +1,13 @@
+from api import app, api, db
+from marshmallow.exceptions import ValidationError
 from flask import request, render_template, redirect, url_for, jsonify, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, BooleanField
 from wtforms.validators import DataRequired, ValidationError
-from api import app, api, db
 from ..models.filial_pdv_model import Filial
-from ..models import filial_pdv_model
-from ..services import filial_pdv_service, receita_service
-from ..schemas import filial_pdv_schema, receita_schema, pedido_schemas
-from ..schemas.filial_pdv_schema import FilialSchema
+from ..services import filial_pdv_service, cliente_service
+from ..schemas import filial_pdv_schema
 from ..models.cliente_model import Cliente
-from ..paginate import paginate
 
 #TODO ** Classe FilialForm_Modelo ** ESSA classe recebe os dados do formulario.
 #     @author Fabiano Faria
@@ -24,70 +22,61 @@ class FilialForm(FlaskForm):
     whatsapp = StringField('WhatsApp', validators=[DataRequired()])
     cnpj = StringField('CNPJ', validators=[DataRequired()])
     status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
-  #  receitas = SelectField('Receitas', validators=[DataRequired()])
-    cliente = SelectField('Cliente', validators=[DataRequired()])
-    #pedidos = SelectField('Pedidos_Compras', validators=[DataRequired()])
-    #pedidosprod = SelectField('Pedidos_Compras', validators=[DataRequired()])
+    cliente = SelectField('Cliente', validators=[DataRequired()], coerce=int)
     submit = SubmitField('Cadastrar')
 
     def __init__(self, *args, **kwargs):
         super(FilialForm, self).__init__(*args, **kwargs)
-      #  self.receitas.choices = [(receita.id, receita.descricao_mix) for receita in Receita.query.all()]
         self.cliente.choices = [(cliente.id, cliente.nome) for cliente in Cliente.query.all()]
-       # self.pedidos.choices = [(produto.id, produto.nome) for produto in Produto.query.all()]
-       # self.pedidosprod.choices = [(pedidoproducao.id, pedidoproducao.receita_id) for pedidoproducao in PedidoProducao.query.all()]
         self.status.choices = self.get_status_choices()
 
     @staticmethod
     def get_status_choices():
         return [("1", 'Ativo'), ("0", 'Inativo')]
 
-    def to_dict(self):  # metodo personalizado no seu formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
-        return {
-            'nome': self.nome.data,
-            'endereco': self.endereco.data,
-            'bairro': self.bairro.data,
-            'cidade': self.cidade.data,
-            'estado': self.estado.data,
-            'responsavel': self.responsavel.data,
-            'whatsapp': self.whatsapp.data,
-            'cnpj': self.cnpj.data,
-            'status': self.status.data,
-            'cliente': self.cliente.data,
-          #  'receitas': self.receitas.data,
-         #   'pedidos': self.pedidos.data,
-           # 'pedidosprod': self.pedidosprod.data,
+ #TODO metodo personalizado no formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
+    def to_dict(self):
+        data = {
+            'nome': str(self.nome.data) if self.nome.data else '',
+            'endereco': str(self.endereco.data) if self.endereco.data else '',
+            'bairro': str(self.bairro.data) if self.bairro.data else '',
+            'cidade': str(self.cidade.data) if self.cidade.data else '',
+            'estado': str(self.estado.data) if self.estado.data else '',
+            'responsavel': str(self.responsavel.data) if self.responsavel.data else '',
+            'whatsapp': str(self.whatsapp.data) if self.whatsapp.data else '',
+            'cnpj': str(self.cnpj.data) if self.cnpj.data else '',
+            'status': str(self.status.data) if self.status.data else '',
+            'cliente': int(self.cliente.data) if self.cliente.data else None,
         }
+        return data
+
 
 @app.route('/filiais/<int:id>/atualizar', methods=['GET', 'POST', 'PUT'])
 def atualizar_filial(id):
     filial = filial_pdv_service.listar_filial_pdv_id(id)
-    if not filial:
-        return render_template("filiais/filial.html", error_message="Filial não encontrada"), 404
-    form = FilialForm(obj=filial)
+    form = FilialForm(request.form, obj=filial)
     if request.method == 'POST' and form.validate_on_submit():
-        filial_atualizada = filial_pdv_model.Filial.query.get(id)
-        form.populate_obj(filial_atualizada)
-        filial_pdv_service.atualiza_filial_pdv(filial, filial_atualizada)
-        return redirect(url_for("listar_filiais"))
+        form_data = form.to_dict()
+        cliente_id = form_data['cliente']
+        cliente = Cliente.query.get(cliente_id)
+        filial_atualizada = Filial(nome=form_data['nome'], endereco=form_data['endereco'], bairro=form_data['bairro'],
+                                   cidade=form_data['cidade'], estado=form_data['estado'], responsavel=form_data['responsavel'],
+                                   whatsapp=form_data['whatsapp'], cnpj=form_data['cnpj'], status=form_data['status'],
+                                   cliente=cliente)
 
-    return render_template('filiais/formfilial.html', filial=filial, form=form), 400
+        filial_pdv_service.atualiza_filial_pdv(filial, filial_atualizada, form_data)
+        flash("Filial atualizada com sucesso!")
+        return redirect(url_for('listar_filiais'))
+
+    return render_template('filiais/formfilial.html', form=form, filial=filial), 400
 
 
 @app.route('/filiais', methods=['GET'])###1
 def listar_filiais():
-    page = request.args.get('page', 1, type=int)
-    per_page = 6
-    filiais = filial_pdv_service.listar_filial_pdv()
+    if request.method == 'GET':
+        filiais = filial_pdv_service.listar_filial_pdv()
 
-    paginated_result = paginate(Filial.query, FilialSchema(), page, per_page)
-    total_filiais = len(paginated_result['items'])
-    total_filiais_ativos = len([filial for filial in paginated_result['items'] if filial['status'] == 1])
-    total_filiais_inativos = len([filial for filial in paginated_result['items'] if filial['status'] == 0])
-
-    return render_template('filiais/filial.html', filiais=filiais, paginated_result=paginated_result, total_filiais=total_filiais,
-                           total_filiais_ativos=total_filiais_ativos,
-                           total_filiais_inativos=total_filiais_inativos)
+        return render_template('filiais/filial.html', filiais=filiais)
 
 
 @app.route('/filiais/formulario', methods=['GET', 'POST'])###2
@@ -96,14 +85,21 @@ def exibir_formfilial():
     if request.method == 'POST' and form.validate_on_submit():
         try:
             form_data = form.to_dict()
-            filial = filial_pdv_schema.FilialSchema().load(form_data)
-            filial_bd = filial_pdv_service.cadastrar_filial_pdv(filial)
-            filial_data = filial_pdv_schema.FilialSchema().dump(filial_bd)
-            flash("Filial cadastrada com sucesso!")
-            return redirect(url_for('listar_filiais'))
-        except ValidationError as error:
-            flash("Erro ao cadastrar filial: " + str(error.messages))
-    return render_template('filiais/formfilial.html', form=form)###3
+            cf = form_data['cliente']
+            # Verifique se o cliente existe no banco de dados
+            cliente = cliente_service.listar_cliente_id(cf)
+            if cliente is None:
+                filial_bd = filial_pdv_service.cadastrar_filial_pdv(form_data)
+                flash("Filial cadastrada com sucesso!")
+                return redirect(url_for('listar_filiais'))
+            else:
+                flash("Cliente não encontrado!")
+                return redirect(url_for('exibir_formfilial')), 400
+        except ValidationError as e:
+            flash(e.messages)
+            return redirect(url_for('exibir_formfilial')), 400
+    return render_template('filiais/formfilial.html', form=form)
+
 
 @app.route('/filiais/buscar', methods=['GET'])
 def buscar_filial():
@@ -112,35 +108,81 @@ def buscar_filial():
 
     if nome_filial:
         # Lógica para buscar a filial por nome
-        filiais = filial_pdv_service.listar_filial_pdv()
+        filiais = filial_pdv_service.listar_filial_pdv_id(id)
         resultados = [filial for filial in filiais if nome_filial in filial.nome.lower()]
 
     return render_template("filiais/consultar_filial.html", resultados=resultados, nome_filial=nome_filial)
 
+
 @app.route('/filiais/<int:id>', methods=['GET', 'POST'])
 def visualizar_filial(id):
+    filial = filial_pdv_service.listar_filial_pdv_id(id)
+    if not filial:
+        return render_template("filiais/filial.html", error_message="Filial não encontrada"), 404
+    if request.method == 'GET':
+        # Carrega os relacionamentos de filial automaticamente com os modelos SQLAlchemy
+        filial_data = filial_pdv_schema.FilialSchema().dump(filial)
+        return render_template('filiais/detalhes.html', filial=filial_data)
+    elif request.method == 'POST':
+        form = FilialForm(obj=filial)
+        if form.validate_on_submit():
+            form_data = form.to_dict()
+            cliente_id = form_data['cliente']
+            cliente = Cliente.query.get(cliente_id)
+            filial.nome = form_data['nome']
+            filial.endereco = form_data['endereco']
+            filial.bairro = form_data['bairro']
+            filial.cidade = form_data['cidade']
+            filial.estado = form_data['estado']
+            filial.responsavel = form_data['responsavel']
+            filial.whatsapp = form_data['whatsapp']
+            filial.cnpj = form_data['cnpj']
+            filial.status = form_data['status']
+            filial.cliente = cliente
+            filial_pdv_service.atualiza_filial_pdv(filial, filial)
+            flash("Filial atualizada com sucesso!")
+            return redirect(url_for('listar_filiais'))
+        return render_template('filiais/formfilial.html', form=form)
+    elif request.method == 'DELETE':
+        filial_pdv_service.remove_filial_pdv(filial)
+        return redirect(url_for('listar_filiais'))
+
+@app.route('/filiais/<int:id>', methods=['DELETE'])
+def deletar_filial(id):
+    filial = filial_pdv_service.listar_filial_pdv_id(id)
+    filial_pdv_service.remove_filial_pdv(filial)
+    return redirect(url_for('listar_filiais'))
+
+
+@app.route('/filiais/<int:id>', methods=['GET', 'POST'])
+def visualizar(id):
     if request.method == 'GET':
         filial = filial_pdv_service.listar_filial_pdv_id(id)
         if filial:
             filial_data = filial_pdv_schema.FilialSchema().dump(filial)
-            # Obter o nome do receita
-            receitas = filial.receitas
-            filial_data['receitas'] = [receita.descricao_mix for receita in receitas]
 
-            # Obter o nome do pedido de Compras
-            pedidos = filial.pedidos
-            pedidos_produto_nomes = [pedido.produtos.nome if pedido.produtos else 'Produto não encontrado' for pedido in pedidos]
-            filial_data['pedidos'] = ', '.join(pedidos_produto_nomes)
+            # Obter o nome do CLIENTE
+            cliente = filial.cliente
+            filial_data['cliente'] = cliente.nome if cliente else None
 
-            # Obter o nome do Cliente
-            clientes = filial.clientes
-            clientes_nomes = [cliente.nome if cliente else 'Cliente não encontrado' for cliente in clientes]
-            filial_data['clientes'] = clientes_nomes
+            # Obter o nome do ESTOQUE
+            estoques = filial.estoques
+            estoques_ids = [estoque.nome if estoque else 'Estoque não encontrado' for estoque in estoques]
+            filial_data['estoques'] = estoques_ids
+
+            # Obter o nome do MIXPRODUTO
+            mixprodutos = filial.mixprodutos
+            mixprodutos_ids = [mixproduto.nome if mixproduto else 'MixProduto não encontrado' for mixproduto in mixprodutos]
+            filial_data['mixprodutos'] = mixprodutos_ids
 
             # Obter o nome do PEDIDO DE PRODUÇAO
             pedidosprod = filial.pedidosprod
             pedidos_producao_ids = [pedido.receita_id if pedido.receitas else 'Pedido de Produção não encontrado' for pedido in pedidosprod]
             filial_data['pedidosprod'] = pedidos_producao_ids
+
+            # varificar se esta em producao
+            producao = filial.producoes
+            filial_data['producao'] = producao.status if producao else None
 
             return render_template('filiais/detalhes.html', filial=filial_data)
         else:
@@ -153,13 +195,4 @@ def visualizar_filial(id):
             if filial:
                 filial_pdv_service.remove_filial_pdv(filial)
                 return redirect(url_for('listar_filiais'))
-
-@app.route('/filiais/<int:id>', methods=['DELETE'])
-def deletar_filial(id):
-    filial = filial_pdv_service.listar_filial_pdv_id(id)
-    if filial:
-        filial_pdv_service.remove_filial_pdv(filial)
-        return redirect(url_for('listar_filiais'))
-    else:
-        return render_template('error.html', message='Filial não encontrada', status_code=404)
 

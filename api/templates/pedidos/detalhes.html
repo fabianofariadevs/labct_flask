@@ -16,7 +16,7 @@
         </div>
         <div>
         <a href="{{ url_for('listar_pedidos') }}" class="btn btn-outline-dark" title="Voltar para lista de Pedidos">Voltar para lista de Pedidos</a>
-        <a href="{{ url_for('atualizar_pedido', id=pedido.id, _method='POST') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Pedido">Atualizar Pedido</a>
+        <a href="{{ url_for('atualizar_pedidocompra', id=pedidoc.id, _method='POST') }}" class="btn btn-primary" rel="tooltip" title="Atualizar Pedido">Atualizar Pedido</a>
         </div>
     </div>
     <div class="card-body">
@@ -26,87 +26,88 @@
                         <tr>
                             <th>id</th>
                             <th class="text-center">Data_pedido</th>
+                            <th class="text-center">Fábrica</th>
                             <th class="text-center">Qtde_pedido</th>
                             <th class="text-center">Produto</th>
                             <th class="text-center">Fornecedor</th>
                             <th class="text-center">Data_entrega</th>
                             <th>Obs</th>
                             <th class="text-center">Status</th>
-                            <th class="text-center">Filial</th>
                             <th class="text-center">Cadastrado_em</th>
                             <th class="text-center">Atualizado_em</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{pedido.id}}</td>
-                            <td class="text-center">{{pedido.data_pedido}}</td>
-                            <td class="text-center">{{pedido.qtde_pedido}}</td>
-                            <td class="text-center">{{pedido.produto_id}}</td>
-                            <td class="text-center">{{pedido.fornecedor_id}}</td>
-                            <td class="text-center">{{pedido.data_entrega}}</td>
-                            <td >{{pedido.obs}}</td>
-                            <td class="text-center">{{pedido.status}}</td>
-                            <td class="text-center">{{pedido.filial_pdv}}</td>
-                            <td class="text-center">{{pedido.cadastrado_em}}</td>
-                            <td class="text-center">{{pedido.atualizado_em}}</td>
+                            <td>{{pedidoc.id}}</td>
+                            <td class="text-center">{{pedidoc.data_pedido}}</td>
+                            <td class="text-center">{{pedidoc.clientes}}</td>
+                            <td class="text-center">{{pedidoc.qtde_pedido}}</td>
+                            <td class="text-center">{{pedidoc.produtos}}</td>
+                            <td class="text-center">{{pedidoc.fornecedores}}</td>
+                            <td class="text-center">{{pedidoc.data_entrega}}</td>
+                            <td >{{pedidoc.obs}}</td>
+                            <td class="text-center">
+                                  <span>
+                                      {% if pedidoc.status == 1 %}
+                                      <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i> Ativo
+                                      {% else %}
+                                      <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i> Inativo
+                                      {% endif %}
+                                  </span>
+                            </td>
+                            <td class="text-center">{{pedidoc.cadastrado_em}}</td>
+                            <td class="text-center">{{pedidoc.atualizado_em}}</td>
                     </tbody>
                   <div class="row">
                       <div class="card-header border-0 d-flex justify-content-between align-items-center">
                           <div>
-                            <i class="fw-bold text-secondary"> Detalhes Pedido de Compra : </i>(id: {{pedido.id}})
-                            <i class="breadcrumb-item active fw-bold text-dark"> {{pedido.produto_id}}</i>
+                            <i class="fw-bold text-secondary"> Detalhes Pedido de Compra : </i>(id: {{pedidoc.id}})
+                            <i class="breadcrumb-item active fw-bold text-dark"> {{pedidoc.produtos}}</i>
                           </div>
-                          <form id="delete-form" action="{{ url_for('visualizar_pedido', id=pedido.id, _method='POST') }}" method="post">
+                          <form id="delete-form" action="{{ url_for('visualizar_pedido', id=pedidoc.id, _method='POST') }}" method="post">
                               <input type="hidden" name="_method" value="DELETE">
-                              <button class="btn btn-danger" type="submit" title="Excluir Pedido de Compra" onclick="return confirm('Deseja excluir o Pedido {{pedido.produto_id}} ?')">Excluir Pedido</button>
+                              <button class="btn btn-outline-danger" type="submit" title="Excluir Pedido de Compra" onclick="return confirm('Deseja excluir o Pedido de Compra {{pedidoc.produtos}} ?')">Excluir Pedido Compra</button>
                           </form>
                       </div>
                       <hr>
                   </div>
               </table>
         </div>
-        <!--inicio DA div detalhes abaixo tabela detalhes receitas-->
+        <!--inicio DA div detalhes abaixo tabela detalhes do Fornecedor-->
         <div class="row card-header bg-secondary">
              <!--INICIO FORNECEDORES-->
              <div class="col-sm-12 col-md-6 col-xl-4 mb-4">
                 <div class="card border-0 shadow-sm  h-100">
                     <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
                         <h6 class="fw-bold text-secondary">
-                            Fornecedores Cadastrados para Produto
+                            Fornecedor do Produto
                         </h6>
                         <a href="{{ url_for('exibir_formfornecedor') }}" class="fs-5" rel="tooltip" title="Cadastrar Fornecedor">
                             <i class="fa-solid fa-circle-plus"></i>
                         </a>
                     </div>
                     <div class="card-body">
-                        {% if fornecedor %}
+                        {% if pedidoc.fornecedores %}
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
 
-                                        <th>Descrição</th>
-                                        <th class="text-center">Filial</th>
+                                        <th>Nome</th>
+                                        <th class="text-center">Cidade</th>
                                         <th class="text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for fornecedor in fornecedores %}
+                                    {% for fornecedor in pedidoc.fornecedores %}
                                     <tr>
 
-                                        <td>
-                                            <span>
-                                                {% if fornecedor.status == 1 %}
-                                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
-                                                {% else %}
-                                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
-                                                {% endif %}
-                                            </span>
-                                            {{fornecedor.nome}}
+                                        <td class="text-center">
+                                            {{fornecedor.fornecedores}}
                                         </td>
                                         <td class="text-center">
-                                            {{fornecedor.nome}}
+
                                         </td>
                                         <td class="text-center">
                                             <a href="#" rel="tooltip" title="Editar">
@@ -115,6 +116,13 @@
                                             <a href="#" rel="tooltip" title="Deletar">
                                                 <i class="fa-solid fa-trash m-1"></i>
                                             </a>
+                                            <span>
+                                                {% if fornecedor.status == 1 %}
+                                                <i class="fa-solid fa-circle text-success" rel="tooltip" title="Ativo"></i>
+                                                {% else %}
+                                                <i class="fa-solid fa-circle text-danger" rel="tooltip" title="Inativo"></i>
+                                                {% endif %}
+                                            </span>
                                         </td>
                                     </tr>
                                     {%endfor%}
@@ -135,7 +143,7 @@
                 <div class="card border-0 shadow-sm  h-100">
                     <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
                         <h6 class="fw-bold text-secondary">
-                            Ultimos Compras Realizadas
+                            Ultimas Compras Realizadas
                         </h6>
 
                         <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Pedidos">
@@ -186,7 +194,7 @@
                         </div>
                         {% else %}
                         <div class="alert alert-warning" role="alert">
-                            Nenhum Pedido de Compra Cadastrado para exibir!
+                            Nenhum Pedido de Compra realizado para exibir!
                         </div>
                         {% endif %}
                     </div>
@@ -194,30 +202,47 @@
             </div>
             <!--FIM ULTIMOS PEDIDOS DE COMPRAS-->
 
-            <!--INICIO PRODUTOS RECEITA-->
+            <!--INICIO OBSERVAÇÕES DO PEDIDO DE COMPRA-->
             <div class="col-sm-6 col-md-6 col-xl-4 mb-4">
                 <div class="card border-0 shadow-sm  h-100">
                     <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-2">
                         <h6 class="fw-bold text-secondary">
-                            Observações para o Produto
+                            Observações para o Pedido
                         </h6>
-                        <a href="#" class="fs-5" rel="tooltip" title="Cadastrar Produto">
-                             <i class="fa-solid fa-circle-plus"></i>
-                        </a>
                     </div>
                     <div class="card-body">
-                        {% if cliente %}
-                        <ul class="list-group list-group-flush">
-                            #for
-                            <li class="list-group-item">
-                                <p>
-                                    <i class="fa-solid fa-user me-2"></i>
-                                    <span class="fw-bold">#</span>
-                                </p>
-                                <small class="text-muted"># em # às #</small>
-                            </li>
-                            #end
-                        </ul>
+                        {% if pedidoc %}
+                       <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Produto</th>
+                                        <th class="text-center">Observação</th>
+                                        <th class="text-center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <tr>
+                                         <td class="text-center">
+                                            {{pedidoc.produtos}}
+                                        </td>
+                                        <td class="text-center">
+                                            {{pedidoc.obs}}
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="#" rel="tooltip" title="Editar">
+                                                <i class="fa-solid fa-pen m-1"></i>
+                                            </a>
+                                            <a href="#" rel="tooltip" title="Deletar">
+                                                <i class="fa-solid fa-trash m-1"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
                         {% else %}
                         <div class="alert alert-warning" role="alert">
                             Nenhuma Observação para exibir!

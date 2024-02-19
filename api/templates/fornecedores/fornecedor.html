@@ -34,15 +34,17 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-             {% if error_message %}
-                <p>{{ error_message }}</p>
-             {% else %}
+            <div class="error-message {% if error_message %}error{% else %}success{% endif %}">
+                {% if error_message %}
+                    <p>{{ error_message }}</p>
+                 {% endif %}
+            </div>
             <table class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th class="text-center">id</th>
                         <th>Nome</th>
-                        <th>Produto a cadastar/fornecer</th>
+                        <th>Produto</th>
                         <th>Endereco</th>
                         <th>Bairro</th>
                         <th>Cidade</th>
@@ -80,7 +82,7 @@
                 {% endfor %}
                 </tbody>
             </table>
-           {% endif %}
+
         </div>
     </div>
 </div>

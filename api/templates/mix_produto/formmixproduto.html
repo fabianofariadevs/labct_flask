@@ -1,0 +1,134 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+            <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="60" width="145"/>
+            </a>
+        </div>
+
+    </div>
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" style="font-size: 11px">
+             <a href="#">
+                    Admin/Usuário
+             </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Formulário de Cadastro de MixProdutos - Receitas
+            </li>
+        </ol>
+    </nav>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('adicionar_mixproduto') }}">
+            {% if mi_xproduto %}
+            <input type="hidden" name="_method" value="PUT">
+            {% else %}
+            <input type="hidden" name="_method" value="POST">
+            {% endif %}
+            {{ form.hidden_tag() }}
+            {% for field, errors in form.errors.items() %}
+                {% for error in errors %}
+                <p>{{ field }}: {{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+
+            <div class="row">
+                <h5>Atenção: Para adicionar MixProdutos, a receita deve está cadastrada!</h5>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="mb-1">
+                        {{ form.cod_prod_mix.label }} {{ form.cod_prod_mix(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.status.label }} {{ form.status(class="form-control") }}
+                   </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                     {{ form.receita.label }} {{ form.receita(class="form-select") }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.produtos.label }}
+                        {% for i in range(form.produtos.choices|length) %}
+                            {{ form.produtos(class="form-control", multiple="multiple")[i] }}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-4">
+                   {% for i in range(form.quantidades.choices|length) %}
+                       {{ form.quantidades(class="form-control")[i] }}
+                    {% endfor %}
+                    </div>
+                </div>
+
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" id="add-row">Adicionar Produto e Qtde</button>
+                    </div>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                        <a href="{{ url_for('listar_mixprodutos') }}" class="btn btn-outline-dark" title="Voltar para lista MixProdutos">Voltar para lista MixProdutos</a>
+
+                        <div id="dynamic-fields">
+                          <!-- Aqui serão adicionados dinamicamente os campos para mais produtos e quantidades -->
+                        </div>
+
+                <div class="col-md-3">
+                    <div class="mb-3">
+                         <!-- Lista de Produtos e Quantidades Cadastrados -->
+                        {% if mix_produto and mix_produto.quantidades %}
+                        <h4>Produtos Cadastrados:</h4>
+                        <ul>
+                            {% for quantidade in mix_produto.quantidades %}
+                            <li>{{ quantidade.produto }} - Quantidade: {{ quantidade.quantidade }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <hr>
+
+            <hr>
+            <br>
+
+            {% if mix_produto %}
+            <input type="submit" class="btn btn-outline-success" name="Atualizar" value="Atualizar MixProduto">
+            {% else %}
+            <input type="submit" class="btn btn-primary" name="cadastrar" value="Cadastrar">
+            {% endif %}
+        </form>
+    </div>
+</div>
+ <script>
+    $(document).ready(function () {
+      var addButton = $('#add-row');
+      var wrapper = $('#dynamic-fields');
+
+      // Adiciona dinamicamente campos para mais produtos e quantidades
+      $(addButton).click(function () {
+        var fieldHTML = '<div class="form-group"><label class="form-control-label">Produto</label>{{ form.produtos(class="form-control", multiple="multiple") }}{% if form.produtos.errors %}<ul class="errors">{% for error in form.produtos.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}</div><div class="form-group"><label class="form-control-label">Quantidade</label>{{ form.quantidades(class="form-control") }}{% if form.quantidades.errors %}<ul class="errors">{% for error in form.quantidades.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}</div>';
+
+        $(wrapper).append(fieldHTML);
+
+      });
+    });
+  </script>
+{% endblock conteudo %}
+

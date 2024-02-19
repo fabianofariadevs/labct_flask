@@ -7,6 +7,9 @@ from datetime import datetime
 
 class Fornecedor(db.Model):
     __tablename__ = "fornecedor"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     nome = db.Column(db.String(50), nullable=False)
     descricao = db.Column(db.String(200), nullable=False)
@@ -24,9 +27,10 @@ class Fornecedor(db.Model):
     atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
     #TODO relacionando FORNECEDOR com  PRODUTO 1/N
-    produtos = db.relationship("Produto", back_populates='fornecedor')
+    produtos = db.relationship('Produto', back_populates='fornecedor', foreign_keys='Produto.fornecedor_id')
 
-    pedidos = db.relationship('Pedido', back_populates='fornecedores')
+    pedido_compra = db.relationship('Pedido', back_populates='fornecedores', secondary='pedido_fornecedor', lazy='joined')
 
-    def __repr__(self):
-        return f"<Fornecedor {self.nome}>"
+    #TODO relacionando FORNECEDOR com  ESTOQUE 1/N
+    estoques = db.relationship('Estoque', back_populates='fornecedor', foreign_keys='Estoque.fornecedor_id')
+

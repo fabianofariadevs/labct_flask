@@ -23,7 +23,7 @@
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="consultaModalLabel">Relação Serviços em Abertos/Pendentes</h5>
+				<h5 class="modal-title" id="consultaModalLabel">Observações....Pendências Filiais?</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
 					<span aria-hidden="true">OK</span>
 				</button>
@@ -34,24 +34,176 @@
 		</div>
 	</div>
 </div>
-
-
-<!-- modal consulta producao  -->
- <div class="modal fade" id="consultaModalProd" tabindex="-1" role="dialog" aria-labelledby="consultaModalProdLabel">
+<!-- Modal para estoque Cliente -->
+<div class="modal fade" id="consultaclienteestoqueModal" tabindex="-1" role="dialog" aria-labelledby="consultaclienteestoqueModalLabel">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="consultaModalProdLabel">Pendências Cliente</h5>
+				<h5 class="modal-title" id="consultaclienteestoqueModalLabel">Relação Estoque</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-					<span aria-hidden="true">&times;</span>
+					<span aria-hidden="true">OK</span>
 				</button>
 			</div>
 			<div class="modal-body">
-				{% block modal_contentprod %}{% endblock %}
+				{% block modal_contentclienteestoque %}{% endblock %}
 			</div>
 		</div>
 	</div>
 </div>
+
+<!-- Modal para Receita Cliente -->
+<div class="modal fade" id="consultaclientereceitaModal" tabindex="-1" role="dialog" aria-labelledby="consultaclientereceitaModalLabel">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="consultaclientereceitaModalLabel">Receitas Cadastradas</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">OK</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				{% block modal_contentclientereceita %}{% endblock %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- modal consulta filial  -->
+ <div class="modal fade" id="consultaModalFilial" tabindex="-1" role="dialog" aria-labelledby="consultaModalFilialLabel">
+	 <div class="modal-dialog modal-dialog-centered" role="document">
+		 <div class="modal-content">
+			 <div class="modal-header">
+				 <h5 class="modal-title" id="consultaModalFilialLabel">Pendências Filial</h5>
+				 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					 <span aria-hidden="true">&times;</span>
+				 </button>
+			 </div>
+			 <div class="modal-body">
+				 {% block modal_contentfilial %}{% endblock %}
+			 </div>
+		 </div>
+		 	 </div>
+	 </div>
+
+<!-- modal consulta receita  -->
+ <div class="modal fade" id="consultaModalReceita" tabindex="-1" role="dialog" aria-labelledby="consultaModalReceitaLabel">
+	 <div class="modal-dialog modal-dialog-centered" role="document">
+		 <div class="modal-content">
+			 <div class="modal-header">
+				 <h5 class="modal-title" id="consultaModalReceitaLabel">Pendências Receita</h5>
+				 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					 <span aria-hidden="true">&times;</span>
+				 </button>
+			 </div>
+			 <div class="modal-body">
+				 {% block modal_contentreceita %}{% endblock %}
+			 </div>
+		 </div>
+		 	 </div>
+	 </div>
+
+<!-- modal consulta mixproduto  -->
+ <div class="modal fade" id="consultaModalMix" tabindex="-1" role="dialog" aria-labelledby="consultaModalMixLabel">
+	 <div class="modal-dialog modal-dialog-centered" role="document">
+		 <div class="modal-content">
+			 <div class="modal-header">
+				 <h5 class="modal-title" id="consultaModalMixLabel">Pendências Mix de Produtos</h5>
+				 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					 <span aria-hidden="true">&times;</span>
+				 </button>
+			 </div>
+			 <div class="modal-body">
+				 {% block modal_contentmix %}{% endblock %}
+			 </div>
+		 </div>
+		 	 </div>
+	 </div>
+
+<!-- modal consulta produtos  -->
+ <div class="modal fade" id="consultaModalProdutos" tabindex="-1" role="dialog" aria-labelledby="consultaModalProdutosLabel">
+	 <div class="modal-dialog modal-dialog-centered" role="document">
+		 <div class="modal-content">
+			 <div class="modal-header">
+				 <h5 class="modal-title" id="consultaModalProdutosLabel">Pendências Produtos</h5>
+				 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					 <span aria-hidden="true">&times;</span>
+				 </button>
+			 </div>
+			 <div class="modal-body">
+				 {% block modal_contentprodutos %}{% endblock %}
+			 </div>
+		 </div>
+		 	 </div>
+	 </div>
+
+<!-- modal consulta fornecedores  -->
+ <div class="modal fade" id="consultaModalFornecedores" tabindex="-1" role="dialog" aria-labelledby="consultaModalFornecedoresLabel">
+	 <div class="modal-dialog modal-dialog-centered" role="document">
+		 <div class="modal-content">
+			 <div class="modal-header">
+				 <h5 class="modal-title" id="consultaModalFornecedoresLabel">Pendências Fornecedores</h5>
+				 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					 <span aria-hidden="true">&times;</span>
+				 </button>
+			 </div>
+			 <div class="modal-body">
+				 {% block modal_contentfornecedores %}{% endblock %}
+			 </div>
+		 </div>
+		 	 </div>
+	 </div>
+
+<!-- modal consulta pedidos  -->
+<div class="modal fade" id="consultaModalPedidos" tabindex="-1" role="dialog" aria-labelledby="consultaModalPedidosLabel">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				 <h5 class="modal-title" id="consultaModalPedidosLabel">Pendências Pedidos de Compras</h5>
+				 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					 <span aria-hidden="true">&times;</span>
+				 </button>
+			</div>
+			<div class="modal-body">
+				 {% block modal_contentpedidos %}{% endblock %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- modal consulta pedidos produção  -->
+<div class="modal fade" id="consultaModalPedidosProd" tabindex="-1" role="dialog" aria-labelledby="consultaModalPedidosProdLabel">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				 <h5 class="modal-title" id="consultaModalPedidosProdLabel">Pendências Pedidos de Produção</h5>
+				 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					 <span aria-hidden="true">&times;</span>
+				 </button>
+			</div>
+			<div class="modal-body">
+				 {% block modal_contentpedidosprod %}{% endblock %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- modal consulta usuario  -->
+<div class="modal fade" id="consultaModalUsuario" tabindex="-1" role="dialog" aria-labelledby="consultaModalUsuarioLabel">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				 <h5 class="modal-title" id="consultaModalUsuarioLabel">Pendências Usuários</h5>
+				 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					 <span aria-hidden="true">&times;</span>
+				 </button>
+			</div>
+			<div class="modal-body">
+				 {% block modal_contentusuario %}{% endblock %}
+			</div>
+		</div>
+	</div>
+</div>
+
 
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
 

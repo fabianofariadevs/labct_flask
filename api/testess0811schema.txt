@@ -1,0 +1,160 @@
+class ReceitaSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = receita_model.Receita
+        load_instance = True
+        include_relationships = True # Inclui automaticamente os relacionamentos
+        fields = ("id", "descricao_mix", "modo_preparo", "departamento", "rend_kg", "rend_unid", "validade", "status", "cadastrado_em", "atualizado_em",
+                  "usuario", "cliente", "mixprodutos", "pedidosprod")
+
+    id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
+    descricao_mix = fields.String(required=True)
+    modo_preparo = fields.String(required=True)
+    departamento = fields.String(required=True)
+    rend_kg = fields.Float(required=True)
+    rend_unid = fields.Float(required=True)
+    validade = fields.Integer(required=True)
+    status = fields.Integer(required=False)
+    cadastrado_em = fields.DateTime(required=False)
+    atualizado_em = fields.DateTime(required=False)
+
+    usuario = ma.Nested("UsuarioSchema", only=('id', 'nome'))
+    cliente = ma.Nested("ClienteSchema", many=False, exclude=("receitas",))
+    mixprodutos = ma.Nested("MixProdutoSchema", many=True, exclude=("receita",))
+    pedidosprod = ma.Nested("PedidoProducaoSchema", many=True, exclude=("receitas",))
+
+class MixProdutoSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = mix_produto_model.MixProduto
+        load_instance = True
+        include_relationships = True
+        fields = ("id", "cod_prod_mix", "status", "situacao", "cadastrado_em", "atualizado_em",
+                  "receita", "filiais", "pedidosprod", "producoes", "produtos")
+
+    cod_prod_mix = fields.Integer(required=True)
+    status = fields.Integer(required=False)
+    situacao = fields.String(required=False)
+    cadastrado_em = fields.DateTime(required=True)
+    atualizado_em = fields.DateTime(required=True)
+
+    receita = ma.Nested("ReceitaSchema", many=False, exclude=("mixprodutos",))
+    filiais = ma.Nested("FilialSchema", many=True, exclude=("mixprodutos",))
+    pedidosprod = ma.Nested("PedidoProducaoSchema", many=True, exclude=("mixprodutos",))
+    producoes = ma.Nested("ProducaoSchema", many=True, only=('data_producao',), exclude=("mixprodutos",))
+    produtos = ma.Nested("ProdutoMpSchema", many=True, exclude=("mixprodutos",))
+
+class ProducaoSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = mix_produto_model.Producao
+        load_instance = True
+        include_relationships = True  # Inclui automaticamente os relacionamentos
+        fields = ("id", "data_producao", "qtde_produzida", "status", "obs", "qr_code", "cadastrado_em", "atualizado_em",
+                  "mixprodutos", "filial", "usuario", "pedidosprod")
+
+    id = fields.Integer(primary_key=True, autoincrement=True, nullable=False, dump_only=True)
+    data_producao = fields.Date(required=True)
+    qtde_produzida = fields.Integer(required=True)
+    status = fields.Integer(required=False)
+    obs = fields.String(required=False)
+    qr_code = fields.String(required=False)
+    cadastrado_em = fields.DateTime(required=True)
+    atualizado_em = fields.DateTime(required=True)
+
+    mixprodutos = ma.Nested("MixProdutoSchema", many=False)
+    filial = ma.Nested("FilialSchema", many=False)
+    usuario = ma.Nested("UsuarioSchema", many=False)
+    pedidosprod = ma.Nested("PedidoProducaoSchema", many=False)
+
+
+class Receita(db.Model):
+    __tablename__ = "receita"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    descricao_mix = db.Column(db.Text, nullable=False)
+    modo_preparo = db.Column(db.Text, nullable=False)
+    departamento = db.Column(db.String(50), nullable=False)
+    rend_kg = db.Column(db.Float, nullable=False)
+    rend_unid = db.Column(db.Float, nullable=False)
+    validade = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=func.now)
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    # TODO relacionando Receita c/ usuario 1/1
+    usuario = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=True)
+
+    # TODO relacionando RECEITA c/ cliente N/1
+    cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id"), nullable=False)
+    cliente = db.relationship("Cliente", back_populates="receitas", foreign_keys=[cliente_id])
+
+    # TODO relacionando RECEITA c/ mixprodutos 1/1
+    mixprodutos = db.relationship("MixProduto", back_populates="receita", uselist=False, cascade="all, delete-orphan", lazy="joined")
+
+    # Relacionamento 1/N com a tabela PedidoProducao
+    pedidosprod = db.relationship("PedidoProducao", back_populates="receitas")
+
+mixproduto_filial = db.Table("mixproduto_filial", db.Column("mixproduto_id", db.Integer, db.ForeignKey("mixproduto.id"), primary_key=True),
+                             db.Column("filial_id", db.Integer, db.ForeignKey("filial.id"), primary_key=True),
+                             db.Column("qtde_produzida", db.Integer, nullable=True, default=0))
+
+# TODO ** Classe Mixproduto dbModel, responsavel por definir e criar o Banco de dados com as migrations flask db.
+class MixProduto(db.Model):
+    __tablename__ = "mixproduto"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    cod_prod_mix = db.Column(db.Integer, nullable=True)
+    status = db.Column(db.Integer, default=1, nullable=True)
+    situacao = db.Column(db.String(50), nullable=False)
+    cadastrado_em = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    atualizado_em = db.Column(db.DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+
+    # TODO relacionamento com tabela filial N/N
+    filial_id = db.Column(db.Integer, db.ForeignKey('filial.id', ondelete="CASCADE"), nullable=False)
+    filiais = db.relationship("Filial", secondary="mixproduto_filial", back_populates="mixprodutos")
+
+    # TODO relacionamento com tabela receita 1/1
+    receita_id = db.Column(db.Integer, db.ForeignKey("receita.id"), nullable=False)
+    receita = db.relationship("Receita", back_populates="mixprodutos", foreign_keys=[receita_id])
+
+    # TODO relacionamento com tabela pedido_producao 1/N
+    #pedidosprod_id = db.Column(db.Integer, db.ForeignKey("pedidoproducao.id"), nullable=False)
+    pedidosprod = db.relationship("PedidoProducao", back_populates="mixprodutos")
+
+    producao_id = db.Column(db.Integer, db.ForeignKey("producao.id"), nullable=True)
+    producoes = db.relationship("Producao", back_populates="mixprodutos", uselist=True, single_parent=True, cascade="all, delete-orphan", foreign_keys="[Producao.mixproduto_id]")
+
+    # TODO relacionamento com tabela PRODUTOS N/N
+    produtos = db.relationship("Produto", secondary="mixproduto_produto", back_populates="mixprodutos_produtos")
+
+class Producao(db.Model):
+    __tablename__ = "producao"
+    __table_args__ = {"extend_existing": True}
+    include_relationships = True
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    data_producao = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    qtde_produzida = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(50), nullable=False)
+    obs = db.Column(db.Text(), nullable=True)
+    qr_code = db.Column(db.String(50), nullable=True)
+    cadastrado_em = db.Column(db.DateTime, default=db.func.now, nullable=False)
+    atualizado_em = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+
+    # TODO relacionamento com tabela MixProduto 1/1
+    mixproduto_id = db.Column(db.Integer, db.ForeignKey("mixproduto.id"), nullable=False)
+    mixprodutos = db.relationship("MixProduto", back_populates="producoes", foreign_keys=[mixproduto_id])
+
+    # TODO relacionamento com tabela Filial 1/1
+    filial_id = db.Column(db.Integer, db.ForeignKey("filial.id"), nullable=False)
+    filial = db.relationship("Filial", back_populates="producoes")
+
+    # TODO relacionamento com tabela Usuario 1/1
+    usuario = db.relationship("Usuario", back_populates="producoes")
+
+    # TODO relacionamento com tabela PedidoProducao 1/1
+    pedidosprod = db.relationship("PedidoProducao", back_populates="producoes", foreign_keys=[PedidoProducao.producao_id])
+

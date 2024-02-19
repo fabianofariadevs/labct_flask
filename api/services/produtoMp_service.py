@@ -8,14 +8,25 @@ from ..services import fornecedor_service
 #       @author Fabiano Faria
 
 
-def cadastrar_produto(produto):
-    produto_bd = produtoMp_model.Produto(nome=produto.nome, descricao=produto.descricao, quantidade=produto.quantidade, fornecedor_id=produto.fornecedor_id,
-                                         compra_unid=produto.compra_unid, peso_pcte=produto.peso_pcte, valor=produto.valor, custo_ultima_compra=produto.custo_ultima_compra,
-                                         whatsapp=produto.whatsapp, qrcode=produto.qrcode, status=produto.status, cadastrado_em=func.now(), atualizado_em=produto.atualizado_em)
+def cadastrar_produto(form_data):
+    produto_bd = produtoMp_model.Produto(
+        nome=form_data.get('nome'),
+        descricao=form_data.get('descricao'),
+        quantidade=form_data.get('quantidade'),
+        compra_unid=form_data.get('compra_unid'),
+        peso_pcte=form_data.get('peso_pcte'),
+        valor=form_data.get('valor'),
+        custo_ultima_compra=form_data.get('custo_ultima_compra'),
+        whatsapp=form_data.get('whatsapp'),
+        qrcode=form_data.get('qrcode'),
+        status=form_data.get('status'),
+        estoque_minimo=form_data.get('estoque_minimo'),
+        obs=form_data.get('obs'),
+        cadastrado_em=func.now(),
+        atualizado_em=form_data.get('atualizado_em'),
+        fornecedor=fornecedor_service.listar_fornecedor_id(form_data.get('fornecedor'))
+    )
 
-   # for i in produto.fornecedor_id:
-    #    fornecedor = listar_produtos(i)
-     #   produto_bd.produtos.append(fornecedor)
     db.session.add(produto_bd)
     db.session.commit()
     return produto_bd
@@ -28,26 +39,42 @@ def listar_produto_id(id):
     produto = produtoMp_model.Produto.query.filter_by(id=id).first()
     return produto
 
-def atualiza_produto(produto_anterior, produto_novo):
-    produto_anterior.nome = produto_novo.nome
-    produto_anterior.descricao = produto_novo.descricao
-    produto_anterior.quantidade = produto_novo.quantidade
-    produto_anterior.fornecedor_id = produto_novo.fornecedor_id
-    #produto_anterior.cliente_id = produto_novo.cliente_id
-    produto_anterior.compra_unid = produto_novo.compra_unid
-    produto_anterior.peso_pcte = produto_novo.peso_pcte
-    produto_anterior.valor = produto_novo.valor
-    produto_anterior.custo_ultima_compra = produto_novo.custo_ultima_compra
-    produto_anterior.whatsapp = produto_novo.whatsapp
-    produto_anterior.qrcode = produto_novo.qrcode
-    produto_anterior.status = produto_novo.status
+def atualiza_produto(produto, fornecedor_id, form_data):
+    if produto:
+        fornecedor = fornecedor_service.listar_fornecedor_id(fornecedor_id)
+        if fornecedor:
+            campos_obrigatorios = ['nome', 'descricao', 'quantidade', 'compra_unid', 'peso_pcte', 'valor', 'custo_ultima_compra', 'whatsapp', 'qrcode', 'status', 'estoque_minimo', 'obs']
+            for campo in campos_obrigatorios:
+                if campo not in form_data:
+                    raise ValueError(f"Campo obrigatório {campo} não informado")
 
-    db.session.commit()
+            produto.fornecedor = fornecedor
+            produto.nome = form_data['nome']
+            produto.descricao = form_data['descricao']
+            produto.quantidade = form_data['quantidade']
+            produto.compra_unid = form_data['compra_unid']
+            produto.peso_pcte = form_data['peso_pcte']
+            produto.valor = form_data['valor']
+            produto.custo_ultima_compra = form_data['custo_ultima_compra']
+            produto.whatsapp = form_data['whatsapp']
+            produto.qrcode = form_data['qrcode']
+            produto.status = form_data['status']
+            produto.estoque_minimo = form_data['estoque_minimo']
+            produto.obs = form_data['obs']
+            produto.atualizado_em = func.now()
 
+            db.session.commit()
+
+            return produto
+        else:
+            raise ValueError(f"Fornecedor não encontrado")
+    else:
+        raise ValueError(f"Produto não encontrado")
+
+    
 def remove_produto(produto):
     db.session.delete(produto)
     db.session.commit()
-
 
 
 #TODO Aqui os metodos CRUD da classe INVENTARIO

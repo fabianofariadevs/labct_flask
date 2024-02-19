@@ -1,40 +1,85 @@
-from ..models import mix_produto_model
 from api import db
+from sqlalchemy import func
+from ..models import mix_produto_model, receita_model, produtoMp_model
+from ..services import produtoMp_service, receita_service, filial_pdv_service
 
 #TODO ** CRUD ** ESSAS funções fornecem operações básicas de criação, leitura, atualização e remoção (CRUD) para os registros da tabela pedido no banco de dados.
 #       @author Fabiano Faria
 
-def cadastrar_mixproduto(mixproduto):
-    mixproduto_bd = mix_produto_model.Mixproduto(cliente=mixproduto.cliente, cod_prod_mix=mixproduto.cod_prod_mix, produto=mixproduto.produto, descricao=mixproduto.descricao,
-                                                 modo_preparo=mixproduto.modo_preparo, departamento=mixproduto.departamento, rend_kg=mixproduto.rend_kg, rend_unid=mixproduto.rend_unid,
-                                                 validade=mixproduto.validade, status=mixproduto.status, cadastrado_em=mixproduto.cadastrado_em, atualizado_em=mixproduto.atualizado_em)
-    db.session.add(mixproduto_bd)
-    db.session.commit()
-    return mixproduto_bd
-
 def listar_mixprodutos():
-    mixprodutos = mix_produto_model.Mixproduto.query.all()
-    return mixprodutos
-
-def listar_mixproduto_id(id):
-    mixproduto = mix_produto_model.Mixproduto.query.filter_by(id=id).first()
+    mixproduto = mix_produto_model.MixProduto.query.all()
     return mixproduto
 
-def atualiza_mixproduto(mixproduto_anterior, mixproduto_novo):
-    mixproduto_anterior.cliente = mixproduto_novo.cliente
-    mixproduto_anterior.cod_prod_mix = mixproduto_novo.cod_prod_mix
-    mixproduto_anterior.produto = mixproduto_novo.produto
-    mixproduto_anterior.descricao = mixproduto_novo.descricao
-    mixproduto_anterior.modo_preparo = mixproduto_novo.modo_preparo
-    mixproduto_anterior.departamento = mixproduto_novo.departamento
-    mixproduto_anterior.rend_kg = mixproduto_novo.rend_kg
-    mixproduto_anterior.rend_unid = mixproduto_novo.rend_unid
-    mixproduto_anterior.validade = mixproduto_novo.validade
-    mixproduto_anterior.status = mixproduto_novo.status
-    mixproduto_anterior.cadastrado_em = mixproduto_novo.cadastrado_em
-    mixproduto_anterior.atualizado_em = mixproduto_novo.atualizado_em
+def listar_mixproduto_id(id):
+    mixproduto = mix_produto_model.MixProduto.query.filter_by(id=id).first()
+    return mixproduto
+
+def cadastrar_mixproduto(form_data):
+    produtos_ids = form_data.get('produtos', [])
+    if not isinstance(produtos_ids, list):
+        produtos_ids = [produtos_ids]
+
+    produtos = produtoMp_model.Produto.query.filter(produtoMp_model.Produto.id.in_(produtos_ids)).all()
+    if len(produtos) != len(produtos_ids):
+        raise ValueError("Um ou mais produtos não foram encontrados.")
+
+    mixproduto = mix_produto_model.MixProduto(
+        cod_prod_mix=form_data['cod_prod_mix'],
+        status=form_data['status'],
+        situacao=form_data['situacao'],
+        produtos=produtos,
+        quantidades=form_data['quantidades'],
+        receita=receita_service.listar_receita_id(form_data['receita']),
+        cadastrado_em=func.now(),
+    )
+    db.session.add(mixproduto)
+    db.session.commit()
+    return mixproduto
+
+
+def salvar_mixproduto(mixproduto):
     db.session.commit()
 
-def remove_mixproduto(mixproduto):
+
+def cadastrar_mixproduto22(form_data):
+    try:
+        produtos_com_quantidades = form_data.get('produtos', [])
+        if not isinstance(produtos_com_quantidades, list):
+            raise ValueError("A lista de produtos não foi enviada")
+
+        for item in produtos_com_quantidades:
+            item['quantidade'] = int(item['quantidade'])
+
+            mix_bd = mix_produto_model.MixProduto(
+                cod_prod_mix=form_data.cod_prod_mix,
+                status=form_data.status,
+                situacao=form_data.situacao,
+                produtos=[item['produto'] for item in produtos_com_quantidades],
+                quantidade=[item['quantidade'] for item in produtos_com_quantidades],
+                receita=form_data.receita,
+                filiais=form_data.filiais,
+                cadastrado_em=func.now(),
+                atualizado_em=form_data.atualizado_em,
+            )
+            db.session.add(mix_bd)
+            db.session.commit()
+            return mix_bd
+    except Exception as e:
+        raise ValueError(f"Erro ao cadastrar mixproduto: {e}")
+
+def deletar_mixproduto(mixproduto):
     db.session.delete(mixproduto)
     db.session.commit()
+
+
+def atualizar_mixproduto(form_data):
+    mixproduto = mix_produto_model.MixProduto.query.filter_by(id=form_data.id).first()
+    if not mixproduto:
+        raise ValueError(f"O mixproduto com id {form_data.id} não foi encontrado.")
+
+    mixproduto.produtos = form_data.produtos
+    mixproduto.quantidades = form_data.quantidades
+    mixproduto.receita = form_data.receita
+
+    db.session.commit()
+    return mixproduto

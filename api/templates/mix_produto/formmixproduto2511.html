@@ -1,0 +1,110 @@
+{% extends 'basedetalhes.html' %}
+{% block conteudo %}
+
+<div class="card border-0 shadow-sm" style="width:98%; margin-left:12px; margin-top:12px;">
+    <div class="card-header bg-secondary border-0 d-flex justify-content-between align-items-center">
+        <div class="card-header justify-content-between">
+            <a href="{{ url_for('index') }}" title="Sobre a LAB página inicial">
+                <img src="https://i.postimg.cc/k54vbtBF/userlmn-ebfdb7b90b9b59a3c0ece37c1d46cf20-removebg-preview.png" alt="logo labct" height="60" width="145"/>
+            </a>
+        </div>
+
+    </div>
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" style="font-size: 11px">
+             <a href="#">
+                    Admin/Usuário
+             </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Formulário de Cadastro de MixProdutos - Receitas
+            </li>
+        </ol>
+    </nav>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('adicionar_mixproduto') }}">
+            {% if receita %}
+            <input type="hidden" name="_method" value="PUT">
+            {% else %}
+            <input type="hidden" name="_method" value="POST">
+            {% endif %}
+            {{ form.hidden_tag() }}
+            {% for error in form.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+
+            <div class="row">
+                <h5>Atenção: Para adicionar MixProdutos, a receita deve está cadastrada!</h5>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="mb-1">
+                        {{ form.cod_prod_mix.label }} {{ form.cod_prod_mix(class="form-control") }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mb-3">
+                        {{ form.status.label }} {{ form.status(class="form-control") }}
+                   </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                     {{ form.receita.label }} {{ form.receita(class="form-select") }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.produtos.label }} {{ form.produtos(class="form-control", multiple="multiple") }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-4">
+                        {{ form.quantidades.label }} {{ form.quantidades(class="form-control") }}
+                    </div>
+                    <div>
+                        <div>
+                        <button type="submit" class="btn btn-outline-success">Adicionar Produto</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                         <!-- Lista de Produtos e Quantidades Cadastrados -->
+                        {% if mix_produto and mix_produto.quantidades %}
+                        <h4>Produtos Cadastrados:</h4>
+                        <ul>
+                            {% for quantidade in mix_produto.quantidades %}
+                            <li>{{ quantidade.produto.nome }} - Quantidade: {{ quantidade.quantidade }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <hr>
+             <div>
+                 <div class="3">
+                    <a href="{{ url_for('listar_mixprodutos') }}" class="btn btn-outline-dark" title="Voltar para lista MixProdutos">Voltar para lista MixProdutos</a>
+                 </div>
+             </div>
+            <hr>
+            <br>
+
+            {% if mixprodutos %}
+            <input type="submit" class="btn btn-outline-success" name="Atualizar" value="Atualizar MixProduto">
+            {% else %}
+            <input type="submit" class="btn btn-primary" name="cadastrar" value="Cadastrar">
+            {% endif %}
+            <a href="{{ url_for('listar_mixprodutos') }}" class="btn btn-outline-secondary" rel="tooltip" title="voltar ao menu">voltar</a>
+        </form>
+    </div>
+</div>
+{% endblock conteudo %}
+

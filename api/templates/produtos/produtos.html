@@ -46,6 +46,7 @@
                         <th>Descrição</th>
                         <th class="text-center">Qtde</th>
                         <th class="text-center">Fornecedor</th>
+                        <th class="text-center">Estoque</th>
                         <th class="text-center">Whatsapp</th>
                         <th class="text-center">Status</th>
                         <th class="text-center">Ações</th>
@@ -58,7 +59,8 @@
                         <td>{{produto.nome}}</td>
                         <td>{{produto.descricao}}</td>
                         <td class="text-center">{{produto.quantidade}}</td>
-                        <td class="text-center">{{produto.fornecedor_id}}</td>
+                        <td class="text-center">{{produto.fornecedor.nome}}</td>
+                        <td class="text-center">{{produto.estoques_produto}}</td>
                         <td class="text-center">{{produto.whatsapp}}</td>
                         <td class="text-center">
                             {% if produto.status == 1 %}

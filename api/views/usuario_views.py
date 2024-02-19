@@ -13,19 +13,19 @@ class UsuarioForm(FlaskForm):
     nome = StringField("Nome", validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired()])
     senha = StringField('Senha', validators=[DataRequired()])
-    is_admin = SelectField('Administrador', choices=[("1", 'Sim'), ("0", 'Não')], validators=[DataRequired()])
-    status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()])
-    empresa = SelectField('Empresa/Cliente', validators=[DataRequired()])
-    cargo = SelectField('Função', validators=[DataRequired()])
+    is_admin = SelectField('Administrador', choices=[("1", 'Sim'), ("0", 'Não')], validators=[DataRequired()], coerce=int)
+    status = SelectField('Status', choices=[("1", 'Ativo'), ("0", 'Inativo')], validators=[DataRequired()], coerce=int)
+    cliente = SelectField('Empresa/Cliente', validators=[DataRequired()], coerce=int)
+    funcao = SelectField('Função', validators=[DataRequired()], coerce=int)
 
     submit = SubmitField('Cadastrar')
 
     def __init__(self, *args, **kwargs):
         super(UsuarioForm, self).__init__(*args, **kwargs)
-        self.empresa.choices = [(cliente.id, cliente.nome)
+        self.cliente.choices = [(cliente.id, cliente.nome)
                                 for cliente in Cliente.query.all()]
-        self.cargo.choices = [(funcao.id, funcao.nome)
-                              for funcao in Funcao.query.all()]
+        self.funcao.choices = [(funcao.id, funcao.nome)
+                               for funcao in Funcao.query.all()]
 
         self.is_admin.choices = self.get_is_admin_choices()
         self.status.choices = self.get_status_choices()
@@ -38,17 +38,18 @@ class UsuarioForm(FlaskForm):
     def get_status_choices():
         return [("1", 'Ativo'), ("0", 'Inativo')]
 
-    #TODO metodo personalizado no seu formulário para extrair os dados do formulário em um formato serializável, como um dicionário.
     def to_dict(self):
-        return {
-            'nome': self.nome.data,
-            'email': self.email.data,
-            'senha': self.senha.data,
-            'is_admin': self.is_admin.data,
-            'status': self.status.data,
-            'empresa': self.empresa.data,
-            'cargo': self.cargo.data,
+        data = {
+            "nome": self.nome.data,
+            "email": self.email.data,
+            "senha": self.senha.data,
+            "is_admin": self.is_admin.data,
+            "status": self.status.data,
+            "cliente": int(self.cliente.data) if self.cliente.data else None,
+            "funcao": int(self.funcao.data) if self.funcao.data else None,
         }
+        return data
+
 
 @app.route('/usuarios', methods=['GET'])
 def listar_usuarios():
@@ -97,13 +98,14 @@ def exibir_formusuario():
         try:
             form_data = form.to_dict()
             usuario = usuario_schema.UsuarioSchema().load(form_data)
+           # form.populate_obj(usuario)
             usuario_bd = usuario_service.cadastrar_usuario(usuario)
             usuario_data = usuario_schema.UsuarioSchema().dump(usuario_bd)
             flash("Usuário cadastrado com sucesso!")
             return redirect(url_for("listar_usuarios"))
         except ValidationError as error:
             flash("Erro ao cadastrar Usuário")
-    return render_template('usuarios/formusuario.html', form=form)
+    return render_template('usuarios/formusuario.html', form=form, usuario={})
 
 @app.route('/usuarios/buscar', methods=['GET'])
 def buscar_usuario():

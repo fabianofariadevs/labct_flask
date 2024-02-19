@@ -2,18 +2,18 @@
 #TODO CLASSE PARA ENTIDADES PEDIDO E PEDIDOPRODUCAO
 
 class Pedido:
-    def __init__(self, qtde_pedido, data_pedido, data_entrega, status, obs, produto_id, fornecedor_id, filial_pdv, cadastrado_em, atualizado_em, produto):
+    def __init__(self, qtde_pedido, data_pedido, data_entrega, status, obs, cadastrado_em, atualizado_em,
+                 produtos, clientes, fornecedores):
         self.__qtde_pedido = qtde_pedido
         self.__data_pedido = data_pedido
         self.__data_entrega = data_entrega
         self.__status = status
         self.__obs = obs
-        self.__produto_id = produto_id
-        self.__fornecedor_id = fornecedor_id
-        self.__filial_pdv = filial_pdv
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
-        self.__produto = produto
+        self.__produtos = produtos
+        self.__clientes = clientes
+        self.__fornecedores = fornecedores
 
     @property
     def qtde_pedido(self):
@@ -56,30 +56,6 @@ class Pedido:
         self.__obs = obs
 
     @property
-    def produto_id(self):
-        return self.__produto_id
-
-    @produto_id.setter
-    def produto_id(self, produto_id):
-        self.__produto_id = produto_id
-
-    @property
-    def fornecedor_id(self):
-        return self.__fornecedor_id
-
-    @fornecedor_id.setter
-    def fornecedor_id(self, fornecedor_id):
-        self.__fornecedor_id = fornecedor_id
-
-    @property
-    def filial_pdv(self):
-        return self.__filial_pdv
-
-    @filial_pdv.setter
-    def filial_pdv(self, filial_pdv):
-        self.__filial_pdv = filial_pdv
-
-    @property
     def cadastrado_em(self):
         return self.__cadastrado_em
 
@@ -96,25 +72,46 @@ class Pedido:
         self.__atualizado_em = atualizado_em
 
     @property
-    def produto(self):
-        return self.__produto
+    def produtos(self):
+        return self.__produtos
 
-    @produto.setter
-    def produto(self, produto):
-        self.__produto = produto
+    @produtos.setter
+    def produtos(self, produtos):
+        self.__produtos = produtos
+
+    @property
+    def clientes(self):
+        return self.__clientes
+
+    @clientes.setter
+    def clientes(self, clientes):
+        self.__clientes = clientes
+
+    @property
+    def fornecedores(self):
+        return self.__fornecedores
+
+    @fornecedores.setter
+    def fornecedores(self, fornecedores):
+        self.__fornecedores = fornecedores
 
 
 class PedidoProducao:
-    def __init__(self, data_pedido, data_entrega, qtde_pedido, status, obs, receita_id, filial_pdv, cadastrado_em, atualizado_em):
+    def __init__(self, data_pedido, data_entrega, qtde_pedido, situacao, status, obs, cadastrado_em, atualizado_em,
+                 filiais, cliente, mixprodutos, producoes):
+
         self.__data_pedido = data_pedido
         self.__data_entrega = data_entrega
         self.__qtde_pedido = qtde_pedido
+        self.__situacao = situacao
         self.__status = status
         self.__obs = obs
-        self.__receita_id = receita_id
-        self.__filial_pdv = filial_pdv
         self.__cadastrado_em = cadastrado_em
         self.__atualizado_em = atualizado_em
+        self.__filiais = filiais
+        self.__cliente = cliente
+        self.__mixprodutos = mixprodutos
+        self.__producoes = producoes
 
     @property
     def data_pedido(self):
@@ -131,6 +128,14 @@ class PedidoProducao:
     @data_entrega.setter
     def data_entrega(self, data_entrega):
         self.__data_entrega = data_entrega
+
+    @property
+    def situacao(self):
+        return self.__situacao
+
+    @situacao.setter
+    def situacao(self, situacao):
+        self.__situacao = situacao
 
     @property
     def status(self):
@@ -157,22 +162,6 @@ class PedidoProducao:
         self.__obs = obs
 
     @property
-    def receita_id(self):
-        return self.__receita_id
-
-    @receita_id.setter
-    def receita_id(self, receita_id):
-        self.__receita_id = receita_id
-
-    @property
-    def filial_pdv(self):
-        return self.__filial_pdv
-
-    @filial_pdv.setter
-    def filial_pdv(self, filial_pdv):
-        self.__filial_pdv = filial_pdv
-
-    @property
     def cadastrado_em(self):
         return self.__cadastrado_em
 
@@ -187,3 +176,36 @@ class PedidoProducao:
     @atualizado_em.setter
     def atualizado_em(self, atualizado_em):
         self.__atualizado_em = atualizado_em
+
+    @property
+    def filiais(self):
+        return self.__filiais
+
+    @filiais.setter
+    def filiais(self, filiais):
+        self.__filiais = filiais
+
+    @property
+    def cliente(self):
+        return self.__cliente
+
+    @cliente.setter
+    def cliente(self, cliente):
+        self.__cliente = cliente
+
+    @property
+    def mixprodutos(self):
+        return self.__mixprodutos
+
+    @mixprodutos.setter
+    def mixprodutos(self, mixprodutos):
+        self.__mixprodutos = mixprodutos
+
+    @property
+    def producoes(self):
+        return self.__producoes
+
+    @producoes.setter
+    def producoes(self, producoes):
+        self.__producoes = producoes
+

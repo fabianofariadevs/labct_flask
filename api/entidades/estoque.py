@@ -1,14 +1,14 @@
 class Estoque:
-    def __init__(self, produto_id, cliente_id, filial_pdv, nome, preco, validade, valor_ultima_compra, quantidade_op, quantidade_minima, obs, quantidade_atual, status, cadastrado_em, atualizado_em):
+    def __init__(self, produto, fornecedor, cliente, filiais, nome, validade, valor_ultima_compra, quantidade_minima, obs,
+                 quantidade_atual, status, cadastrado_em, atualizado_em):
 
-        self.produto_id = produto_id
-        self.cliente_id = cliente_id
-        self.filial_pdv = filial_pdv
+        self.produto = produto
+        self.fornecedor = fornecedor
+        self.cliente = cliente
+        self.filiais = filiais
         self.nome = nome
-        self.preco = preco
         self.validade = validade
         self.valor_ultima_compra = valor_ultima_compra
-        self.quantidade_op = quantidade_op
         self.quantidade_minima = quantidade_minima
         self.obs = obs
         self.quantidade_atual = quantidade_atual
@@ -17,28 +17,36 @@ class Estoque:
         self.atualizado_em = atualizado_em
 
     @property
-    def produto_id(self):
-        return self.__produto_id
+    def produtos(self):
+        return self.__produtos
 
-    @produto_id.setter
-    def produto_id(self, produto_id):
-        self.__produto_id = produto_id
-
-    @property
-    def cliente_id(self):
-        return self.__cliente_id
-
-    @cliente_id.setter
-    def cliente_id(self, cliente_id):
-        self.__cliente_id = cliente_id
+    @produtos.setter
+    def produtos(self, produtos):
+        self.__produtos = produtos
 
     @property
-    def filial_pdv(self):
-        return self.__filial_pdv
+    def fornecedor(self):
+        return self.__fornecedor
 
-    @filial_pdv.setter
-    def filial_pdv(self, filial_pdv):
-        self.__filial_pdv = filial_pdv
+    @fornecedor.setter
+    def fornecedor(self, fornecedor):
+        self.__fornecedor = fornecedor
+
+    @property
+    def cliente(self):
+        return self.__cliente
+
+    @cliente.setter
+    def cliente(self, cliente):
+        self.__cliente = cliente
+
+    @property
+    def filiais(self):
+        return self.__filiais
+
+    @filiais.setter
+    def filiais(self, filiais):
+        self.__filiais = filiais
 
     @property
     def nome(self):
@@ -47,14 +55,6 @@ class Estoque:
     @nome.setter
     def nome(self, nome):
         self.__nome = nome
-
-    @property
-    def preco(self):
-        return self.__preco
-
-    @preco.setter
-    def preco(self, preco):
-        self.__preco = preco
 
     @property
     def validade(self):
@@ -71,14 +71,6 @@ class Estoque:
     @valor_ultima_compra.setter
     def valor_ultima_compra(self, valor_ultima_compra):
         self.__valor_ultima_compra = valor_ultima_compra
-
-    @property
-    def quantidade_op(self):
-        return self.__quantidade_op
-
-    @quantidade_op.setter
-    def quantidade_op(self, quantidade_op):
-        self.__quantidade_op = quantidade_op
 
     @property
     def quantidade_minima(self):
