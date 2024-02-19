@@ -15,10 +15,10 @@ class MixProdutoSchema(ma.SQLAlchemyAutoSchema):
     cadastrado_em = fields.DateTime(required=False)
     atualizado_em = fields.DateTime(required=False)
 
-    receita = ma.Nested("ReceitaSchema", many=False, unknown=EXCLUDE, only=('descricao_mix',))  # Certifique-se de ajustar 'ReceitaSchema' conforme necessário
-    pedidosprod = ma.Nested("PedidoProducaoSchema", many=True, exclude=("mixprodutos",), unknown="exclude", only=('situacao', 'status', 'mixprodutos', 'producoes'))
-    producoes = ma.Nested("ProducaoSchema", many=False, exclude=("mixprodutos",), unknown="exclude", only=('data_producao', 'qtde_produzida', 'status', 'obs', 'mixprodutos', 'filial', 'usuario', 'pedidosprod'))
-    produtos = ma.Nested("ProdutoMpSchema", many=True, unknown="exclude", only=('id', 'status'))
+    receita = ma.Nested("ReceitaSchema", many=False, unknown=EXCLUDE,)  # Certifique-se de ajustar 'ReceitaSchema' conforme necessário
+    pedidosprod = ma.Nested("PedidoProducaoSchema", many=True, exclude=("mixprodutos",), unknown="exclude")
+    producoes = ma.Nested("ProducaoSchema", many=False, exclude=("mixprodutos",), unknown="exclude",)
+    produtos = ma.Nested("ProdutoMpSchema", many=True, unknown="exclude",)
     quantidades = ma.Nested("QuantidadeMixProdutosSchema", many=True, unknown="exclude")
 
 
@@ -40,9 +40,9 @@ class ProducaoSchema(ma.SQLAlchemyAutoSchema):
     atualizado_em = fields.DateTime(required=True)
 
     mixprodutos = ma.Nested("MixProdutoSchema", many=False, only=('id', 'cod_prod_mix', 'status', 'receita'))
-    filial = ma.Nested("FilialSchema", many=False, only=('id', 'nome'))
-    usuario = ma.Nested("UsuarioSchema", many=False, only=('id', 'nome'))
-    pedidosprod = ma.Nested("PedidoProducaoSchema", many=False, only=('id', 'data_pedido', 'data_entrega', 'qtde_pedido', 'situacao', 'status', 'obs', 'cadastrado_em', 'atualizado_em'))
+    filial = ma.Nested("FilialSchema", many=False,)
+    usuario = ma.Nested("UsuarioSchema", many=False, exclude=("producoes",))
+    pedidosprod = ma.Nested("PedidoProducaoSchema", many=False,)
 
 class QuantidadeMixProdutosSchema(ma.SQLAlchemyAutoSchema):
     class Meta:

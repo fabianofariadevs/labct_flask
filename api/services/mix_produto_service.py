@@ -37,38 +37,6 @@ def cadastrar_mixproduto(form_data):
     return mixproduto
 
 
-def cadastrar_mixproduto44(form_data):
-    cod_prod_mix = form_data.get('cod_prod_mix'),
-    status = form_data.get('status'),
-    situacao = form_data.get('situacao'),
-    produtos_data = form_data.get('produtos', [])
-    quantidade = form_data.get('quantidade'),
-    receita_id = form_data.get('receita'),
-    filiais = form_data.get('filiais'),
-
-    receita = receita_model.Receita.query.get(receita_id)
-
-    mixproduto = mix_produto_model.MixProduto(
-        cod_prod_mix=cod_prod_mix,
-        status=status,
-        situacao=situacao,
-        produtos=produtos_data,
-        quantidade=quantidade,
-        receita=receita,
-        filiais=filiais,
-    )
-    for produto_data in produtos_data:
-        produto_id = produto_data.get('produto_id')
-        qtde_produto = produto_data.get('qtde_produto', 0)
-        produto = produtoMp_model.Produto.query.get(produto_id)
-        if produto:
-            mixproduto.produtos.append(produto, {'quantidade': qtde_produto})
-
-    db.session.add(mixproduto)
-    db.session.commit()
-    return mixproduto
-
-
 def salvar_mixproduto(mixproduto):
     db.session.commit()
 
@@ -109,8 +77,8 @@ def atualizar_mixproduto(form_data):
     if not mixproduto:
         raise ValueError(f"O mixproduto com id {form_data.id} não foi encontrado.")
 
-    mixproduto.produto = form_data.produto
-    mixproduto.quantidade = form_data.quantidade
+    mixproduto.produtos = form_data.produtos
+    mixproduto.quantidades = form_data.quantidades
     mixproduto.receita = form_data.receita
 
     db.session.commit()

@@ -48,3 +48,13 @@ class QuantidadeMixProdutos(db.Model):
     mix_id = db.Column(db.Integer, db.ForeignKey('mixproduto.id'), nullable=True)
     mix_produto = db.relationship('MixProduto', back_populates='quantidades', foreign_keys=[mix_id])
     quantidade = db.Column(db.Float, nullable=False)
+
+    def json(self):
+        return {
+            "id": self.id,
+            "produto_id": self.produto_id,
+            "produto": self.produto.json(),
+            "mix_id": self.mix_id,
+            "mix_produto": self.mix_produto.json(),
+            "quantidade": self.quantidade
+        }

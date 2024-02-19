@@ -142,7 +142,7 @@ def visualizar_receita(id):
             receita.validade = form_data['validade']
             receita.status = form_data['status']
             receita.cliente = cliente
-            receita_service.atualizar_receita(receita, receita)
+            receita_service.atualizar_receita(receita, cliente_id, form_data)
             flash("receita atualizada com sucesso!")
             return redirect(url_for('listar_receitas'))
         return render_template("receitas/formreceita.html", form=form)
@@ -176,8 +176,8 @@ def adicionar_produtos_receita(id):
         produtos_selecionados = Produto.query.filter(Produto.id.in_(form.produtos.data)).all()
 
         # Adicionar produtos à receita
-        for produto_id, quantidade in zip(form.produtos.data, form.quantidades.data):
-            mix_produto = MixProduto(receita=receita, produto_id=produto_id, quantidade=quantidade)
+        for produto, quantidade in zip(produtos_selecionados, form.quantidades.data):
+            mix_produto = MixProduto(receita=receita, produtos=[produto], quantidades=quantidade)
             db.session.add(mix_produto)
         db.session.commit()
 

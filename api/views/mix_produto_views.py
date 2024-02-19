@@ -5,7 +5,7 @@ from ..models.estoque_model import Estoque
 from ..services import mix_produto_service, produtoMp_service
 from ..schemas.receita_schema import ReceitaSchema
 from ..schemas.estoque_schema import EstoqueSchema
-from ..schemas import mix_produto_schema
+from api.schemas.mix_produto_schema import MixProdutoSchema, QuantidadeMixProdutosSchema
 from ..models.produtoMp_model import Produto
 from ..models.mix_produto_model import MixProduto, QuantidadeMixProdutos
 from flask_wtf import FlaskForm
@@ -61,7 +61,7 @@ def listar_mixprodutos1():
         mixprodutos = MixProduto.query.options(joinedload("receita")).all()
         mixprodutos_data = []
         for mixproduto in mixprodutos:
-            mixproduto_dict = mix_produto_schema.MixProdutoSchema().dump(mixproduto)
+            mixproduto_dict = MixProdutoSchema().dump(mixproduto)
 
             receita = mixproduto.receita
             mixproduto_dict['receita'] = receita.descricao_mix if receita else None
@@ -138,6 +138,40 @@ def ver_mix_produto(receita_id):
 
 @app.route('/mixprodutos/formulario', methods=['GET', 'POST'])
 def adicionar_mixproduto():
+    form = MixProdutosForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        mix_produto_schema = MixProdutoSchema()
+        quantidade_mix_produto_schema = QuantidadeMixProdutosSchema(many=True)
+
+        try:
+            mixproduto_data = mix_produto_schema.load(form.to_dict())
+            quantidade_mix_produto_data = quantidade_mix_produto_schema.load(request.form.getlist('quantidades'))
+        except ValidationError as error:
+            return render_template('mix_produto/formmixproduto.html', error_message=error.messages), 400
+
+        # Cria instância do MixProduto
+        mixproduto = MixProduto(**mixproduto_data)
+        mixproduto.quantidades = quantidade_mix_produto_data
+
+        # Salva no banco de dados
+        db.session.add(mixproduto)
+        db.session.commit()
+
+        # Criação das instâncias de QuantidadeMixProdutos
+        for quantidade_mix_produto in quantidade_mix_produto_data:
+            quantidade_mix_produto.mix_produto = mixproduto
+            db.session.add(quantidade_mix_produto)
+
+        db.session.commit()
+
+        flash("MixProduto cadastrado com sucesso!")
+        return redirect(url_for("listar_mixprodutos"))
+
+    return render_template('mix_produto/formmixproduto.html', form=form, mixproduto={})
+
+
+@app.route('/mixprodutos/formulario', methods=['GET', 'POST'])
+def adicionar_mixproduto0412():
     form = MixProdutosForm()
     if request.method == 'POST' and form.validate_on_submit():
         mix_produto = MixProduto(

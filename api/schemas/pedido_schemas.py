@@ -9,7 +9,7 @@ class PedidoSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = pedido_model.Pedido
         load_instance = True
-        include_relationships = True # Inclui automaticamente os relacionamentos
+        include_relationships = True  # Inclui automaticamente os relacionamentos
         fields = ("id", "qtde_pedido", "data_pedido", "data_entrega", "status", "obs", "cadastrado_em", "atualizado_em",
                   "produtos", "fornecedores", "clientes")
 
@@ -22,9 +22,9 @@ class PedidoSchema(ma.SQLAlchemyAutoSchema):
     cadastrado_em = fields.DateTime(required=False, dump_only=True)
     atualizado_em = fields.DateTime(required=False, dump_only=True)
 
-    produtos = ma.Nested("ProdutoMpSchema", many=False, only=('id', 'status'))
-    fornecedores = ma.Nested("FornecedorSchema", many=False, only=('id', 'nome', 'cidade', 'status'))
-    clientes = ma.Nested("ClienteSchema", many=False, only=('id', 'nome', 'status'))
+    produtos = ma.Nested("ProdutoMpSchema", many=False,)
+    fornecedores = ma.Nested("FornecedorSchema", many=False,)
+    clientes = ma.Nested("ClienteSchema", many=False,)
 
 
 # TODO ** Classe PedidoProdução Schema_Modelo ** este esquema define como os objetos da classe Pedido devem ser convertidos em um formato serializado (como JSON) e vice-versa. Ele fornece uma estrutura clara para lidar com a validação e formatação de dados ao interagir com os modelos.
